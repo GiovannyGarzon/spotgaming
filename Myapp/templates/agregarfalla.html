@@ -1,10 +1,249 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'menusoporte.html' %}
+{% load crispy_forms_tags %}
+{% block content%}
+<h1> Reporte de Fallas</h1>
+<p></p>
+<form class="row g-3" action="{% url 'guardarfalla' %}" method="POST">
+    {% csrf_token %}
+    <div class="col-md-4">
+        <label for="inputnumero" class="form-label">Numero_FAL:</label>
+        <input type="texto" class="form-control" id="inputnumero" name="numero" readonly onmousedown="return false;">
+    </div>
+    <div class="col-md-4">
+        <label for="inputstatus" class="form-label">Status:</label>
+        <select id="inputstatus" class="form-select" name="statusfalla1" required disabled>
+            <option selected value="2">ABIERTA</option>
+            <option value="3">INSPIRED</option>
+            <option value="5">CERRADA</option>
+        </select>
+        <input type="hidden" class="form-control" id="inputstatusoculto" name="statusfalla" value="2" readonly onmousedown="return false;">
+    </div>
+    <div class="col-md-4">
+        <label for="inputCodigoMaquina" class="form-label">*Código Maquina:</label>
+        <select id="inputCodigoMaquina" class="form-select" name="codigomaquina" required>
+            <option value="">Todas las Maquinas...</option>
+            {% for Maquina in maquinas %}
+            <option value="{{ Maquina.id }}" data-operacion="{{ Maquina.id_status }}" data-operacion2="{{ Maquina.id_status.id }}" data-cliente2="{{ Maquina.clientes }}" data-cliente="{{ Maquina.clientes.nombre }}" data-sala2="{{ Maquina.salas }}" data-sala="{{ Maquina.salas.nombre }}">{{ Maquina.id_codigo }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label for="inputCliente" class="form-label">*Cliente:</label>
+        <input type="text" id="inputCliente" class="form-control" name="clientemostrar" readonly>
+        <input type="hidden" class="form-control" id="inputClienteoculto" name="cliente">
+    </div>
+    <div class="col-md-4">
+        <label for="inputsala" class="form-label">*Sala:</label>
+        <input type="text" id="inputsala" class="form-control" name="salamostrar" readonly>
+        <input type="hidden" class="form-control" id="inputsalateoculto" name="sala">
+    </div>
+    <div class="col-md-2">
+        <label for="inputoperacion" class="form-label">*Operación:</label>
+        <input type="text" id="inputoperacion" class="form-control" name="operacionmostrar" readonly>
+        <input type="hidden" class="form-control" id="inputoperacionoculto" name="operacion">
+    </div>
+    <div class="col-md-2">
+        <label for="inputfecharepor" class="form-label">*Fecha Reporte:</label>
+        <input type="date" class="form-control" name="fechareporte" id="inputfecharepor" required>
+    </div>
+    <div class="col-md-4">
+        <label for="inputfechasolucion" class="form-label">Fecha Solución:</label>
+        <input type="date" class="form-control" name="fechasolucion" id="inputfechasolucion" >
+    </div>
+    <div class="col-md-4">
+        <label for="inputfechareject" class="form-label">Fecha Reject:</label>
+        <input type="date" class="form-control" name="fechareject" id="inputfechareject" readonly>
+    </div>
+    <div class="col-md-4">
+        <label for="inputreporta" class="form-label">*Reportado por:</label>
+        <input type="text" class="form-control" name="reportadopor" id="inputreporta" required>
+    </div>
+    <div class="col-md-4">
+        <label for="inputtelefono" class="form-label">*Telefono de Contacto:</label>
+        <input type="text" class="form-control" name="telefono" id="inputtelefono" required>
+    </div>
+    <div class="col-md-2">
+        <label for="inputprioridad" class="form-label">*Prioridad:</label>
+        <select id="inputprioridad" class="form-select" name="prioridad" required>
+            <option value="">Seleccione...</option>
+            <option>BAJA</option>
+            <option>MEDIA</option>
+            <option>ALTA</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label for="inputtipososporte" class="form-label">*Tipo Soporte:</label>
+        <select id="inputtipososporte" class="form-select" name="tipososporte" required>
+            <option>REMOTO</option>
+            <option>NO REMOTO</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label for="inputfechalaboratorio" class="form-label">Fecha en Laboratorio:</label>
+        <input type="date" class="form-control" name="fechalaboratorio" id="inputfechalaboratorio" readonly>
+    </div>
+    <div class="col-md-2">
+        <label for="inputfechacierre" class="form-label">Fecha Cierre:</label>
+        <input type="date" class="form-control" name="fechacierre" id="inputfechacierre" readonly>
+    </div>
+    <div class="col-md-2">
+        <label for="inputestado" class="form-label">*Maquina Apagada:</label>
+        <select id="inputestado" class="form-select" name="apagada">
+            <option value="1">Si</option>
+            <option value="0">No</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label for="inputjuego" class="form-label">Juego:</label>
+        <select id="inputjuego" class="form-select" name="juego">
+            <option value="">Ningun Juego...</option>
+            {% for Juego in juegos %}
+            <option value="{{Juego.id}}">{{Juego.nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label for="inputCodigo" class="form-label">*Tipo de Falla:</label>
+        <select id="inputCodigo" class="form-select" name="codfalla" required>
+            <option value="">Todos los Errores...</option>
+            {% for CodigoFalla in fallas %}
+            <option value="{{CodigoFalla.id}}">{{CodigoFalla.descripcion_sp}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label for="inpitarquitectura" class="form-label">*Arquitectura:</label>
+        <select id="inpitarquitectura" class="form-select" name="arquitectura" required>
+            <option value="">Seleccione Arquitectura...</option>
+            {% for arquitectura in arquitecturas %}
+            <option value="{{arquitectura.id}}">{{arquitectura.nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-48">
+        <label for="inputdescripcion" class="form-label">*Descripción Falla:</label>
+        <input type="texto" class="form-control" id="inputdescripcion" name="descripcion" required>
+    </div>
+    <!--<div class="col-md-6">
+        <label for="inputprocedimiento" class="form-label">Procedimiento SFTP:</label>
+        <select id="inputprocedimiento" class="form-select" name="procedimientos" required>
+            <option value="">Todos los Procedimientos...</option>
+            {% for ProcedimientosSFP in procedimientos %}
+            <option value="{{ProcedimientosSFP.id}}">{{ProcedimientosSFP.titulo}}</option>
+            {% endfor %}
+        </select>
+    </div>--!>
+    <div class="col-md-4">
+        <label for="inputreportada" class="form-label">Falla Registrada Por:</label>
+        <input type="texto" class="form-control" id="inputreportada" name="reportadapor" value="{{user.username}}" readonly>
+    </div>
+    <div class="col-md-4">
+        <label for="inputpresponsable" class="form-label">Responsable:</label>
+        <select id="inputpresponsable" class="form-select" name="responsable" required>
+            <option value="">Todos los tecnicos...</option>
+            {% for Tecnico in tecnicos %}
+            <option value="{{Tecnico.id}}">       {{Tecnico.nombre}}            </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label for="inputatencion" class="form-label">Nivel de Atención:</label>
+        <select id="inputatencion" class="form-select" name="nivelatencion" required>
+            <option value="">Seleccione...</option>
+            <option>NIVEL 1 - TECNICO LOCAL DE SALA</option>
+            <option>NIVEL 2 - SOPORTE REMOTO</option>
+            <option>NIVEL 3 - TECNICO SPOT ENVIADO</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label for="inputresuelto" class="form-label">Resuelto por:</label>
+        <select id="inputresuelto" class="form-select" name="resueltapor" required>
+            <option value="">Seleccione...</option>
+            <option value="2">SOPORTE SPOT GAMING</option>
+            <option value="3">SOPORTE INSPIRED</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label for="inputsolucion" class="form-label">Solucion:</label>
+        <select id="inputsolucion" class="form-select" name="solucion">
+            <option value="">Todos las Soluciones...</option>
+            {% for SolucionFalla in soluciones %}
+            <option value="{{SolucionFalla.id}}">{{SolucionFalla.descripcion_sp}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-48">
+        <label for="inputseguimiento" class="form-label">Ultimo Seguimiento:</label>
+        <textarea  class="form-control" id="inputseguimiento" name="ultimoseguimeinto"></textarea>
+    </div>
+    <!--<table border="0" width="98%" id="table2" cellspacing="1" cellpadding="0" style="border: 1px solid #000000; padding-left:0; padding-right:0">
+        <tbody>
+        <tr>
+            <td bgcolor="#808080" align="center">
+                <b><font face="Tahoma" size="2" color="#FFFFFF">Seguimiento (Historial)</font></b></td</tr>
+        </tbody>
+    </table>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">ID</th>
+            <th scope="col">Fecha Novedad</th>
+            <th scope="col">Responsable</th>
+            <th scope="col">Status</th>
+            <th scope="col">Seguimiento / Novedades</th>
+            <th scope="col">Opciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td WIDTH="80" HEIGHT="80">
+                {% for asignacion in asignaciones %}
+                <input type="text" class="form-control" value="{{asignacion.id}}" readonly onmousedown="return false;">
+                {% endfor %}
+            </td>
+            <td>
+                {% for asignacion in asignaciones %}
+                <input type="text" class="form-control" id="textcliente" value="{{asignacion.clientes}}" readonly onmousedown="return false;">
+                {% endfor %}
+            </td>
+            <td>
+                {% for asignacion in asignaciones %}
+                <input id="contacto" type="text" class="form-control" value="{{asignacion.contacto}}" readonly onmousedown="return false;">
+                {% endfor %}
+            </td>
+            <td>
+                {% for asignacion in asignaciones %}
+                <input type="text" class="form-control" value="{{asignacion.stado}}" readonly onmousedown="return false;">
+                {% endfor %}
+            </td>
+            <td>
+                {% for asignacion in asignaciones %}
+                <input type="text" class="form-control" value="{{asignacion.fecha_asignacion}}" readonly onmousedown="return false;">
+                {% endfor %}
+            </td>
+            <td WIDTH="140" HEIGHT="140">
+                {% for asignacion in asignaciones %}
+                <a href="{% url 'asignar'%}" type="submit" class="btn btn-danger">Editar</a> &nbsp;  <button type="button" class="btn btn-danger">Ver</button>
+                {% endfor %}
+            </td>
+        </tr>
+        </tbody>
+    </table>--!>
+      <p></p>
+      <center>
+          <fieldset id="borde2">
+              <!--<a type="button" class="btn btn-info">ENVIAR Incident</a>--!>
+              <a type="button" class="btn btn-info">REJECT Incident</a>
+              <!--<a type="button" class="btn btn-info">ESCALAR Incident</a>--!>
+              <a type="button" class="btn btn-info">+ Novedades</a>
+              <!--<a type="button" class="btn btn-info">Anexos</a><br><br>--!>
+              <a type="button" class="btn btn-info">Servicio Tecnico</a>
+              <!--<a type="button" class="btn btn-info">Solicitud de Despacho</a>--!>
+              <a type="button" class="btn btn-info">Imprimir</a>
+              <button type="submit" class="btn btn-info">Crear</button>
+              <a href="{% url 'listareportedefallas'%}" type="button" class="btn btn-info">Cerrar</a>
+        </fieldset>
+      </center>
+    </form>
+{% endblock%}

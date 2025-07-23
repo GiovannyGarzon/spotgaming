@@ -1,0 +1,112 @@
+{% load static %}
+{% load crispy_forms_tags %}
+<html>
+<head>
+    <title>Remisión REM00-{{ retornoremision.numero }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0; /* Elimina los márgenes predeterminados del cuerpo */
+        }
+        .page {
+            border: 5px solid black;
+            margin: 20px;
+            padding: 20px;
+        }
+        table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px; /* Ajusta la separación desde el párrafo anterior según tus preferencias */
+    }
+
+    th, td {
+        border: 1px solid #dddddd;
+        text-align: center;
+        padding: 8px;
+    }
+
+    th {
+        background-color: #f2f2f2;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    </style>
+</head>
+<body>
+<img src="{{ STATIC_URL }}Myapp/static/img/Logosistema.png" alt="Logo de la Empresa">
+<p style="text-align: right; font-weight: bold; font-size: 18px;">Numero REM: REM00-{{ retornoremision.id }}</p>
+<center><h1>ORDEN DE RETORNO DE REMISION </h1>
+<table style="width: 100%; border-collapse: collapse; margin-top: 10px;" class="borderless-table">
+    <tr style="margin-bottom: -5px;">
+        <td style="border: none; padding: 5px; width: 20%; font-weight: bold;">Cliente:</td>
+        <td style="border: none; padding: 5px; width: 30%;">{{ retornoremision.cliente.nombre }}</td>
+        <td style="border: none; padding: 5px; width: 40%; font-weight: bold;">Fecha Remisión:</td>
+        <td style="border: none; padding: 5px; width: 10%;">{{ retornoremision.fecha|date:"Y-m-d" }}</td>
+    </tr>
+    <tr style="margin-bottom: -5px;">
+        <td style="border: none; padding: 5px; width: 20%; font-weight: bold;"># Guía Envío:</td>
+        <td style="border: none; padding: 5px; width: 30%;">{{ retornoremision.guia }}</td>
+        <td style="border: none; padding: 5px; width: 40%; font-weight: bold;">Fecha Retorno:</td>
+        <td style="border: none; padding: 5px; width: 10%;">{{ retornoremision.fecha_recibido|date:"Y-m-d" }}</td>
+    </tr>
+    <tr style="margin-bottom: -5px;">
+        <td style="border: none; padding: 5px; width: 20%; font-weight: bold;">Enviado Por:</td>
+        <td style="border: none; padding: 5px; width: 30%;">{{ retornoremision.contacto }}</td>
+        <td style="border: none; padding: 5px; width: 40%; font-weight: bold;">Forma de Envío:</td>
+        <td style="border: none; padding: 5px; width: 10%;">{{ retornoremision.id_transporte }}</td>
+    </tr>
+</table>
+</center>
+<div style="width: 80%; margin: 20px auto;">
+    <center>
+        <h2>Detalle de la Remisión</h2>
+    </center>
+    <center>
+    <table>
+        <thead>
+        <tr>
+            <th WIDTH="20" scope="col">ID</th>
+            <th WIDTH="160" scope="col">Des. Pieza / Parte</th>
+            <th WIDTH="160" scope="col">Serial</th>
+            <th WIDTH="120" scope="col">#Fecha Retorno</th>
+            <!-- Agrega más encabezados según tus necesidades -->
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in items_remision %}
+        <tr>
+            <td>{{ item.id }}</td>
+            <td>{{ item.repuesto.nombre }}</td>
+            <td>{{ item.serialrepuestoretorno }}</td>
+            <td>{{ item.fecharetorno }}</td>
+            <!-- Agrega más detalles según tus necesidades -->
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </center>
+</div>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+    <table style="width: 100%; border-collapse: collapse;" class="borderless-table">
+    <tr>
+        <td style="border: none;">Cliente:______________________________ </td>
+        <td style="border: none;"></td>
+        <td style="border: none;"></td>
+        <td style="border: none;">Empresa:______________________________</td>
+    </tr>
+    </table>
+
+
+
+</body>
+</html>

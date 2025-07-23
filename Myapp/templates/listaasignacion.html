@@ -1,165 +1,161 @@
 {% extends 'menuinstalacion.html' %}
 {% load crispy_forms_tags %}
-{% block content%}
-
-
-    <fieldset id="borde">
+{% block content %}
+<fieldset id="borde">
     <h5> Asignacion de Maquinas</h5>
-    </fieldset>
-
-  <p></p>
-<form class="row g-3">
-      <div class="col-md-6">
+</fieldset>
+{% if messages %}
+<div class="alert alert-success">
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+<p></p>
+<form id="formfiltrarasignaciones" class="row g-3" method="GET" action="{% url 'listaasignacion' %}">
+    {% csrf_token %}
+    <div class="col-md-6">
         <label for="inputnumero" class="form-label">Numero_ASG:</label>
         <input type="text" class="form-control" id="inputnumero">
-      </div>
-      <div class="col-md-6">
-        <label for="inputfecharegistro" class="form-label">Mes:</label>
-        <input type="date" class="form-control" id="inputfecharegistro">
-      </div>
-      <!--<div class="col-md-6">
+    </div>
+
+    <div class="col-md-2">
+        <label for="inputmes1" class="form-label">Mes:</label>
+        <select id="inputmes1" class="form-select" name="mes">
+            <option value="">Todos los Meses</option>
+            {% for mes, nombre_mes in meses %}
+            <option value="{{ mes }}" {% if mes_filtro == mes %}selected{% endif %}>{{ nombre_mes }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label for="inputanio" class="form-label">Año:</label>
+        <select id="inputanio" class="form-select" name="anio">
+            {% for año, nombre_año in años %}
+            <option value="{{ año }}" {% if año_filtro == año %}selected{% endif %}>{{ nombre_año }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
         <label for="inputcliente" class="form-label">Cliente:</label>
-        <input type="text" class="form-control" id="inputcliente" value="{{nombre}}">
-      </div>--!>
-       <div class="col-md-6">
-            <label for="inputcliente" class="form-label">Cliente:</label><br>
-            <select class="col-md-12" id="inputcliente" class="form-selec">
-                <option>Todos los Clientes...</option>
-                {% for Cliente in clientes %}
-                    <option value="{{Cliente.nombre}}">{{Cliente.nombre}}</option>
-                {% endfor %}
-            </select>
-       </div>
-
-      <div class="col-md-6">
-        <label for="inputfechaasginacion" class="form-label">Año:</label>
-        <input type="date" class="form-control" id="inputfechaasginacion" >
-      </div>
-      <div class="col-md-4">
-         <label for="inputState" class="form-label">Status:</label>
-            <select id="inputState" class="form-select">
-                <option>Todos los Status...</option>
-                    {% for Asignacione in asignaciones %}
-                        <option value="{{Asignacione.stado}}">{{Asignacione.stado}}</option>
-                    {% endfor %}
-            </select>
-        </div>
-        <center>
+        <select id="inputcliente" class="form-select" name="cliente">
+            <option>Todos los Clientes...</option>
+            {% for Cliente in clientes %}
+            <option value="{{Cliente.id}}">{{Cliente.nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label for="inputState" class="form-label">Status:</label>
+        <select id="inputState" class="form-select">
+            <option>Todos los Status...</option>
+            {% for listaestados in estados %}
+            <option value="{{listaestados.id}}">{{listaestados.nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <p></p>
+    <fieldset id="borde3">
+        <button type="submit" class="btn btn-danger">Filtrar</button>
+        <a href="{% url 'listaasignacion' %}" type="button" class="btn btn-danger">Todos</a>
+    </fieldset>
+    <p></p>
+    <p></p>
+    <center>
         <h3>Lista de Ordenes de Asignación de Maquinas</h3>
-        </center>
-            <!--<div class="col-md-2">
-        <label for="inputZip" class="form-label">Zip</label>
-        <input type="text" class="form-control" id="inputZip">
-      </div>
-      <div class="col-12">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="gridCheck">
-          <label class="form-check-label" for="gridCheck">
-            Check me out
-          </label>
-        </div>
-      </div>
-      <div class="col-12">
-        <button type="submit" class="btn btn-primary">Sign in</button>
-      </div>--!>
+    </center>
+    <fieldset style="border:2px solid black">
         <style type="text/css">
-
-            td, th{
-                padding: 10px;
-            }
-            th {
-                text-align: center;
+          td, th{padding: 10px;}
+          th{
+            text-align: center;
                 font-size: 15px;
             }
             td{
-                font-size: 5px;
+                font-size:80%;
             }
 
-    </style>
-        <table class="table table-bordered">
-        <thead>
+
+        </style>
+        <table class="table table-bordered" style="text-align:center;">
+            <thead>
             <tr>
-                <!--<th scope="col">ID</th>--!>
-                <th scope="col">Numero ASG</th>
-                <th scope="col">Cliente</th>
-                <th scope="col">Contacto</th>
-                <th scope="col">Status</th>
-                <th scope="col">Fecha Asignación</th>
-                <th scope="col">Mod Ope.</th>
-                <th scope="col">Cant. Maq</th>
-                <th scope="col">Opciones</th>
-             </tr>
-        </thead>
+                <th WIDTH="10">Num ASG</th>
+                <th WIDTH="180" scope="col">Cliente</th>
+                <th WIDTH="100" scope="col">Contacto</th>
+                <th WIDTH="75" scope="col">Status</th>
+                <th WIDTH="135" scope="col">Fecha Asignación</th>
+                <th WIDTH="30" scope="col">Mod Ope.</th>
+                <th WIDTH="10" scope="col">Cant. Maq</th>
+                <th WIDTH="110" scope="col">Opciones</th>
+            </tr>
+            </thead>
             <tbody>
-                <tr>
-                    <!--<td WIDTH="50" HEIGHT="50">
-                        {% for asignacion in asignaciones %}
-                            <input type="text" class="form-control" id="inputid" value="{{asignacion.id}}" readonly onmousedown="return false;">
-                        {% endfor %}--!>
-                    </td>
-                    <td WIDTH="80" HEIGHT="80">
-                        {% for asignacion in asignaciones %}
-                            <input type="text" class="form-control" value="{{asignacion.numero}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {% for asignacion in asignaciones %}
-                            <input type="text" class="form-control" id="textcliente" value="{{asignacion.clientes}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {% for asignacion in asignaciones %}
-                            <input type="text" class="form-control" value="{{asignacion.contacto}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {% for asignacion in asignaciones %}
-                            <input type="text" class="form-control" value="{{asignacion.stado}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {% for asignacion in asignaciones %}
-                            <input type="text" class="form-control" value="{{asignacion.fecha_asignacion}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <TD WIDTH="250" HEIGHT="200">
-                        {% for asignacion in asignaciones %}
-                            <input type="text" class="form-control" value="{{asignacion.modelo}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td WIDTH="60" HEIGHT="60">
-                        {% for asignacion in asignaciones %}
-                            <input type="text" class="form-control" value="#" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <script>
-                        function enviartexto(){
-                            var texto=document.getElementById("textcliente").value;
-                            document.getElementById("inputcliente").value=texto;
-                        }
-                    </script>
-                    <td WIDTH="140" HEIGHT="140">
-                        {% for asignacion in asignaciones %}
-                            <a href="{% url 'instalar'%}" type="button" class="btn btn-danger">Editar</a>  <button type="button" class="btn btn-danger">Ver</button>
-                        {% endfor %}
-                    </td>
+            {% for asignacion in asignaciones %}
+            <tr>
+                <td>ASG00-{{asignacion.id}}</td>
+                <td>{{asignacion.clientes.nombre}}</td>
+                <td>{% if asignacion.contacto == "0" %}
+                    {{""}}
+                    {% else %}
+                    {{asignacion.contacto}}
+                    {% endif %}
+                </td>
+                <td>{{asignacion.stado}}</td>
+                <td>{{asignacion.fecha_asignacion|date:"Y-m-d"}}</td>
+                <td>{{asignacion.operacion.id_codigo}}</td>
+                <td>{{ asignacion.numero_seriales|default:"" }}</td>
+                <td>{% if asignacion.stado.id == 6 %}
+                    <button type="button" class="btn btn-danger">Ver</button>
+                </td>
+                {% else %}
+                {% if asignacion.stado.id == 11 %}
+                    <a href="{% url 'verasignacion' asignacion.id %}" class="btn btn-info btn-sm">
+                        <i class="fas fa-eye"></i></a>
+                {% else %}
 
-
-                </tr>
+                    <a href="{% url 'editar_asignacion' asignacion.id %}" class="btn btn-warning btn-sm">
+                        <i class="fas fa-edit"></i></a>
+                     <a href="{% url 'verasignacion' asignacion.id %}" class="btn btn-info btn-sm">
+                        <i class="fas fa-eye"></i></a>
+                {% endif %}
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
             </tbody>
         </table>
-      <p></p>
-      <p></p>
-      <p></p>
-      <p></p>
-      <center>
-      <fieldset id="borde2">
-          <a href="{% url 'asignar'%}" class="btn btn-success">Agregar</a>
-          <a href="#" class="btn btn-success">Imprimir</a>
-          <a href="#" class="btn btn-success">Cerrar</a>
-      </fieldset>
-       </center>
+    </fieldset>
+    <p></p>
+    <p></p>
+    <center>
+        <fieldset id="borde2">
+            <a href="{% url 'asignar'%}" class="btn btn-success">Agregar</a>
+            <a href="#" class="btn btn-success">Imprimir</a>
+            <a href="#" class="btn btn-success">Cerrar</a>
+        </fieldset>
+    </center>
 
+    <!-- Implementación de la paginación -->
+    <div class="pagination">
+        <span class="step-links">
+            {% if asignaciones.has_previous %}
+                <a href="?page=1">&laquo; Primera</a>
+                <a href="?page={{ asignaciones.previous_page_number }}">anterior</a>
+            {% endif %}
 
+            <span class="current">
+                Página {{ asignaciones.number }} de {{ asignaciones.paginator.num_pages }}.
+            </span>
+
+            {% if asignaciones.has_next %}
+                <a href="?page={{ asignaciones.next_page_number }}">siguiente</a>
+                <a href="?page={{ asignaciones.paginator.num_pages }}">Última &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+    <!-- Fin de la paginación -->
 </form>
-{% endblock%}
+{% endblock %}

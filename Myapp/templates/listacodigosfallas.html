@@ -1,4 +1,5 @@
 {% extends 'menumaestro.html' %}
+{% block title %}Lista Codigos{% endblock %}
 {% load crispy_forms_tags %}
 {% block content%}
 <fieldset id="borde" xmlns="http://www.w3.org/1999/html">
@@ -17,28 +18,33 @@
                 font-size:80%;
             }
     </style>
-<table class="table table-bordered" id="cliente">
+<table class="table table-bordered" id="codigosfalla" style="text-align:center;">
     <thead>
     <tr>
-        <th WIDTH="120" scope="col">ID</th>
+        <th WIDTH="20" scope="col">ID</th>
         <th WIDTH="40" scope="col">Codigo</th>
         <th WIDTH="180" scope="col">Descripcion</th>
         <th WIDTH="80" scope="col">Categoria</th>
-        <th WIDTH="80" scope="col">Tipo</th>
         <th WIDTH="60" scope="col">Activo</th>
         <th WIDTH="120" scope="col">Opciones</th>
     </tr>
     </thead>
     <tbody>
-    {% for CodigoFalla in codigas %}
+    {% for CodigoFalla in codigos %}
     <tr>
         <td>{{CodigoFalla.id}}</td>
         <td>{{CodigoFalla.codigo}}</td>
         <td>{{CodigoFalla.descripcion_sp}}</td>
         <td>{{CodigoFalla.categoria}}</td>
-        <td>{{CodigoFalla.id_tipo}}</td>
-        <td>{{CodigoFalla.activo}}</td>
-        <td><a href="{% url 'instalar'%}" type="button" class="btn btn-danger">Editar</a>  <button type="button" class="btn btn-danger">Ver</button></td>
+        <td><script>
+                if ({{CodigoFalla.activo}} == 1){
+                    document.write("x")
+                }else{
+                    document.write("")
+                    }
+            </script>
+        </td>
+        <td><a type="button" class="btn btn-danger">Editar</a>  <button type="button" class="btn btn-danger">Ver</button></td>
     </tr>
     {% endfor %}
     </tbody>
@@ -48,7 +54,7 @@
 <script src="https://cdn.datatables.net/fixedheader/3.1.6/js/dataTables.fixedHeader.min.js"></script>
 <script>
            $(document).ready(function(){
-               var table = $('#cliente').DataTable({
+               var table = $('#codigosfalla').DataTable({
                    orderCellsTop: true,
                    fixedHeader: true
                });

@@ -1,10 +1,96 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'menusoporte.html' %}
+{% load crispy_forms_tags %}
+{% block content%}
+<h1> Datos de la Orden de Servicio Tecnico</h1>
+<p></p>
+<form class="row g-3" action="{% url 'guardarservicio' %}" method="POST">
+    {% csrf_token %}
+    <div class="col-md-4">
+        <label for="inputnumero" class="form-label">Numero_TEC:</label>
+        <input type="texto" class="form-control" id="inputnumero" name="numero" readonly onmousedown="return false;">
+    </div>
+    <div class="col-md-2">
+        <label for="inputfechareporte" class="form-label">* Fecha:</label>
+        <input type="text" class="form-control" name="fecha" id="inputfechareporte" required>
+    </div>
+    <div class="col-md-6">
+        <label for="inpuclienteservicio" class="form-label">* Cliente:</label>
+        <select id="inpuclienteservicio" class="form-select" name="clienteserviciotecnico" required>
+            <option>Todos los clientes...</option>
+            {% for Cliente in clientes %}
+            <option value="{{Cliente.id}}">{{Cliente.nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label for="inputfechareject" class="form-label">Fecha de Visita:</label>
+        <input type="date" class="form-control" name="fechavisita" id="inputfechareject">
+    </div>
+    <div class="col-md-8">
+        <label for="inputpresponsable" class="form-label">* Tecnico Asignado:</label>
+        <select id="inputpresponsable" class="form-select" required name="tecnicoserviciotecnico" required>
+            <option value="">Todos los Procedimientos...</option>
+            {% for Tecnico in tecnicos %}
+             <option value="{{Tecnico.id}}">       {{Tecnico.nombre}}            </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label for="inputfechacierre" class="form-label">Fecha Cierre:</label>
+        <input type="date" class="form-control" name="fechacierre" id="inputfechacierre">
+    </div>
+    <div class="col-md-4">
+        <label for="inputstatus" class="form-label">* Status:</label>
+        <select id="inputstatus" class="form-select" name="statusserviciotecncio" required>
+            <option value="">Todos los Status...</option>
+            <option value="2">PENDIENTE</option>
+            <option value="1">EN PROCESO</option>
+            <option value="3">CERRADA</option>
+        </select>
+    </div>
+    <div class="col-md-12">
+        <label for="inputdescripcion" class="form-label">* Breve Descripción:</label>
+        <input type="text" class="form-control" name="descripcion" id="inputdescripcion" required>
+    </div>
+    <table border="0" width="99%" id="table2" cellspacing="1" cellpadding="0" style="border: 1px solid #000000; padding-left:0; padding-right:0">
+        <tbody><tr>
+            <td bgcolor="#808080" align="center">
+                <b><font face="Tahoma" size="2" color="#FFFFFF">Detalle del Servicio Técnico</font></b></td>
+        </tr>
+        </tbody>
+    </table>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <!--<th scope="col">ID</th>--!>
+            <th WIDTH="80" scope="col">ID</th>
+            <th scope="col">Serie PMV</th>
+            <th scope="col">Sala / Punto</th>
+            <th scope="col">Falla reportada</th>
+            <th scope="col">Fecha Servicio</th>
+            <th scope="col">Fecha Solucion</th>
+            <th scope="col">Status</th>
+            <th WIDTH="140" scope="col">Opciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        </tr>
+        </tbody>
+    </table>
+    <div class="col-md-48">
+        <label for="inputreporta" class="form-label">Observación:</label>
+        <input type="text" class="form-control" name="observacion" id="inputreporta">
+    </div>
+    <p></p>
+    <center>
+        <fieldset id="borde2">
+            <a type="button" class="btn btn-info">Agregar Item</a>
+            <a type="button" class="btn btn-info">Carta</a>
+            <a type="button" class="btn btn-info">Imprimir</a>
+            <button type="submit" class="btn btn-info">Crear</button>
+            <a href="{% url 'listaserviciotecnico'%}" type="button" class="btn btn-info">Cerrar</a>
+        </fieldset>
+    </center>
+</form>
+{% endblock%}

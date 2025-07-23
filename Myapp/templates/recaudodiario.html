@@ -1,0 +1,251 @@
+{% extends 'menuservicios.html' %}
+{% load crispy_forms_tags %}
+{% block content%}
+<fieldset id="borde" xmlns="http://www.w3.org/1999/html">
+    <h5>  Recaudaciones Diarias </h5>
+</fieldset>
+<br>
+<style>
+    #formrecaudodiario {
+      margin: 0 auto;
+      width: 1300px;
+      padding: 0.2em;
+      border: 1px solid #CCC;
+      border-radius: 1em;
+    }
+    #recaudodia-body td {
+        font-size: 8px; /* o el tamaño que prefieras */
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    form li + li {
+      margin-top: 1em;
+    }
+    input,
+    textarea {
+      font: 1em sans-serif;
+      width: 300px;
+      box-sizing: border-box;
+      border: 1px solid #999;
+    }
+    input:focus,
+    textarea:focus {
+      border-color: #000;
+    }
+    textarea {
+      vertical-align: top;
+      height: 5em;
+    }
+    .button {
+      padding-left: 90px;
+    }
+    button {
+      margin-left: .5em;
+    }
+    #tabla-container {
+        max-height: 400px; /* Ajusta según tu preferencia */
+        overflow-y: auto;
+        border: 1px solid #ccc;
+      }
+      table#recaudodia {
+        width: 100%;
+        border-collapse: collapse;
+      }
+    td.ingreso-verde {
+      background-color: #d4edda !important;
+      color: #000000 !important;
+      font-weight: bold;
+      font-weight: bold;
+    }
+    td.ingreso-naranja {
+      background-color: #ffcc80 !important;
+      color: #000000 !important;
+      font-weight: bold;
+      font-weight: bold;
+    }
+
+</style>
+
+<form name="formrecaudodiario" id="formrecaudodiario" class="row g-1">
+    <div class="col-md-4">
+        <label for="inputcliente" class="form-label">Cliente:</label>
+        <select id="inputcliente" class="form-select">
+            <option value="">Todos los Clientes...</option>
+            {% for Cliente in clientes %}
+            <option value="{{Cliente.id}}">{{Cliente.nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label for="inputsala" class="form-label">Sala:</label>
+        <select id="inputsala" class="form-select">
+            <option value="">Todas las salas...</option>
+            {% for Sala in salas %}
+            <option value="{{Sala.id}}">{{Sala.nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label for="inputcodigomaquina" class="form-label">Cod. Maquina:</label>
+        <select id="inputcodigomaquina" class="form-select">
+            <option value="">Todas las Maquinas...</option>
+            {% for Maquina in maquinas %}
+            <option value="{{Maquina.id}}">{{Maquina.id_codigo}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <!--<div class="col-md-2">
+        <label for="inputfamilia" class="form-label">Familia:</label>
+        <select id="inputfamilia" class="form-select">
+            <option value="">Todas las Familias...</option>
+            {% for FamiliaMaquina in familias %}
+            <option value="{{FamiliaMaquina.id}}">{{FamiliaMaquina.nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label for="inputmodelo" class="form-label">Modelo:</label>
+        <select id="inputmodelo" class="form-select">
+            <option value="">Todos los Modelos...</option>
+            {% for Modelo in modelos %}
+            <option value="{{Modelo.id}}">{{Modelo.nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>--!>
+    <div class="col-md-4">
+        <label for="inputdesde" class="form-label">De la Fecha:</label>
+        <input type="date" id="inputdesde" class="form-control">
+    </div>
+    <div class="col-md-4">
+        <label for="inputhasta" class="form-label">Hasta la Fecha:</label>
+        <input type="date" id="inputhasta" class="form-control">
+    </div>
+
+
+</form>
+<br>
+<button id="submit" class="btn btn-danger">Filtrar</button>
+<a href="{% url 'register'%}" type="button" class="btn btn-danger">Todos</a>
+<br>
+<center>
+    <h3>Recaudos Diarios x Maquina</h3>
+</center>
+<style type="text/css">
+      td, th{padding: 10px;}
+      th{
+        text-align: center;
+        font-size: 15px;
+      }
+      td{
+        font-size:60%;
+      }
+</style>
+<div id="tabla-container">
+<table class="table table-bordered" id="recaudodia" style="text-align:center;">
+    <thead>
+        <tr>
+            <th WIDTH="10" scope="col">ID</th>
+            <th WIDTH="180" scope="col">Cliente</th>
+            <th WIDTH="80" scope="col">Sal/Punto</th>
+            <th WIDTH="160" scope="col">Fec Recuado</th>
+            <th WIDTH="160" scope="col">Fec Trans. </th>
+            <th WIDTH="80" scope="col"># Maq.</th>
+            <th WIDTH="60" scope="col">$ Entrada</th>
+            <th WIDTH="60" scope="col">$ Salida</th>
+            <th WIDTH="60" scope="col">$ Pago manual</th>
+            <th WIDTH="60" scope="col">$ JackPot</th>
+            <th WIDTH="60" scope="col">$ Billeteros</th>
+            <th WIDTH="60" scope="col"># Jugadas</th>
+            <th WIDTH="60" scope="col">$ Neto(NetWin)</th>
+            <th WIDTH="60" scope="col">$ Ingreso(Value Retained)</th>
+            <th WIDTH="60" scope="col">$ Verf. Contador</th>
+            <th WIDTH="60" scope="col">% RTP</th>
+            <th WIDTH="120" scope="col">Opc.</th>
+        </tr>
+    </thead>
+    <tbody id="recaudodia-body">
+        <!-- Inicialmente vacío -->
+    </tbody>
+</table>
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<!--<script src="https://cdn.datatables.net/fixedheader/3.1.6/js/dataTables.fixedHeader.min.js"></script>--!>
+
+<script>
+    $('#submit').click(function(e) {
+        e.preventDefault();
+
+        let cliente = $('#inputcliente').val();
+        let sala = $('#inputsala').val();
+        let maquina = $('#inputcodigomaquina').val();
+        let desde = $('#inputdesde').val();
+        let hasta = $('#inputhasta').val();
+
+        if (!desde) {
+            alert("Por favor, selecciona una fecha de carga.");
+            return;
+        }
+
+        $.ajax({
+            url: "{% url 'ajax_filtrar_recaudo' %}",
+            method: "GET",
+            data: {
+                cliente: cliente,
+                sala: sala,
+                maquina: maquina,
+                desde: desde,
+                hasta: hasta,
+            },
+            dataType: 'json',
+            success: function(data) {
+                $('#recaudodia-body').empty();
+
+                data.data.forEach(function(item, index) {
+                    $('#recaudodia-body').append(`
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${item.clientes__nombre || ''}</td>
+                            <td>${item.salas__nombre || ''}</td>
+                            <td>${item.fecha || ''}</td>
+                            <td>${item.fechacarga || ''}</td>
+                            <td>${item.maquina__id_codigo || ''}</td>
+                            <td>${Number(item.coinin || 0).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
+                            <td>${Number(item.coinout || 0).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
+                            <td>${Number(item.handpay || 0).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
+                            <td>${Number(item.jackpot || 0).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
+                            <td>${Number(item.bills || 0).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
+                            <td>${Number(item.plays || 0).toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
+                            <td>${Number(item.neto || 0).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
+                            <td class="ingreso-verde">${Number(item.ingreso || 0).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
+                            <td class="ingreso-naranja">${Number(item.payback || 0).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
+                            <td>
+                                ${item.coinin && item.coinout
+                                    ? ((item.coinout / item.coinin) * 100).toFixed(2) + ' %'
+                                    : '0 %'}
+                            </td>
+                            <td>-</td>
+                        </tr>
+                    `);
+                });
+            },
+            error: function(error) {
+                console.error("Error al obtener los datos:", error);
+            }
+        });
+    });
+</script>
+<br>
+<br>
+<br>
+<center>
+    <fieldset id="borde2">
+        <a href="#" class="btn btn-success">Imprimir</a>
+        <a href="{% url 'menuservicios' %}" class="btn btn-success">Cerrar</a>
+    </fieldset>
+</center>
+
+{% endblock %}

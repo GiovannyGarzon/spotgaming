@@ -1,0 +1,263 @@
+{% load static %}
+{% load humanize %}
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Liquidación PDF</title>
+    <style>
+        @page {
+            margin: 80px 30px 50px 30px;
+            @top-right {
+                content: url('{{ logo_url }}');
+            }
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 4px;
+            text-align: center;
+        }
+        .encabezado {
+            background-color: #f2f2f2;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .titulo {
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="titulo">
+    <h2>Detalle de Liquidación</h2>
+</div>
+
+<div class="encabezado">
+    <table style="width: 100%; border: none;">
+        <tr>
+            <td><span class="label">ID:</span> LIQ-{{ cliente.id }}-{{ mes }}{{ anio }}</td>
+            <td><span class="label">Mes:</span> {{ nombre_mes }}</td>
+        </tr>
+        <tr>
+            <td><span class="label">Cliente:</span> {{ cliente.nombre }}</td>
+            <td><span class="label">Año:</span> {{ anio }}</td>
+        </tr>
+        <tr>
+            <td><span class="label"># Máquinas:</span> {{ detalles|length }}</td>
+            <td><span class="label">Método Cálculo:</span> BILLS - HADPAY</td>
+        </tr>
+        <tr>
+            <td><span class="label">Días a Liquidar:</span> 30</td>
+            <td><span class="label">Fecha Liquidación:</span> {{ fecha_liquidacion|date:'d/m/Y' }}</td>
+        </tr>
+    </table>
+</div>
+
+<center>
+<h3>Totales de la Liquidación</h3>
+</center>
+<table>
+    <tr>
+        <th>$ Neto Total</th>
+        <th>$ Impuesto</th>
+        <th>$ IVA</th>
+    </tr>
+    <tr>
+        <td>{{ total.neto|formato_pesos }}</td>
+        <td>{{ total.impuesto|formato_pesos }}</td>
+        <td>{{ total.iva|formato_pesos }}</td>
+    </tr>
+    <tr>
+        <th colspan="6" style="text-align: center; font-size: 16px; padding: 8px; background-color: #f2f2f2;">
+            VALOR A DISTRIBUIR
+        </th>
+    </tr>
+    <tr>
+        <th>$ Valor a distribuir</th>
+        <th>$ Total x Cliente </th>
+        <th> $ Total x Spot </th>
+    </tr>
+    <tr>
+        <td style="font-size: 18px; font-weight: bold;">{{ total.monto_a_dividir|formato_pesos }}</td>
+        <td style="font-size: 18px; font-weight: bold;">{{ total.pago_cliente|formato_pesos }}</td>
+        <td style="font-size: 18px; font-weight: bold;">{{ total.pago_dueno|formato_pesos }}</td>
+    </tr>
+</table>
+
+<div style="height: 100px;"></div>
+
+<table style="width: 99%; border: 1px solid #000000; border-collapse: collapse;">
+    <tr>
+        <td style="background-color: #808080; text-align: center; padding: 10px;">
+            <span style="font-family: Tahoma; font-size: 25px; color: black; font-weight: bold;">
+                TOTAL NETO A GIRAR SPOT GAMING SAS &nbsp;&nbsp;&nbsp;&nbsp;                  {{ total.pago_dueno|formato_pesos }}
+            </span>
+        </td>
+    </tr>
+</table>
+<!-- Cuadro de texto con instrucciones -->
+<table style="width: 99%; border: 1px solid #000000; border-collapse: collapse; margin-top: 15px;">
+    <tr>
+        <td style="padding: 12px; font-family: Tahoma; font-size: 13px; color: black;">
+            <strong>Favor consignar a nombre de:</strong> SPOT GAMING SAS a la cuenta <strong>AHORROS 30494970810</strong> del <strong>BANCOLOMBIA</strong><br>
+            y confirmar la consignación al email: <strong>auxcontable@spotgaming.co</strong> o al Telf.: <strong>(+57) 317 638 55 29</strong>
+        </td>
+    </tr>
+</table>
+<div style="height: 220px;"></div>
+<table style="width: 100%; border: 1px solid black; padding: 10px; margin-top: 40px;">
+
+    <tr>
+        <td style="width: 50%; padding: 20px;">
+            Empresa: ____________________________
+        </td>
+        <td style="width: 50%; padding: 20px;">
+            Gestor: ____________________________
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" style="border-top: 1px solid black; text-align: center; padding: 10px; font-size: 10px;">
+            Calle 163 # 17-37<br>
+            PBX: +57 310 638 5529<br>
+            Bogotá D.C., Cundinamarca, Colombia
+        </td>
+    </tr>
+</table>
+
+<style>
+    .bloque-salas {
+        border: 2px solid #000;
+        border-radius: 6px;
+        padding: 15px;
+        margin: 30px 0;
+        page-break-inside: avoid;
+    }
+</style>
+
+<div class="bloque-salas">
+
+<center>
+    <h2 style="text-align: center; border: 2px solid #000; padding: 10px; display: inline-block; margin: 20px auto;">
+        Resumen Sala / Maquina
+    </h2>
+</center>
+    {% for sala in resumen_salas %}
+        <h4>{{ sala.nombre }}</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>ID Máquina</th>
+                    <th>Días Rep.</th>
+                    <th>%</th>
+                    <th>Desde</th>
+                    <th>Hasta</th>
+                    <th>Plays</th>
+                    <th>$ Ingreso / Neto</th>
+                    <th>- $ Imp. / IVA / Otros</th>
+                    <th>$ Total x Cliente </th>
+                    <th>$ Total x Spot</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for detalle in sala.detalles %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ detalle.maquina.serie_PMV }}</td>
+                    <td>{{ detalle.numero_registro }}</td>
+                    <td>{{ detalle.maquina.porcentaje_pago|floatformat:0 }}%</td>
+                    <td>{{ fecha_desde|date:"d/m/Y" }}</td>
+                    <td>{{ fecha_hasta|date:"d/m/Y" }}</td>
+                    <td>{{ detalle.play_total|custom_intcomma }}</td>
+                    <td>{{ detalle.neto_total|formato_pesos }}</td>
+                    <td>{{ detalle.valor_a_descontar|formato_pesos }}</td>
+                    <td>{{ detalle.pago_cliente|formato_pesos }}</td>
+                    <td>{{ detalle.pago_dueno|formato_pesos }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="6">Totales Sala</th>
+                    <th>{{ sala.totales.play|custom_intcomma }}</th>
+                    <th>{{ sala.totales.neto|formato_pesos }}</th>
+                    <th>{{ sala.totales.descuento|formato_pesos }}</th>
+                    <th>{{ sala.totales.pago_cliente|formato_pesos }}</th>
+                    <th>{{ sala.totales.pago_dueno|formato_pesos }}</th>
+                </tr>
+            </tfoot>
+        </table>
+    {% endfor %}
+</div>
+
+<center>
+<h2>Totales Generales</h2>
+</center>
+<table>
+    <thead>
+    <tr>
+        <th>Plays</th>
+        <th>$ Ingreso / Neto</th>
+        <th>- $ Imp. / IVA / Otro</th>
+        <th>$ Total x Cliente </th>
+                <th>$ Total x Spot</th>
+    </tr>
+    </thead>
+    <tr>
+        <th>{{ total.play|custom_intcomma }}</th>
+        <th>{{ total.neto|formato_pesos }}</th>
+        <th>{{ total.descuento|formato_pesos }}</th>
+        <th>{{ total.pago_cliente|formato_pesos }}</th>
+        <th>{{ total.pago_dueno|formato_pesos }}</th>
+    </tr>
+</table>
+<p></p>
+<div style="height: 100px;"></div>
+<p></p>
+<br><br>
+<br><br>
+
+<table style="width: 100%; border: 1px solid black; padding: 10px; margin-top: 40px;">
+    <tr>
+        <th colspan="2" style="text-align: center; font-size: 18px; padding: 10px; background-color: #f2f2f2; border-top: 2px solid #000;">
+            Confirmación de Liquidación
+        </th>
+    </tr>
+    <tr>
+        <td style="width: 50%; padding: 20px;">
+            Empresa: ____________________________
+        </td>
+        <td style="width: 50%; padding: 20px;">
+            Gestor: ____________________________
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" style="border-top: 1px solid black; text-align: center; padding: 10px; font-size: 10px;">
+            Calle 163 # 17-37<br>
+            PBX: +57 310 638 5529<br>
+            Bogotá D.C., Cundinamarca, Colombia
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

@@ -1,10 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'menumaestro.html' %}
+{% block title %}Lista Proveedores{% endblock %}
+{% load crispy_forms_tags %}
+{% block content%}
+<fieldset id="borde" xmlns="http://www.w3.org/1999/html">
+    <h5>  Maestro de Prveedores </h5>
+</fieldset>
+<p></p>
+<br>
+<br>
+<style type="text/css">
+          td, th{padding: 10px;}
+          th{
+            text-align: center;
+                font-size: 15px;
+            }
+            td{
+                font-size:80%;
+            }
+    </style>
+<table class="table table-bordered" id="proveedor" style="text-align:center;">
+    <thead>
+    <tr>
+        <th WIDTH="20" scope="col">NIT</th>
+        <th WIDTH="40" scope="col">Razon Social</th>
+        <th WIDTH="180" scope="col">Contacto</th>
+        <th WIDTH="160" scope="col">Clase</th>
+        <th WIDTH="120" scope="col">Opciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for Proveedore in proveedores %}
+    <tr>
+        <td>{{Proveedore.nit}}</td>
+        <td>{{Proveedore.razon_social}}</td>
+        <td>{{Proveedore.contacto}}</td>
+        <td>{{Proveedore.id_clase}}</td>
+        <td><a type="button" class="btn btn-danger">Editar</a>  <button type="button" class="btn btn-danger">Ver</button></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/fixedheader/3.1.6/js/dataTables.fixedHeader.min.js"></script>
+<script>
+           $(document).ready(function(){
+               var table = $('#proveedor').DataTable({
+                   orderCellsTop: true,
+                   fixedHeader: true
+               });
+            });
+            /*$('#cliente thead tr').clone(true).appendTo( '#cliente thead' );
+            $('#cliente thead tr:eq(1) th').each( function (i) {
+                var title = $(this).text(); //es el nombre de la columna
+                $(this).html( '<input type="text" placeholder="Search...'+title+'" />' );
+
+                $( 'input', this ).on( 'keyup change', function () {
+                    if ( table.column(i).search() !== this.value ) {
+                        table
+                            .column(i)
+                            .search( this.value )
+                            .draw();
+                     }
+                } );
+             } );*/
+</script>
+<p></p>
+{% endblock%}

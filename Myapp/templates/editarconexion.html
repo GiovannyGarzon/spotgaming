@@ -1,10 +1,98 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'menuinstalacion.html' %}
+{% load crispy_forms_tags %}
+{% block content%}
+  <h1> Datos de la Solicitud de Conectividad</h1>
+  <p></p>
+    <form class="row g-3">
+      <div class="col-md-6">
+        <label for="inputnumero" class="form-label">Numero_ASG:</label>
+          <input type="texto" class="form-control"  value="ASG00-{{conexion.id}}" readonly onmousedown="return false;">
+        <input type="hidden" class="form-control" id="inputnumero" name="numero"   value="{{datosconexion.id}}" readonly onmousedown="return false;">
+      </div>
+      <div class="col-md-6">
+        <label for="inputfecharegistro" class="form-label">Fecha registro:</label>
+          <p><input type="date" class="form-control"  name="fecharegistro" id="inputfecharegistro" value="{{conexion.fecha|date:"Y-m-d" }}"></p>
+      </div>
+        <div class="col-md-24">
+            <label for="inputclientes" class="form-label">Cliente:</label>
+            <input type="texto" class="form-control" id="inputclientes" name="clienteoculto" value="{{conexion.clientes.nombre}}" readonly onmousedown="return false;">
+        </div>
+        <input type="hidden" class="form-control" id="inputclientesocultos" name="cliente" value="{{conexion.clientes}}" readonly onmousedown="return false;">
+      <div class="col-md-6">
+        <label for="inputfechacreacionums" class="form-label">Fecha Creación UMS:</label>
+        <input type="date" class="form-control" name="fechaasignacion" id="inputfechacreacionums" value="{{conexion.fecha_asignacion|date:"Y-m-d"}}" required>
+      </div>
+        <div class="col-md-6">
+        <label for="inputcontacto" class="form-label">Contacto:</label>
+        <input type="text" class="form-control" name="contacto" id="inputcontacto" value="{{conexion.contacto}}" readonly onmousedown="return false;">
+      </div>
+        <div class="col-md-6">
+        <label for="inputfechavalidacionums" class="form-label"> Fecha Verificación UMS:</label>
+        <input type="date" class="form-control" name="fechaasignacion" id="inputfechavalidacionums" value="{{conexion.fecha_asignacion|date:"Y-m-d"}}" required>
+      </div>
+        <div class="col-md-6">
+        <label for="inputumscreadopor" class="form-label">UMS Creado por:</label>
+        <input type="text" class="form-control" name="contacto" id="inputumscreadopor" value="{{conexion.contacto}}" readonly onmousedown="return false;">
+      </div>
+      <div class="col-md-4">
+        <label for="inputState" class="form-label">Status:</label>
+        <select id="inputState" class="form-select" name="status">
+                <option value="">{{conexion.stado}}</option>
+                <option>CREACION UMS</option>
+                <option>CODIGOS IGG</option>
+        </select>
+      </div>
+
+        <table border="0" width="99%" id="table2" cellspacing="1" cellpadding="0" style="border: 1px solid #000000; padding-left:0; padding-right:0">
+            <tbody><tr>
+                <td bgcolor="#808080" align="center">
+                    <b><font face="Tahoma" size="2" color="#FFFFFF">Maquinas y/o Seriales Incluidos en esta Solicitud de Conectividad</font></b></td>
+            </tr>
+            <tr>
+
+            </tr>
+            </tbody>
+        </table>
+      <table class="table table-bordered" style="text-align:center;">
+        <thead>
+            <tr>
+                <th WIDTH="30" scope="col">ID</th>
+                <th WIDTH="100" scope="col"># Serie PMV</th>
+                <th WIDTH="130" scope="col"># Serie IGG</th>
+                <th WIDTH="30" scope="col">Modelo</th>
+                <th WIDTH="30" scope="col">ID Inspired</th>
+                <th WIDTH="30" scope="col">Menu Mix</th>
+                <th WIDTH="30" scope="col">Sala / Punto</th>
+                <th WIDTH="160" scope="col">Opciones</th>
+             </tr>
+        </thead>
+            <tbody>
+            {% for Seriales in seriales %}
+                <tr>
+                    <td>{{Seriales.id}}</td>
+                    <td>{{Seriales.serie_pmv}}</td>
+                    <td>{{Seriales.modelo}}</td>
+                    <td>{{Seriales.operacion}}</td>
+                    <td>{{Seriales.modelo}}</td>
+                    <td>{{Seriales.cres}}</td>
+                    <td>{{Seriales.liqmensual}}</td>
+                    <td><a type="submit" class="btn btn-danger">Editar</a> &nbsp;  <button type="button" class="btn btn-danger">Ver</button></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <center>
+        <fieldset id="borde2">
+
+                <a type="button" class="btn btn-info">Reporte</a>
+                <a type="button" class="btn btn-info">Imprimir</a>
+                <button type="submit" class="btn btn-info">Guardar</button>
+                <a href="{% url 'listaconectar'%}" type="button" class="btn btn-info">Cerrar</a>
+        </fieldset>
+      </center>
+    </form>
+{% endblock%}

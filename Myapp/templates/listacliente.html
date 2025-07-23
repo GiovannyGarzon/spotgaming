@@ -1,123 +1,113 @@
-
 {% extends 'menumaestro.html' %}
+{% block title %}Lista Clientes{% endblock %}
 {% load crispy_forms_tags %}
 {% block content%}
-
 <fieldset id="borde" xmlns="http://www.w3.org/1999/html">
     <h5>  Maestro de Clientes </h5>
- </fieldset>
+</fieldset>
 <p></p>
 <br>
-<br>
+{% if messages %}
 
+<div class="alert alert-success">
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
 
-<form class="row g-3">
-            <!--<div class="col-md-2">
-        <label for="inputZip" class="form-label">Zip</label>
-        <input type="text" class="form-control" id="inputZip">
-      </div>
-      <div class="col-12">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="gridCheck">
-          <label class="form-check-label" for="gridCheck">
-            Check me out
-          </label>
-        </div>
-      </div>
-      <div class="col-12">
-        <button type="submit" class="btn btn-primary">Sign in</button>
-      </div>--!>
+<p align="right">
+    <a type="button" href="{% url 'crear_cliente' %}" class="btn btn-danger"> Agregar</a> <a type="button" href="{% url 'menumaestro' %}" class="btn btn-danger"> Cerrar</a>
+</p>
 <style type="text/css">
-    th {
-        text-align: center;
-    }
-</style>
-        <table class="table table-bordered" id="cliente">
-        <thead>
-            <tr>
-
-                <th scope="col">NIT</th>
-                <th scope="col">Inspired</th>
-                <th scope="col">Nombre</th>
-                <th scope="col">Razon Social</th>
-                <th scope="col">Grupo</th>
-                <th scope="col" colspan="4">Estado
-                    (activo/visor/mod.liq/liq)</th>
-
-                <th scope="col">Opciones</th>
-             </tr>
-        </thead>
-            <tbody>
-                <tr>
-
-                    <td>
-                        {% for Cliente in clientes %}
-                            <input  type="text" class="form-control" value="{{Cliente.nit}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td WIDTH="80" HEIGHT="80">
-                        {% for Cliente in clientes %}
-                            <input type="text" class="form-control" value="{{Cliente.id_inspired}}" readonly onmousedown="return false;" name="clienteconectar">
-                        {% endfor %}
-                    </td>
-                    <td WIDTH="400" HEIGHT="400">
-                        {% for Cliente in clientes %}
-                            <input type="text" class="form-control" value="{{Cliente.nombre}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td WIDTH="400" HEIGHT="400">
-                        {% for Cliente in clientes %}
-                            <input type="text" class="form-control" value="{{Cliente.razon}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {% for Cliente in clientes %}
-                            <input type="text" class="form-control" value="{{Cliente.Grupos}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td WIDTH="50" HEIGHT="50">
-                        {% for Cliente in clientes %}
-                            <input type="text" class="form-control" value="{{Cliente.activo}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td WIDTH="50" HEIGHT="50">
-                        {% for Cliente in clientes %}
-                            <input type="text" class="form-control" value="{{Cliente.visor}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td WIDTH="50" HEIGHT="50">
-                        {% for Cliente in clientes %}
-                            <input type="text" class="form-control" value="{{Cliente.liquida_mes}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td WIDTH="50" HEIGHT="50">
-                        {% for Cliente in clientes %}
-                            <input type="text" class="form-control" value="{{Cliente.liquida}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td WIDTH="140" HEIGHT="140">
-                        {% for Cliente in clientes %}
-                            <a href="{% url 'instalar'%}" type="button" class="btn btn-danger">Editar</a>  <button type="button" class="btn btn-danger">Ver</button>
-                        {% endfor %}
-                    </td>
-
-
-                </tr>
-            </tbody>
-        </table>
-        <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
-        <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
-        <script src="https://cdn.datatables.net/fixedheader/3.1.6/js/dataTables.fixedHeader.min.js"></script>
-        <script>
-            $(document).ready(function(){
-                var table = $('#cliente').DataTable({
-                    orderCellsTop: true,
-                    fixedHeader: true
-                });
+          td, th{padding: 10px;}
+          th{
+            text-align: center;
+                font-size: 15px;
+            }
+            td{
+                font-size:80%;
+            }
+    </style>
+<table class="table table-bordered" id="cliente" style="text-align:center;">
+    <thead>
+    <tr>
+        <th WIDTH="120" scope="col">NIT</th>
+        <th WIDTH="40" scope="col">Inspired</th>
+        <th WIDTH="180" scope="col">Nombre</th>
+        <th WIDTH="160" scope="col">Razon Social</th>
+        <th WIDTH="120" scope="col">Grupo</th>
+        <th WIDTH="40" scope="col">Activo</th>
+        <th WIDTH="30" scope="col">Visor</th>
+        <th WIDTH="40" scope="col">Mod.liq</th>
+        <th WIDTH="30" scope="col">Liq</th>
+        <th WIDTH="160" scope="col">Opciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for Cliente in clientes %}
+    <tr>
+        <td>{{Cliente.nit}}</td>
+        <td>{{Cliente.id_inspired}}</td>
+        <td>{{Cliente.nombre}}</td>
+        <td>{{Cliente.razon.nombre}}</td>
+        <td><script>
+            if ({{Cliente.Grupos}} == None){
+                document.write("")
+            }</script></td>
+        <td><script>
+            if ({{Cliente.activo}} == 1){
+             document.write("x")
+            }else{
+             document.write("")
+            }
+        </script></td>
+        <td><script>
+            if ({{Cliente.visor}} == 1){
+             document.write("x")
+            }else{
+             document.write("")
+            }
+        </script></td>
+        <td><script>
+            if ({{Cliente.liquida_mes_id}} == 1){
+                document.write("M")
+            }else if({{Cliente.liquida_mes_id}} == 2){
+                    document.write("R")
+                }else{
+                    document.write("")
+                }
+        </script></td>
+        <td><script>
+            if ({{Cliente.liquida}} == 1){
+             document.write("x")
+            }else{
+             document.write("")
+            }
+        </script></td>
+        <td>
+            <a href="{% url 'editarcliente' Cliente.id %}" class="btn btn-warning btn-sm">
+                <i class="fas fa-edit"></i></a>
+            <a href="{% url 'vercliente' Cliente.id %}" class="btn btn-info btn-sm">
+                <i class="fas fa-eye"></i></a>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/fixedheader/3.1.6/js/dataTables.fixedHeader.min.js"></script>
+<script>
+           $(document).ready(function(){
+               var table = $('#cliente').DataTable({
+                   orderCellsTop: true,
+                   fixedHeader: true
+               });
             });
-
             /*$('#cliente thead tr').clone(true).appendTo( '#cliente thead' );
-
             $('#cliente thead tr:eq(1) th').each( function (i) {
                 var title = $(this).text(); //es el nombre de la columna
                 $(this).html( '<input type="text" placeholder="Search...'+title+'" />' );
@@ -131,9 +121,6 @@
                      }
                 } );
              } );*/
-
-
-        </script>
-      <p></p>
-</form>
+</script>
+<br>
 {% endblock%}

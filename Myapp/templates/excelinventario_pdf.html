@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Resumen del Inventario por Tipo de Repuesto</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h2, h3, h4 {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <img src="{{ logo_url }}" alt="Logo"><br>
+    <h2>Resumen del Inventario por Tipo de Repuesto</h2>
+
+    {% for resumen in resumen_repuestos %}
+        {% if resumen.total_repuestos > 0 %}
+            <h3>{{ resumen.tipo_repuesto_nombre }} TENEMOS {{ resumen.total_repuestos }} (repuestos)</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>STATUS</th>
+                        <th>ESTADO</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for estado, cantidad in resumen.conteo_estado.items %}
+                        <tr>
+                            <td>{{ estado }}</td>
+                            <td>{{ cantidad }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- 🔽 Nueva tabla: Resumen por Marca (Pieza) -->
+            <h4>Resumen por Marca (Pieza)</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Marca</th>
+                        <th>Cantidad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for marca, cantidad in resumen.conteo_marca.items %}
+                        <tr>
+                            <td>{{ marca }}</td>
+                            <td>{{ cantidad }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    {% endfor %}
+</body>
+</html>

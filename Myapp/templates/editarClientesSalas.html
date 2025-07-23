@@ -1,10 +1,80 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">Información salas</h2>
+            <button class="close" type="button" data-dismiss="modal" aria-label="close">
+                <span aria-hidden="true" >&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <center>
+                <form class="row g-3">
+
+                    <div class="col-md-4">
+                        <label for="inputnit" class="form-label">Nit:</label>
+                        <input type="texto" class="form-control" id="inputnit" name="nit" value="{{clientes.nit}}" readonly onmousedown="return false;">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="inputcliente" class="form-label">Cliente:</label>
+                        <input type="texto" class="form-control" id="inputcliente" name="cliente" value="{{clientes.nombre}}" readonly onmousedown="return false;">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="inputidinspired" class="form-label">ID Inspired:</label>
+                        <input type="texto" class="form-control" id="inputidinspired" name="idinspired" value="{{clientes.id_inspired}}" readonly onmousedown="return false;">
+                    </div>
+                    <table align="center" border="1" width="90%" id="table3" cellspacing="1" cellpadding="0" style="border: 1px solid #000000; padding-left:0; padding-right:0">
+                        <tbody>
+                        <tr>
+                            <td bgcolor="#808080" align="center">
+                                <b><font face="Tahoma" size="2" color="#FFFFFF">Listado de Salas</font></b>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <fieldset style="border:2px solid black">
+                    <style type="text/css">
+                      td, th{padding: 10px;}
+                      th{
+                        text-align: center;
+                            font-size: 15px;
+                        }
+                        td{
+                            font-size:80%;
+                        }
+                   </style>
+
+                    <table class="table table-bordered" style="text-align:center;">
+                        <thead>
+                        <tr>
+                            <!--<th scope="col">ID</th>--!>
+                            <th WIDTH="10" >Sala / Local / Punto</th>
+                            <th WIDTH="180" scope="col"># Inspired</th>
+                            <th WIDTH="10" scope="col">Ciudad /Municipio</th>
+                            <th WIDTH="100" scope="col">Direccion</th>
+                            <th WIDTH="75" scope="col">Departamento</th>
+                            <th WIDTH="135" scope="col">Telefono</th>
+                            <th WIDTH="30" scope="col">Tipo</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for asignacion in asignaciones %}
+                        <tr>
+                            <td>ASG00-{{asignacion.id}}</td>
+                            <td>{{asignacion.clientes.nombre}}</td>
+                            <td>{{asignacion.contacto}}</td>
+                            <td>{{asignacion.stado}}</td>
+                            <td>{{asignacion.fecha_asignacion|date:"Y-m-d"}}</td>
+                            <td>{{asignacion.modelo}}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    </fieldset>
+                </form>
+            </center>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" data-dismiss="modal">Cancelar</button>
+        </div>
+    </div>
+</div>

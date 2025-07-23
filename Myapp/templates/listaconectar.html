@@ -1,138 +1,92 @@
-
 {% extends 'menuinstalacion.html' %}
 {% load crispy_forms_tags %}
 {% block content%}
-
 <fieldset id="borde" xmlns="http://www.w3.org/1999/html">
     <h5> Lista de Solicitudes de Conectividad y Códigos IGG</h5>
-    </fieldset>
-
-  <p></p>
+</fieldset>
+<p></p>
 <form class="row g-3">
-      <div class="col-md-6">
+    <div class="col-md-6">
         <label for="inputnumero" class="form-label">Numero_ASG:</label>
         <input type="text" class="form-control" id="inputnumero">
-      </div>
-      <div class="col-md-6">
+    </div>
+    <div class="col-md-6">
         <label for="inputfecharegistro" class="form-label">Mes:</label>
-        <input type="date" class="form-control" id="inputfecharegistro">
-      </div>
-      <div class="col-md-6">
+        <input type="month" class="form-control" id="inputfecharegistro">
+    </div>
+    <div class="col-md-6">
         <label for="inputcliente" class="form-label">Cliente:</label>
-        <select class="col-md-12" id="inputcliente" class="form-selec">
-                <option>Todos los Clientes...</option>
-                {% for Cliente in clientes %}
-                    <option value="{{Cliente.nombre}}">{{Cliente.nombre}}</option>
-                {% endfor %}
-            </select>
-      </div>
-
-      <div class="col-md-6">
-        <label for="inputfechaasginacion" class="form-label">Año:</label>
-        <input type="date" class="form-control" id="inputfechaasginacion" >
-      </div>
-
-      <div class="col-md-6">
-          <label form="Asignacione" class="form-label">Status:</label><br>
-          <select class="col-md-4">
-                    <option>Todos los Status...</option>
-                  {% for Asignacione in asignaciones %}
-                        <option value="{{Asignacione.stado}}">{{Asignacione.stado}}</option>
-                  {% endfor %}
-          </select>
-      </div>
-
-
-        <center>
+        <select class="form-select" id="inputcliente" >
+            <option>Todos los Clientes...</option>
+            {% for Cliente in clientes %}
+            <option value="{{Cliente.nombre}}">{{Cliente.nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label form="inputState" class="form-label">Status:</label><br>
+        <select id="inputState" class="form-select" name="statusconexion">
+            <option>Todos los Status...</option>
+            <option>CREACION UMS</option>
+            <option>CODIGOS IGG</option>
+        </select>
+    </div>
+    <p></p>
+    <fieldset id="borde3">
+        <button type="submit" class="btn btn-danger">Filtrar</button>
+        <a type="button" class="btn btn-danger">Todos</a>
+    </fieldset>
+    <p></p>
+    <p></p>
+    <center>
         <h3>Lista de Solicitudes de Conectividad y Códigos IGG</h3>
-        </center>
-            <!--<div class="col-md-2">
-        <label for="inputZip" class="form-label">Zip</label>
-        <input type="text" class="form-control" id="inputZip">
-      </div>
-      <div class="col-12">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="gridCheck">
-          <label class="form-check-label" for="gridCheck">
-            Check me out
-          </label>
-        </div>
-      </div>
-      <div class="col-12">
-        <button type="submit" class="btn btn-primary">Sign in</button>
-      </div>--!>
-
-        <table class="table table-bordered">
+    </center>
+    <fieldset style="border:2px solid black">
+    <style type="text/css">
+          td, th{padding: 10px;}
+          th{
+            text-align: center;
+                font-size: 15px;
+            }
+            td{
+                font-size:80%;
+            }
+       </style>
+    <table class="table table-bordered" style="text-align:center;">
         <thead>
-            <tr>
-
-                <th scope="col">Numero ASG</th>
-                <th scope="col">Cliente</th>
-                <th scope="col">Contacto</th>
-                <th scope="col">Status</th>
-                <th scope="col">Fecha Asignación</th>
-                <th scope="col">Mod Ope.</th>
-                <th scope="col">Cant. Maq</th>
-                <th scope="col">Opciones</th>
-             </tr>
+        <tr>
+            <th scope="col">Numero ASG</th>
+            <th scope="col">Cliente</th>
+            <th scope="col">Contacto</th>
+            <th scope="col">Status</th>
+            <th scope="col">Fecha Asignación</th>
+            <th scope="col">Mod Ope.</th>
+            <th scope="col">Cant. Maq</th>
+            <th scope="col">Opciones</th>
+        </tr>
         </thead>
-            <tbody>
-                <tr>
-
-                    <td WIDTH="80" HEIGHT="80">
-                        {% for asignacion in asignaciones %}
-                            <input type="text" class="form-control" value="{{asignacion.numero}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {% for asignacion in asignaciones %}
-                            <input type="text" class="form-control" value="{{asignacion.clientes}}" readonly onmousedown="return false;" name="clienteconectar">
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {% for asignacion in asignaciones %}
-                            <input type="text" class="form-control" value="{{asignacion.contacto}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {% for asignacion in asignaciones %}
-                            <input type="text" class="form-control" value="{{asignacion.stado}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {% for asignacion in asignaciones %}
-                            <input type="text" class="form-control" value="{{asignacion.fecha_asignacion}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <TD WIDTH="250" HEIGHT="200">
-                        {% for asignacion in asignaciones %}
-                            <input type="text" class="form-control" value="{{asignacion.modelo}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td WIDTH="60" HEIGHT="60">
-                        {% for asignacion in asignaciones %}
-                            <input type="text" class="form-control" value="#" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td WIDTH="140" HEIGHT="140">
-                        {% for asignacion in asignaciones %}
-                            <a href="{% url 'conectar'%}" type="button" class="btn btn-danger">Editar</a>  <button type="button" class="btn btn-danger">Ver</button>
-                        {% endfor %}
-                    </td>
-
-
-                </tr>
-            </tbody>
-        </table>
-      <p></p>
-
-      <center>
-      <fieldset id="borde2">
-          <a href="#" class="btn btn-success">Imprimir</a>
-          <a href="#" class="btn btn-success">Cerrar</a>
-      </fieldset>
-       </center>
-
-
+        <tbody>
+        {% for asignacion in asignaciones %}
+        <tr>
+            <td>{{asignacion.id}}</td>
+            <td>{{asignacion.clientes.nombre}}</td>
+            <td>{{asignacion.contacto}}</td>
+            <td>{{asignacion.stado}}</td>
+            <td>{{asignacion.fecha_asignacion|date:"Y-m-d"}}</td>
+            <td>{{asignacion.modelo}}</td>
+            <td></td>
+            <td><a  type="submit" class="btn btn-danger">Editar</a>  <button type="button" class="btn btn-danger">Ver</button></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </fieldset>
+    <p></p>
+    <center>
+        <fieldset id="borde2">
+            <a class="btn btn-success">Imprimir</a>
+            <a href="{% url 'menuauditoria'}"  class="btn btn-success">Cerrar</a>
+        </fieldset>
+    </center>
 </form>
 {% endblock%}

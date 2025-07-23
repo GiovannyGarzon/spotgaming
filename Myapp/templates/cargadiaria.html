@@ -1,10 +1,233 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'menuservicios.html' %}
+{% load crispy_forms_tags %}
+{% block content%}
+<fieldset id="borde" xmlns="http://www.w3.org/1999/html">
+    <h5>  Resumen de Carga Diaria </h5>
+</fieldset>
+<br>
+<style>
+    form formrecaudodiario {
+      margin: 0 auto;
+      width: 1300px;
+      padding: 1em;
+      border: 1px solid #CCC;
+      border-radius: 1em;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    form li + li {
+      margin-top: 1em;
+    }
+    input,
+    textarea {
+      font: 1em sans-serif;
+      width: 300px;
+      box-sizing: border-box;
+      border: 1px solid #999;
+    }
+    input:focus,
+    textarea:focus {
+      border-color: #000;
+    }
+    textarea {
+      vertical-align: top;
+      height: 5em;
+    }
+    .button {
+      padding-left: 90px;
+    }
+    button {
+      margin-left: .5em;
+    }
+</style>
+
+<form name="formrecaudodiario" id="formrecaudodiario" class="row g-3">
+    <div class="col-md-4">
+        <label for="inputcliente" class="form-label">Cliente:</label>
+        <select id="inputcliente" class="form-select">
+            <option value="">Todos los Clientes...</option>
+            {% for Cliente in clientes %}
+            <option value="{{Cliente.id}}">{{Cliente.nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label for="inputsala" class="form-label">Sala:</label>
+        <select id="inputsala" class="form-select">
+            <option value="">Todas las salas...</option>
+            {% for Sala in salas %}
+            <option value="{{Sala.id}}">{{Sala.nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label for="inputcodigomaquina" class="form-label">Cod. Maquina:</label>
+        <select id="inputcodigomaquina" class="form-select">
+            <option value="">Todas las Maquinas...</option>
+            {% for Maquina in maquinas %}
+            <option value="{{Maquina.id}}">{{Maquina.id_codigo}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <!--<div class="col-md-2">
+        <label for="inputfamilia" class="form-label">Familia:</label>
+        <select id="inputfamilia" class="form-select">
+            <option value="">Todas las Familias...</option>
+            {% for FamiliaMaquina in familias %}
+            <option value="{{FamiliaMaquina.id}}">{{FamiliaMaquina.nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label for="inputmodelo" class="form-label">Modelo:</label>
+        <select id="inputmodelo" class="form-select">
+            <option value="">Todos los Modelos...</option>
+            {% for Modelo in modelos %}
+            <option value="{{Modelo.id}}">{{Modelo.nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>--!>
+    <div class="col-md-4">
+        <label for="inputdesde" class="form-label">Fecha de Carga:</label>
+        <input type="date" id="inputdesde" class="form-control">
+    </div>
+
+</form>
+<br>
+<button id="submit" class="btn btn-danger">Filtrar</button>
+<a href="{% url 'cargadiaria'%}" type="button" class="btn btn-danger">Todos</a>
+<br>
+<center>
+    <h3>Carga Diaria x Maquina</h3>
+</center>
+<style type="text/css">
+      td, th{padding: 10px;}
+      th{
+        text-align: center;
+        font-size: 14px;
+      }
+      td{
+        font-size:60%;
+      }
+      #tabla-container {
+        max-height: 400px; /* Alto máximo del contenedor */
+        overflow-y: auto; /* Habilitar desplazamiento vertical */
+        overflow-x: auto; /* Habilitar desplazamiento horizontal si es necesario */
+        border: 1px solid #ccc; /* Opcional: Borde para diferenciar el contenedor */
+        padding: 10px; /* Opcional: Espaciado interno */
+        max-width: 1300px; /* Ajusta según el tamaño deseado */
+    }
+</style>
+<div id="tabla-container" style="max-height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;">
+    <table class="table table-bordered" id="recaudodia" style="text-align:center;">
+        <thead>
+            <tr>
+                <th WIDTH="10" scope="col">ID</th>
+                <th WIDTH="180" scope="col">Cliente</th>
+                <th WIDTH="180" scope="col">Sal/Punto</th>
+                <th WIDTH="160" scope="col">Fec Recuado</th>
+                <th WIDTH="160" scope="col">Fec Trans. </th>
+                <th WIDTH="80" scope="col"># Maq.</th>
+                <th WIDTH="60" scope="col">$ Entrada</th>
+                <th WIDTH="60" scope="col">$ Salida</th>
+                <th WIDTH="60" scope="col">$ Pago manual</th>
+                <th WIDTH="60" scope="col">$ JackPot</th>
+                <th WIDTH="60" scope="col">$ Billeteros</th>
+                <th WIDTH="60" scope="col"># Jugadas</th>
+                <th WIDTH="60" scope="col">$ Neto(NetWin)</th>
+                <th WIDTH="60" scope="col">$ Ingreso(Value Retained)</th>
+                <!--<th WIDTH="60" scope="col">$ Verf. Contador</th>--!>
+                <th WIDTH="60" scope="col">% RTP</th>
+                <th WIDTH="120" scope="col">Opc.</th>
+            </tr>
+        </thead>
+        <tbody id="recaudodia-body">
+            <!-- Inicialmente vacío -->
+        </tbody>
+    </table>
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/fixedheader/3.1.6/js/dataTables.fixedHeader.min.js"></script>
+
+<script>
+    $('#submit').click(function(e) {
+        e.preventDefault();
+
+        // Recolectar datos de los filtros
+        let cliente = $('#inputcliente').val();
+        let sala = $('#inputsala').val();
+        let maquina = $('#inputcodigomaquina').val();
+        let desde = $('#inputdesde').val();
+
+        // Validar que la fecha sea obligatoria
+        if (!desde) {
+            alert("Por favor, selecciona una fecha de carga.");
+            return;
+        }
+
+        // Configuración para formatear números (puedes ajustar el idioma según necesidad)
+        const formatter = new Intl.NumberFormat('es-CO', { minimumFractionDigits: 2 });
+
+        // Solicitud AJAX
+        $.ajax({
+            url: "{% url 'ajax_filtrar_recaudo' %}",
+            method: "GET",
+            data: {
+                cliente: cliente,
+                sala: sala,
+                maquina: maquina,
+                desde: desde
+            },
+            success: function(data) {
+                // Verificar qué contiene 'data' con un console.log
+                console.log(data);  // Verifica el contenido de la respuesta
+
+                // Limpiar el cuerpo de la tabla
+                $('#recaudodia-body').empty();
+
+                // Agregar nuevas filas
+                data.data.forEach(function(item) {
+                    $('#recaudodia-body').append(`
+                        <tr>
+                            <td>${item.id}</td>
+                            <td>${item.clientes__nombre}</td>
+                            <td>${item.salas__nombre}</td>
+                            <td>${item.fecha}</td>
+                            <td>${item.fechacarga}</td>
+                            <td>${item.maquina__id_codigo}</td>
+                            <td>${formatter.format(item.coinin)}</td>
+                            <td>${formatter.format(item.coinout)}</td>
+                            <td>${formatter.format(item.handpay)}</td>
+                            <td>${formatter.format(item.jackpot)}</td>
+                            <td>${formatter.format(item.bills)}</td>
+                            <td>${item.plays}</td>
+                            <td>${formatter.format(item.neto)}</td>
+                            <td>${formatter.format(item.ingreso)}</td>
+                            <td>${Math.round(item.payback)}%</td>
+                            <td><button onclick="verDetalles(${item.id})">Ver</button></td>
+                        </tr>
+                    `);
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error("Error: " + error);
+                alert("Ocurrió un error al intentar filtrar los datos.");
+            }
+        });
+    });
+</script>
+<br>
+<br>
+<br>
+<center>
+    <fieldset id="borde2">
+        <a href="#" class="btn btn-success">Imprimir</a>
+        <a href="{% url 'menuservicios' %}" class="btn btn-success">Cerrar</a>
+    </fieldset>
+</center>
+
+{% endblock %}

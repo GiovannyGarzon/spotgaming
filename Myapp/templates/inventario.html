@@ -1,0 +1,120 @@
+{% extends 'menualmacen.html' %}
+{% load crispy_forms_tags %}
+{% block content%}
+<fieldset id="borde" xmlns="http://www.w3.org/1999/html">
+    <h5>  Inventario de Partes </h5>
+</fieldset>
+<br>
+<style type="text/css">
+          td, th{padding: 10px;}
+          th{
+            text-align: center;
+                font-size: 15px;
+            }
+            td{
+                font-size:70%;
+            }
+            .btn-right {
+                float: right;
+                margin-bottom: 15px;
+            }
+    </style>
+<!-- Botón para crear nuevo repuesto -->
+<div class="btn-right">
+    <button type="button" class="btn btn-success" id="btnEditarRepuesto">Editar Repuesto</button>
+    <button type="button" class="btn btn-success" id="btnAgregarRepuesto">Agregar Repuesto</button>
+</div>
+<br>
+<br>
+<table class="table table-bordered" id="maquina" style="text-align:center;">
+    <thead>
+    <tr>
+        <th width="80" scope="col">ID</th>
+        <th WIDTH="100" scope="col">Codigo</th>
+        <th WIDTH="100" scope="col">Descripción</th>
+        <th WIDTH="100" scope="col">Tipo</th>
+        <th WIDTH="140" scope="col">Linea</th>
+        <th WIDTH="180" scope="col">Serial</th>
+        <th WIDTH="180" scope="col">Estado</th>
+        <th scope="col">Status</th>
+        <th WIDTH="180" scope="col">Cliente</th>
+        <th WIDTH="140" scope="col">Responsable</th>
+        <th WIDTH="140" scope="col">Declaración</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for Inventario in inventarios %}
+    <tr>
+        <td>{{Inventario.id}}</td>
+        <td>{{Inventario.numero}}</td>
+        <td>{{Inventario.descripcion}}</td>
+        <td>{{Inventario.tipo.nombre}}</td>
+        <td>{{Inventario.piezas.nombre}}</td>
+        <td>{{Inventario.serial}}</td>
+        <td>{{Inventario.estado}}</td>
+        <td>{{Inventario.id_status}}</td>
+        <td>{{Inventario.clientes.nombre}}</td>
+        <td>{{ inventario.responsable|default_if_none:"" }}</td>
+        <td>
+            {% if Inventario.declaracion %}
+                <a href="{{ Inventario.declaracion.pdf.url }}" class="btn btn-info" target="_blank">Ver Declaración</a>
+            {% else %}
+                No disponible
+            {% endif %}
+        </td>
+        <!--<td><a type="button" class="btn btn-danger">Editar</a>  <button type="button" class="btn btn-danger">Ver</button></td>--!>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<center>
+    <fieldset id="borde2">
+        <a href="{% url 'excelinventario' %}" type="button" class="btn btn-info">Resumen</a>
+        <a href="{% url 'menualmacen' %}" type="button" class="btn btn-info">Cerrar</a>
+    </fieldset>
+</center>
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/fixedheader/3.1.6/js/dataTables.fixedHeader.min.js"></script>
+<script>
+            $(document).ready(function(){
+              var table = $('#maquina').DataTable({
+                   orderCellsTop: true,
+                   fixedHeader: true,
+                   pageLength: 15
+               });
+           });
+            /*$('#cliente thead tr').clone(true).appendTo( '#cliente thead' );
+            $('#cliente thead tr:eq(1) th').each( function (i) {
+                var title = $(this).text(); //es el nombre de la columna
+                $(this).html( '<input type="text" placeholder="Search...'+title+'" />' );
+
+                $( 'input', this ).on( 'keyup change', function () {
+                    if ( table.column(i).search() !== this.value ) {
+                        table
+                            .column(i)
+                            .search( this.value )
+                            .draw();
+                     }
+                } );
+             } );*/
+            document.getElementById('btnAgregarRepuesto').addEventListener('click', function () {
+                var url = '/insertarrepuesto/';
+                var popup = window.open(url, 'agregarRepuesto', 'width=550,height=300');
+                if (popup) {
+                    popup.focus();
+                }
+            });
+            document.getElementById('btnEditarRepuesto').addEventListener('click', function () {
+                var url = '/editarrepuesto/';
+                var popup = window.open(url, 'editarrepuesto', 'width=880,height=1100');
+                if (popup) {
+                    popup.focus();
+                }
+            });
+
+
+</script>
+<p></p>
+
+{% endblock%}

@@ -1,10 +1,270 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'menuinstalacion.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content%}
+<!-- Creamos formulario para asignar los seriales uno por uno--!>
+
+
+    <h1>   Asignación de Serie PMV </h1>
+<p></p>
+<!-- Creamos formulario para asignar los seriales uno por uno--!>
+
+<form class="row g-3" action="{% url 'guardarserial' %}" method="POST">
+    <!-- <div class="col-md-4">
+        <label for="inputseriepmv" class="form-label"># Serie PMV a Asignar:</label>
+        <input type="text" class="form-control" id="inputseriepmv">
+        <button type="button" class="btn btn-primary">Agregar serial</button>
+    </div>
+    <div class="col-md-4">
+        <label for="inputfechaproduc" class="form-label">Fecha Produccion:</label>
+        <input type="date" class="form-control" id="inputfechaproduc">
+    </div>
+    <div class="col-md-4">
+        <label for="inputfactura" class="form-label">Factura PMV:</label>
+        <input type="text" class="form-control" id="inputfactura">
+    </div>
+    <div class="col-md-24">
+        <label for="inputdescripcion" class="form-label">Descripción:</label>
+        <input type="text" class="form-control" id="inputdescripcion">
+    </div> -->
+    {% csrf_token %}
+    <input type="hidden" class="form-control" id="inputnumero" name="numero"   value="{{asignacionserial.id}}" readonly onmousedown="return false;">
+    <input type="hidden" class="form-control" id="inputcliente" name="cliente"   value="{{asignacionserial.clientes}}" readonly onmousedown="return false;">
+    <div class="col-md-2">
+         <label for="inputseriepmv" class="form-label"> # Serie PMV a Asignar:</label>
+            <select id="inputseriepmv" class="form-select" name="serial">
+                <option value="">Seleccione...</option>
+                {% for Maquina in maquinas %}
+                    <option value="{{Maquina.id}}" data-familia="{{Maquina.familia.nombre}}" data-modelo-igg="{{Maquina.id_modelo_igg.nombre}}">{{Maquina.serie_PMV}}</option>
+                {% endfor %}
+            </select>
+    </div>
+    <div class="col-md-10">
+        <label for="inputdescripcion" class="form-label">Descripción:</label>
+        <input type="text" class="form-control" id="inputdescripcion">
+    </div>
+    <table border="0" width="99%" id="table3" cellspacing="1" cellpadding="0" style="border: 1px solid #000000; padding-left:0; padding-right:0">
+        <tbody><tr>
+            <td bgcolor="#808080" align="center">
+                <b><font face="Tahoma" size="2" color="#FFFFFF">Lista de Solicitudes de Conectividad y Códigos IGG</font></b></td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="col-md-4">
+         <label for="inputsala" class="form-label">Sala /Punto:</label>
+            <select id="inputsala" class="form-select" name="sala">
+                <option value="">Seleccione...</option>
+                {% for Sala in salas %}
+                    <option value="{{Sala.id}}"  data-idinspired="{{Sala.id_inspired}}">{{Sala.nombre}}</option>
+                {% endfor %}
+            </select>
+    </div>
+    <div class="col-md-2">
+        <label for="inputidisnpired" class="form-label">ID Inspired:</label>
+        <input type="text" class="form-control" id="inputidisnpired" name="idinspired">
+    </div>
+    <div class="col-md-2">
+        <label for="inputposicion" class="form-label">Posicion:</label>
+        <input type="text" class="form-control" id="inputposicion" name="posicion">
+    </div>
+    <div class="col-md-2">
+         <label for="inputmenu" class="form-label"> Menu Mix:</label>
+            <select id="inputmenu" class="form-select" name="menu">
+                <option value="">Seleccione...</option>
+                {% for Menu in menus %}
+                    <option value="{{Menu.id}}">{{Menu.nombre}}</option>
+                {% endfor %}
+            </select>
+    </div>
+    <div class="col-md-2">
+        <label for="inputfechacodigo" class="form-label">Fecha Codigos:</label>
+        <input type="date" class="form-control" id="inputfechacodigo" name="fechacodigo">
+    </div>
+    <table border="0" width="99%" id="table4" cellspacing="1" cellpadding="0" style="border: 1px solid #000000; padding-left:0; padding-right:0">
+        <tbody><tr>
+            <td bgcolor="#808080" align="center">
+                <b><font face="Tahoma" size="2" color="#FFFFFF">Modalidad de este Contrato para este Serial</font></b></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="col-md-24">
+        <label for="inputclienteasignado" class="form-label">Cliente Asignado:</label>
+        <input type="text" class="form-control" id="inputclienteasignado" value="{{asignacionserial.clientes.nombre}}" readonly onmousedown="return false;">
+    </div>
+    <div class="col-md-2">
+        <label for="inputmodopera" class="form-label">Modalidad Operación :</label>
+        <input type="text" class="form-control" name="modalidadvisible" id="inputmodoperavisible" value="{{asignacionserial.operacion.id_codigo}}" readonly onmousedown="return false;">
+          <input type="hidden" class="form-control" name="modalidad" id="inputmodopera" value="{{asignacionserial.operacion.id}}" readonly onmousedown="return false;">
+    </div>
+    <div class="col-md-2">
+        <label for="inputresolucion" class="form-label" >Con Resolución Coljuegos</label><br>
+        <select  id="inputresolucion" name="resolucioncoljuegos">
+            <option value="1">Si</option>
+            <option value="0">No</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label for="inputmaqvendida" class="form-label">Vendida:</label><br>
+        <select class="form-label"  id="inputmaqvendida" name="maqvendida">
+            <option value="1">Si</option>
+            <option value="0">No</option>
+        </select>
+    </div>
+    <!--<div class="col-md-2">
+        <label for="inputliquida" class="form-label"></label><br>
+        <input type="checkbox" id="inputliquida" name="liquida" value="1"> Maquina Liquida:
+    </div>--!>
+    <div class="col-md-2">
+        <label for="inputliquida" class="form-label">Liquida:</label><br>
+        <select name="liquida" class="form-label" id="inputliquida">
+            <option value="1">Si</option>
+            <option value="0">No</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label for="inputliquida" class="form-label">Garantia:</label><br>
+        <select id="inputgarantia" name="garantia">
+            <option value="1">Si</option>
+            <option value="0">No</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label for="inputsoporte" class="form-label">Soporte Remoto:</label><br>
+        <select id="inputsoporte" name="soporte">
+            <option value="1">Si</option>
+            <option value="0">No</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label for="input#resolucion" class="form-label"># Resolucion Coljuegos:</label>
+        <input type="text" class="form-control" id="input#resolucion" name="numresolucion">
+    </div>
+     <div class="col-md-4">
+         <label for="inputtarifa" class="form-label">Tipo de Tarifa Coljuegos:</label>
+            <select id="inputtarifa" class="form-select" name="tipotarifa">
+                <option>NINGUNA------------------</option>
+                <option>MET APUESTA $0-$500</option>
+                <option>MET APUESTA > 500</option>
+                <option>MET PROGRESIVA</option>
+            </select>
+     </div>
+    <div class="col-md-4">
+        <label for="input#nuc" class="form-label"># NUC Coljuegos:</label>
+        <input type="text" class="form-control" id="input#nuc" name="nuc">
+    </div>
+    <table border="0" width="99%" id="table2" cellspacing="1" cellpadding="0" style="border: 1px solid #000000; padding-left:0; padding-right:0">
+        <tbody><tr>
+            <td bgcolor="#808080" align="center">
+                <b><font face="Tahoma" size="2" color="#FFFFFF">Condiciones del Contrato para este Serial</font></b></td>
+            </tr>
+        </tbody>
+    </table>
+    <!--<div class="col-md-3">
+         <label for="inputParticipación" class="form-label"> Tipo Participación:</label>
+            <select id="inputParticipación" class="form-select">
+                <option>VENCIMIENTO</option>
+                <option>INDEFINIDA</option>
+                <option>NO TIENE</option>
+            </select>
+     </div>
+    <div class="col-md-3">
+         <label for="inputtiposoporte" class="form-label"> Tipo Soporte Remoto:</label>
+            <select id="inputtiposoporte" class="form-select">
+                <option>VENCIMIENTO</option>
+                <option>INDEFINIDA</option>
+                <option>NO TIENE</option>
+            </select>
+    </div>
+    <div class="col-md-3">
+         <label for="inputgarantia" class="form-label"> Tipo Garantía Hardware:</label>
+            <select id="inputgarantia" class="form-select">
+                <option>VENCIMIENTO</option>
+                <option>INDEFINIDA</option>
+                <option>NO TIENE</option>
+            </select>
+    </div>
+    <div class="col-md-3">
+         <label for="inputactualizacion" class="form-label"> Tipo Actualización:</label>
+            <select id="inputactualizacion" class="form-select">
+                <option>VENCIMIENTO</option>
+                <option>INDEFINIDA</option>
+                <option>NO TIENE</option>
+            </select>
+    </div>
+    <div class="col-md-3">
+        <label for="inputtiempoparti" class="form-label">Tiempo:</label>
+        <input type="text" class="form-control" id="inputtiempoparti" >
+        <label>(Meses)</label>
+    </div>
+    <div class="col-md-3">
+        <label for="inputtiemposopor" class="form-label">Tiempo:</label>
+        <input type="text" class="form-control" id="inputtiemposopor" >
+        <label>(Meses)</label>
+    </div>
+    <div class="col-md-3">
+        <label for="inputtiempogaran" class="form-label">Tiempo:</label>
+        <input type="text" class="form-control" id="inputtiempogaran" >
+        <label>(Meses)</label>
+    </div>
+    <div class="col-md-3">
+        <label for="inputtiempoactuali" class="form-label">Tiempo:</label>
+        <input type="text" class="form-control" id="inputtiempoactuali" >
+        <label>(Meses)</label>
+    </div>--!>
+    <div class="col-md-6">
+        <label for="input%parti" class="form-label">% Participación:</label>
+        <input type="text" class="form-control" id="input%parti" name="participacion" value="0.00">
+    </div>
+
+    <div class="col-md-6">
+        <label for="inputvalorcutoa" class="form-label"> $ Valor Cuota Fija x Mes:</label>
+        <input type="text" class="form-control" id="inputvalorcutoa" name="valorcuotafija">
+    </div>
+    <div class="col-md-48">
+        <label for="inputobser" class="form-label"> Observación:</label>
+        <input type="textarea" class="form-control" id="inputobser" name="observaciones">
+    </div>
+    <p></p>
+    <p></p>
+    <p></p>
+    <center>
+        <fieldset id="borde2" >
+                <a type="button" class="btn btn-info">Imprimir</a>
+                <button type="submit" class="btn btn-info">Guardar</button>
+                <a href="{% url 'asignar'%}" type="button" class="btn btn-info">Cerrar</a>
+        </fieldset>
+      </center>
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Manejar el cambio en el campo de selección (serial)
+        $('#inputseriepmv').change(function () {
+            // Obtener los datos personalizados de la opción seleccionada
+            var familia = $('option:selected', this).data('familia');
+            var modeloIgg = $('option:selected', this).data('modelo-igg');
+
+            console.log('ID Inspired:', familia);
+
+            // Actualizar el campo de descripción
+            $('#inputdescripcion').val(familia + ' - ' + modeloIgg);
+        });
+    });
+
+    $(document).ready(function() {
+        // Manejar el evento de cambio en el select de la sala
+        $('#inputsala').change(function() {
+            // Obtener el atributo data-idinspired del option seleccionado
+            var idInspired = $('option:selected', this).data('idinspired');
+
+            console.log('ID Inspired:', idInspired);
+
+            // Llenar el campo ID inspired con el valor obtenido
+            $('#inputidisnpired').val(idInspired);
+        });
+    });
+</script>
+{% endblock%}

@@ -1,0 +1,164 @@
+{% extends 'menuinstalacion.html' %}
+
+{% block content%}
+<p></p>
+<h1> Instalar Maquinas</h1>
+<p></p>
+{% if messages %}
+<div class="alert alert-success">
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+<form class="row g-3" action="{% url 'guardarinstalacion' %}"  method="POST">
+        {% csrf_token %}
+    <input type="hidden" class="form-control" name="fechaasignacion" id="inputfechaasginacion" readonly
+           onmousedown="return false;" value="{{asignacion.fecha_asignacion|date:" Y-m-d"}}" required>
+    <input type="hidden" class="form-control" name="fechacodigos" id="inputfechacodigo" readonly
+           onmousedown="return false;" value="{{asignacion.fecha_codigos|date:" Y-m-d"}}" required>
+    <input type="hidden" class="form-control" name="modalidad" id="inputmodalidadoculata"
+           value="{{asignacion.operacion.id}}" readonly onmousedown="return false;">
+    <div class="col-md-6">
+        <label for="inputnumero" class="form-label">Numero_ASG:</label>
+        <input type="texto" class="form-control"  value="ASG00-{{asignacion.id}}" readonly onmousedown="return false;">
+        <input type="hidden" class="form-control" id="inputnumero" name="numero"   value="{{asignacion.id}}" readonly onmousedown="return false;">
+    </div>
+    <div class="col-md-6">
+        <label for="inputfecharegistro" class="form-label">Fecha registro:</label>
+          <p><input type="date" class="form-control"  name="fecharegistro" id="inputfecharegistro" readonly onmousedown="return false;" value="{{asignacion.fecha|date:"Y-m-d" }}"></p>
+      </div>
+    <div class="col-6">
+        <label for="inputcliente" class="form-label">Cliente:</label>
+        <input type="text" class="form-control" id="inputcliente" value="{{asignacion.clientes.nombre}}" >
+          <input type="hidden" class="form-control" id="inputclienteoculto" name="cliente" value="{{asignacion.clientes}}" readonly onmousedown="return false;">
+      </div>
+    <div class="col-md-6">
+        <label for="inputfechainstalacion" class="form-label">Fecha instalacion:</label>
+        <input type="date" class="form-control" id="inputfechainstalacion" name="fechainstalacion" readonly onmousedown="return false;" value="{{asignacion.fecha_instalacion|date:"Y-m-d"}}">
+    </div>
+    <div class="col-md-6">
+        <label for="inputtecnico" class="form-label">Técnico Encargado:</label>
+        <select id="inputtecnico" class="form-select" name="tecnico" readonly onmousedown="return false;">
+            {% if asignacion.tecnico %}
+            <option value="{{ asignacion.tecnico.id }}" selected>{{ asignacion.tecnico.nombre }}</option>
+            {% else %}
+            <option value="">Seleccione un Técnico...</option>
+            {% endif %}
+            {% for tecnico in tecnicos %}
+            {% if tecnico.id != asignacion.tecnico.id %}
+            <option value="{{ tecnico.id }}">{{ tecnico.nombre }}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-6">
+        <label for="inputverificación" class="form-label">Fecha Verifica Internet:</label>
+        <input type="date" class="form-control" id="inputverificación" name="fechaverinternet" readonly onmousedown="return false;" value="{{asignacion.fecha_revisado|date:"Y-m-d"}}">
+    </div>
+    <div class="col-md-6">
+        <label for="inputinternetverificado" class="form-label">Internet Verificado por:</label>
+        <input type="text" class="form-control" id="inputinternetverificado" name="nombreverificainternet" readonly onmousedown="return false;" value="{{asignacion.revisado}}">
+    </div>
+    <div class="col-md-6">
+        <label for="inputprocesoums" class="form-label">Fecha Procesado UMS:</label>
+        <input type="date" class="form-control" id="inputprocesoums" name="fechaums" readonly onmousedown="return false;" value="{{asignacion.fecha_notificacion|date:"Y-m-d"}}">
+    </div>
+    <div class="col-md-6">
+        <label for="inputresponsable" class="form-label">UMS Responsable:</label>
+        <input type="text" class="form-control" id="inputresponsablevisible" name="umsresponsbalevisible"
+               value="{{ asignacion.ums_responsable }}" readonly onmousedown="return false;">
+        <input type="hidden" class="form-control" id="inputresponsable" name="umsresponsbale"
+               value="{{ user.username }}" readonly>
+    </div>
+    <div class="col-md-4">
+            <label for="inputState" class="form-label">Status:</label>
+            <select id="inputState" class="form-select" name="status" readonly onmousedown="return false;">
+                <option value="">-------------------</option>
+                {% for StatusAsignacion in asignaciones %}
+                    <option value="{{ StatusAsignacion.id }}" {% if StatusAsignacion.id == asignacion.stado.id %} selected {% endif %}>
+                        {{ StatusAsignacion.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+      </div>
+    <!--<div class="col-md-2">
+      <label for="inputZip" class="form-label">Zip</label>
+      <input type="text" class="form-control" id="inputZip">
+    </div>
+    <div class="col-12">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="gridCheck">
+        <label class="form-check-label" for="gridCheck">
+          Check me out
+        </label>
+      </div>
+    </div>
+    <div class="col-12">
+      <button type="submit" class="btn btn-primary">Sign in</button>
+    </div>--!>
+    <table border="0" width="99%" id="table2" cellspacing="1" cellpadding="0"
+           style="border: 1px solid #000000; padding-left:0; padding-right:0">
+        <tbody>
+        <tr>
+            <td bgcolor="#808080" align="center">
+                <b><font face="Tahoma" size="2" color="#FFFFFF">Maquinas y/o Seriales Incluidos en esta Solicitud de
+                    Conectividad</font></b></td>
+        </tr>
+        </tbody>
+    </table>
+    <fieldset style="border:2px solid black">
+        <table class="table table-bordered" style="text-align:center;">
+            <thead>
+            <tr>
+                <!--<th scope="col">ID</th>--!>
+                <th WIDTH="30" scope="col">ID</th>
+                <th WIDTH="80" scope="col"># Serie PMV</th>
+                <th WIDTH="100" scope="col">Modelo</th>
+                <th WIDTH="30" scope="col">Fecha Prod.</th>
+                <th WIDTH="30" scope="col">ID Inspired</th>
+                <th WIDTH="20" scope="col">Despacho</th>
+                <th WIDTH="140" scope="col">Sala / Punto</th>
+                <th WIDTH="50" scope="col">Opciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for Seriales in seriales %}
+                <tr>
+                    <td>{{Seriales.id}}</td>
+                    <td>{{Seriales.serie_pmv.serie_PMV}}</td>
+                    <td>{{Seriales.serie_pmv.familia}}</td>
+                    <td></td>
+                    <td>{{Seriales.id_inspired}} / {{Seriales.id_posicion}}</td>
+                    <td>{% if Seriales.despacho == 1 %}x{% endif %}</td>
+                    <td>{{Seriales.id_sala.nombre}}</td>
+                    <td>
+                          <a href="{% url 'verserialinstalacion' Seriales.id_asignacion Seriales.id %}" class="btn btn-info btn-sm">
+                                <i class="fas fa-eye"></i></a></td>
+
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </fieldset>
+    <p></p>
+    <p></p>
+    <center>
+        <fieldset id="borde2">
+            <input type="button" value="Reporte">
+            <input type="submit" value="Remsión">
+            <input type="submit" value="Imprimir">
+            <input type="submit" value="Guardar">
+            <input type="submit" value="Cerrar">
+        </fieldset>
+    </center>
+</form>
+
+
+</body>
+
+</html>
+{% endblock%}

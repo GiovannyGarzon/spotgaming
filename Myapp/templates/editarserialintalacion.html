@@ -1,0 +1,146 @@
+{% extends 'menuinstalacion.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content%}
+<!-- Creamos formulario para asignar los seriales uno por uno--!>
+
+
+    <h1>   Información Instalación </h1>
+<p></p>
+<!-- Creamos formulario para asignar los seriales uno por uno--!>
+
+<form class="row g-3" action="{% url 'formeditarserialinstalacion' %}" method="POST">
+    {% csrf_token %}
+    <input type="hidden" class="form-control" id="inputidserial" name="idserial" value="{{serial.id}}"  readonly onmousedown="return false;">
+    <input type="hidden" class="form-control" id="inputidasignaciono" name="idasignacion" value="{{asignacionserial.id}}" readonly onmousedown="return false;">
+    <input type="hidden" class="form-control" id="inputcliente" name="cliente"   value="{{asignacionserial.clientes}}" readonly onmousedown="return false;">
+
+    <div class="col-md-2">
+         <label for="inputseriepmv" class="form-label"> # Serie PMV a Asignar:</label>
+         <input type="text" class="form-control" id="inputseriepmv" name="serieoculto" value="{{serial.serie_pmv.serie_PMV}}" readonly onmousedown="return false;">
+         <input type="hidden" class="form-control" id="inputseriepmvoculto" name="serie" value="{{serial.serie_pmv.id}}" readonly onmousedown="return false;">
+    </div>
+    <div class="col-md-4">
+         <label for="inputsala" class="form-label">Sala /Punto:</label>
+        <input type="text" class="form-control" name="salaoculta" id="inputsala" value="{{serial.id_sala.nombre}}" readonly onmousedown="return false;">
+        <input type="hidden" class="form-control" name="sala" id="inputsalavisible" value="{{serial.id_sala}}" readonly onmousedown="return false;">
+    </div>
+    <div class="col-md-2">
+        <label for="inputidisnpired" class="form-label">ID Inspired:</label>
+        <input type="text" class="form-control" id="inputidisnpired" name="idinspired" value="{{serial.id_inspired}}" readonly onmousedown="return false;">
+    </div>
+    <div class="col-md-2">
+        <label for="inputposicion" class="form-label">Posicion:</label>
+        <input type="text" class="form-control" id="inputposicion" name="posicion" value="{{serial.id_posicion}}" readonly onmousedown="return false;">
+    </div>
+    <div class="col-md-2">
+        <label for="inputmenu" class="form-label"> Menu Mix:</label>
+        <input type="text" class="form-control" id="inputmenu" value="{{serial.menu_mix}}" readonly onmousedown="return false;">
+        <input type="hidden" class="form-control" id="inputmenuoculto" name="menu" value="{{serial.menu_mix.id}}" readonly onmousedown="return false;">
+    </div>
+    <div class="col-md-2">
+        <label for="inputfechacodigo" class="form-label">Fecha Codigos:</label>
+        <input type="date" class="form-control" id="inputfechacodigo" name="fechacodigo" readonly onmousedown="return false;" value="{{serial.fecha_codigos|date:"Y-m-d"}}">
+    </div>
+    <div class="col-md-4">
+        <label for="inputclienteasignado" class="form-label">Cliente Asignado:</label>
+        <input type="text" class="form-control" id="inputclienteasignado" value="{{asignacionserial.clientes.nombre}}" readonly onmousedown="return false;">
+    </div>
+    <div class="col-md-2">
+        <label for="inputmodopera" class="form-label">Modalidad Operación :</label>
+        <input type="text" class="form-control" name="operacion" id="inputmodoperavisible" value="{{asignacionserial.operacion.id_codigo}}" readonly onmousedown="return false;">
+          <input type="hidden" class="form-control" name="modalidad" id="inputmodopera" value="{{asignacionserial.operacion.id}}" readonly onmousedown="return false;">
+
+    </div>
+    <div class="col-md-2">
+        <label for="input%parti" class="form-label">% Participación:</label>
+        <input type="text" class="form-control" id="input%parti" name="participacion" value="{{ porcentaje_entero }}" readonly onmousedown="return false;">
+    </div>
+    <div class="col-md-2">
+        <label for="inputfechaenvio" class="form-label">Fecha Despacho:</label>
+        <input type="date" class="form-control" id="inputfechaenvio" name="fechaenvio" value="{{serial.fecha_despacho|date:"Y-m-d"}}" readonly onmousedown="return false;">
+    </div>
+    <div class="col-md-1">
+        <label for="inputresolucion" class="form-label" >Despachado:</label><br>
+        <select class="form-select"  id="inputresolucion" name="despacho" readonly onmousedown="return false;">
+            <option value="{{serial.despacho}}"> {% if serial.despacho == 1 %}
+                Sí
+                {% else %}
+                No
+                {% endif %} </option>
+            <option value="0">No</option>
+            <option value="1">Si</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label for="inputvendida" class="form-label">Máquina Vendida:</label>
+        <input type="text" class="form-control" id="inputvendida"
+               value="{% if serial.vendida == 1 %}Sí{% else %}No{% endif %}" readonly onmousedown="return false;">
+        <input type="hidden" name="maqvendida" value="{{ serial.vendida }}">
+    </div>
+    <div class="col-md-2">
+        <label for="inputliquida" class="form-label">Máquina Liquida:</label>
+        <input type="text" class="form-control" id="inputliquida"
+               value="{% if serial.liquida == 1 %}Sí{% else %}No{% endif %}" readonly onmousedown="return false;">
+        <input type="hidden" name="liquida" value="{{ serial.liquida }}">
+    </div>
+    <div class="col-md-1">
+        <label for="inputgarantia" class="form-label">Garantia:</label>
+        <input type="text" class="form-control" id="inputgarantia"
+               value="{% if serial.garantia == 1 %}Sí{% else %}No{% endif %}" readonly>
+        <input type="hidden" name="garantia" value="{{ serial.garantia }}">
+    </div>
+    <div class="col-md-1">
+        <label for="inputsoporteremoto" class="form-label">Soporte:</label>
+        <input type="text" class="form-control" id="inputsoporteremoto"
+               value="{% if serial.soporte == 1 %}Sí{% else %}No{% endif %}" readonly>
+        <input type="hidden" name="soporte" value="{{ serial.soporte }}">
+    </div>
+    <div class="col-md-2">
+        <label for="inputfechainstalacion" class="form-label">Fecha Instalación:</label>
+        <input type="date" class="form-control" id="inputfechainstalacion" name="fechainstalacion" value="{{serial.fecha_instalacion|date:"Y-m-d"}}" >
+    </div>
+    <div class="col-md-2">
+        <label for="inputfechainstalacion" class="form-label">Fecha Liquida:</label>
+        <input type="date" class="form-control" id="inputfechaliquida" name="fechaliquida" value="{{serial.fechaliquida|date:"Y-m-d"}}" >
+    </div>
+    <div class="col-md-1">
+        <label for="inputums" class="form-label">Ums:</label><br>
+        <select class="form-select" id="inputums" name="ums">
+            <option value="0" {% if serial.ums == 0 %}selected{% endif %}>No</option>
+            <option value="1" {% if serial.ums == 1 %}selected{% endif %}>Sí</option>
+        </select>
+    </div>
+
+    <div class="col-md-1">
+        <label for="inputinternet" class="form-label">Internet:</label><br>
+        <select class="form-select" id="inputinternet" name="internet">
+            <option value="0" {% if serial.internet == 0 %}selected{% endif %}>No</option>
+            <option value="1" {% if serial.internet == 1 %}selected{% endif %}>Sí</option>
+        </select>
+    </div>
+    <input type="hidden" class="form-control" name="dialiuida" id="inputdialiquida" value="30" readonly onmousedown="return false;">
+    <input type="hidden" class="form-control" name="numresolucion" id="inputnumresolucion" value="0" readonly onmousedown="return false;">
+    <input type="hidden" class="form-control" name="repcoljuegos" id="inputrepcoljuegos" value="0" readonly onmousedown="return false;">
+    <input type="hidden" class="form-control" name="produccion" id="inputproduccion" value="0" readonly onmousedown="return false;">
+    <input type="hidden" class="form-control" name="status" id="inputstatus" value="4" readonly onmousedown="return false;">
+    <input type="hidden" class="form-control" name="tipocoljuegos" id="inputtipocoljuegos" value="UL" readonly onmousedown="return false;">
+    <input type="hidden" class="form-control" name="condicion" id="inputcondicion" value="4" readonly onmousedown="return false;">
+    <input type="hidden" class="form-control" name="razon" id="input#inputrazon" value="{{serial.razon.id}}" readonly onmousedown="return false;">
+    <input type="hidden" class="form-control" name="numresolucion" id="input#resolucion" value="{{serial.resolucion}}" readonly onmousedown="return false;">
+    <input type="hidden" class="form-control" name="tipotarifa" id="inputtarifa" value="{{serial.tarifa}}" readonly onmousedown="return false;">
+    <input type="hidden" class="form-control" name="nuc" id="inputnuc" value="{{serial.nuc}}" readonly onmousedown="return false;">
+
+    <p></p>
+    <p></p>
+    <p></p>
+    <center>
+        <fieldset id="borde2" >
+                <a type="button" class="btn btn-info">Imprimir</a>
+                <button type="submit" class="btn btn-info">Guardar</button>
+                <a href="{% url 'listadespachar'%}" type="button" class="btn btn-info">Cerrar</a>
+        </fieldset>
+      </center>
+
+</form>
+{% endblock%}

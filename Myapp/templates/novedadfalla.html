@@ -1,0 +1,46 @@
+{% extends 'menusoporte.html' %}
+{% load crispy_forms_tags %}
+{% block content%}
+<h1> Datos de la Novedad</h1>
+
+<form class="row g-3" action="{% url 'guardarnovedad' %}" method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="id" value="{{falla.id}}">
+    <div class="col-md-4">
+        <label for="inputfecha" class="form-label">Fecha:</label>
+        <input type="date" class="form-control" name="fechanovedad" id="inputfecha" value="" required>
+    </div>
+    <div class="col-md-6">
+        <label for="inputpresponsable" class="form-label">Responsable:</label>
+        <select id="inputpresponsable" class="form-select" name="responsable" required>
+            <option value="">Todos los tecnicos...</option>
+            {% for Tecnico in listatecnico %}
+            <option value="{{Tecnico.id}}">
+                <script>if ({{Tecnico.activo}} == 1){
+                               document.write("{{Tecnico.nombre}}")
+                             }else{
+                               document.write("")
+                             }
+                    </script>
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-10">
+        <label for="inputnovedad" class="form-label">Novedad:</label>
+        <textarea name="novedad" id="inputnovedad" cols="8" class="form-control" required></textarea>
+        <!--<input type="textArea" cols class="form-control" id="inputdirección" name="descripcionpieza">--!>
+    </div>
+    <p>
+    <center>
+          <fieldset id="borde2">
+              <a type="button" class="btn btn-info">Imprimir</a>
+              <button type="submit" class="btn btn-info">Guardar</button>
+              <a href="{% url 'listareportedefallas'%}" type="button" class="btn btn-info">Cerrar</a>
+          </fieldset>
+    </center>
+</form>
+
+<p></p>
+
+{% endblock %}

@@ -1,10 +1,59 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'menusoporte.html' %}
+{% load crispy_forms_tags %}
+{% block content%}
+
+<p></p>
+<table align="center" border="1" width="100%" id="table2" cellspacing="1" cellpadding="0" style="border: 1px solid #000000; padding-left:0; padding-right:0">
+    <tbody>
+    <tr>
+      <td bgcolor="#808080" align="center">
+        <b><font face="Tahoma" size="2" color="#FFFFFF">Datos de la Orden de Remisión</font></b>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+<p></p>
+
+<form border="1" width="85%" class="row g-3">
+  {% csrf_token %}
+  <div class="col-md-4">
+    <label for="inputpieza" class="form-label"># Serie Pieza / Parte:</label>
+    <input type="texto" class="form-control" id="inputpieza" name="nomeropieza">
+  </div>
+    <p></p>
+  <div class="col-md-24">
+    <label for="inputdescripcionpieza" class="form-label">Descripción Pieza / Parte:</label>
+    <input type="texto" class="form-control" id="inputdescripcionpieza" name="descripcionpieza">
+  </div>
+  <div class="col-md-4">
+    <label for="inputdian" class="form-label"># Declaración DIAN:</label>
+    <input type="texto" class="form-control" id="inputdian" name="declaraciondian">
+  </div>
+    <br/>
+  <div class="col-md-4">
+    <label for="inputreferencia" class="form-label">Nro. Referencia / Caso:</label>
+    <input type="texto" class="form-control" id="inputreferencia" name="referencia">
+  </div>
+  <div class="col-md-4">
+      <label for="inputmaquina" class="form-label">Cod. Maquína:</label>
+      <select id="inputmaquina" class="form-select" name="maquinaserial" required>
+          <option>Todos los Codigos...</option>
+              {% for Maquina in maquinas %}
+                <option value="{{Maquina.id}}">{{Maquina.id_codigo}}</option>
+              {% endfor %}
+      </select>
+  </div>
+  <div class="col-md-24">
+    <label for="inputobservaciones" class="form-label">Observaciones:</label>
+    <input type="texto" class="form-control" id="inputobservaciones" name="descripcionpieza">
+  </div>
+    <p></p>
+<center>
+  <fieldset id="borde2">
+      <a type="button" class="btn btn-info">Imprimir</a>
+      <a type="button" class="btn btn-info">Guardar</a>
+      <a href="{% url 'listaremisiones' %}" type="button" class="btn btn-info">Cerrar</a>
+  </fieldset>
+</center>
+</form>
+{% endblock%}

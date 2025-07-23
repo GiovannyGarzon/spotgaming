@@ -1,47 +1,74 @@
 
 {% extends 'menuinstalacion.html' %}
+{% block title %}Retiros de Máquinas{% endblock %}
 {% load crispy_forms_tags %}
 {% block content%}
 
     <fieldset id="borde" xmlns="http://www.w3.org/1999/html">
     <h5>  Retiros de Maquinas </h5>
     </fieldset>
+    {% if messages %}
 
+<div class = "alert alert-success">
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
   <p></p>
-<form class="row g-3">
-      <div class="col-md-6">
-        <label for="inputnumero" class="form-label">Numero_ASG:</label>
-        <input type="text" class="form-control" id="inputnumero">
-      </div>
-      <div class="col-md-6">
-        <label for="inputfecharegistro" class="form-label">Mes:</label>
-        <input type="date" class="form-control" id="inputfecharegistro">
-      </div>
-      <div class="col-md-6">
+<form class="row g-3" id="filtrarForm">
+    <div class="col-md-4">
+        <label for="inputmes1" class="form-label">Mes:</label>
+        <select id="inputmes1" class="form-select" name="mes">
+             <option value="" {% if selected_month == "" %}selected{% endif %}>Todos los Meses...</option>
+            <option value="01" {% if current_month == 1 %}selected{% endif %}>Enero</option>
+            <option value="02" {% if current_month == 2 %}selected{% endif %}>Febrero</option>
+            <option value="03" {% if current_month == 3 %}selected{% endif %}>Marzo</option>
+            <option value="04" {% if current_month == 4 %}selected{% endif %}>Abril</option>
+            <option value="05" {% if current_month == 5 %}selected{% endif %}>Mayo</option>
+            <option value="06" {% if current_month == 6 %}selected{% endif %}>Junio</option>
+            <option value="07" {% if current_month == 7 %}selected{% endif %}>Julio</option>
+            <option value="08" {% if current_month == 8 %}selected{% endif %}>Agosto</option>
+            <option value="09" {% if current_month == 9 %}selected{% endif %}>Septiembre</option>
+            <option value="10" {% if current_month == 10 %}selected{% endif %}>Octubre</option>
+            <option value="11" {% if current_month == 11 %}selected{% endif %}>Noviembre</option>
+            <option value="12" {% if current_month == 12 %}selected{% endif %}>Diciembre</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label for="inputano" class="form-label">Año:</label>
+        <select class="form-select" id="inputano" name="ano">
+            {% for year in years %}
+            <option value="{{ year }}" {% if year == ano_actual %}selected{% endif %}>{{ year }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-6">
         <label for="inputcliente" class="form-label">Cliente:</label>
-        <select class="col-md-12" id="inputcliente" class="form-selec">
-                <option>Todos los Clientes...</option>
-                {% for Cliente in clientes %}
-                    <option value="{{Cliente.nombre}}">{{Cliente.nombre}}</option>
-                {% endfor %}
-            </select>
-      </div>
+        <select id="inputcliente" class="form-select" name="cliente">
+            <option>Todos los Clientes...</option>
+            {% for Cliente in clientes %}
+            <option value="{{Cliente.nombre}}">{{Cliente.nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label form="inputstatusretiro" class="form-label">Status:</label><br>
+        <select class="form-select" id="inputstatusretiro" name="status">
+            <option value="" {% if selected_status == "" %}selected{% endif %}>Todos los Status...</option>
+            <option value="1" {% if selected_status == "1" %}selected{% endif %}>SOLICITUD</option>
+            <option value="2" {% if selected_status == "2" %}selected{% endif %}>POR RETIRAR</option>
+            <option value="3" {% if selected_status == "3" %}selected{% endif %}>RETIRADO</option>
+            <option value="4" {% if selected_status == "4" %}selected{% endif %}>UMS PROCESADO</option>
+        </select>
+    </div>
+    <fieldset id="borde3">
 
-      <div class="col-md-6">
-        <label for="inputfechaasginacion" class="form-label">Año:</label>
-        <input type="date" class="form-control" id="inputfechaasginacion" >
-      </div>
-
-      <div class="col-md-6">
-          <label form="Asignacione" class="form-label">Status:</label><br>
-          <select class="col-md-4">
-                    <option>Todos los Status...</option>
-                  {% for Asignacione in asignaciones %}
-                        <option value="{{Asignacione.stado}}">{{Asignacione.stado}}</option>
-                  {% endfor %}
-          </select>
-      </div>
-
+        <button type="submit" class="btn btn-danger" id="filtrar">Filtrar</button>
+        <a href="{% url 'listaretiros'%}" type="button" class="btn btn-danger">Todos</a>
+    </fieldset>
 
         <center>
         <h3>Lista de Ordenes de Retiro de Maquinas</h3>
@@ -62,68 +89,88 @@
         <button type="submit" class="btn btn-primary">Sign in</button>
       </div>--!>
 
-        <table class="table table-bordered">
+        <table class="table table-bordered" id="retiros" style="text-align:center;">
         <thead>
             <tr>
-
-                <th scope="col">Numero ASG</th>
-                <th scope="col">Cliente</th>
-                <th scope="col">Contacto</th>
-                <th scope="col">Status</th>
-                <th scope="col">Fecha Asignación</th>
-                <th scope="col">Mod Ope.</th>
-                <th scope="col">Cant. Maq</th>
-                <th scope="col">Opciones</th>
+                <th WIDTH="130" scope="col">Numero RET</th>
+                <th WIDTH="130" scope="col">Cliente</th>
+                <th WIDTH="125" scope="col">Status</th>
+                <th WIDTH="125" scope="col">Fecha Retiro</th>
+                <th WIDTH="80" scope="col">Cant. Maq</th>
+                <th WIDTH="160" scope="col">Opciones</th>
              </tr>
         </thead>
             <tbody>
+            {% for Retiro in listaretiros %}
                 <tr>
-
-                    <td WIDTH="80" HEIGHT="80">
-                        {% for asignacion in asignaciones %}
-                            <input type="text" class="form-control" value="{{asignacion.numero}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
+                    <td>RET-000{{Retiro.id}}</td>
+                    <td>{{Retiro.clientes.nombre}}</td>
+                    <td>{{Retiro.id_status}}</td>
+                    <td>{{Retiro.fecha_retiro|date:"d/m/Y"}}</td>
+                    <td>{{Retiro.cantidad_maquinas_retiradas|default:"" }}</td>
                     <td>
-                        {% for asignacion in asignaciones %}
-                            <input type="text" class="form-control" value="{{asignacion.clientes}}" readonly onmousedown="return false;" name="clienteconectar">
-                        {% endfor %}
+                        {% if Retiro.id_status_id != 4 %}
+                        <a href="{% url 'editarretiro' Retiro.id %}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i></a>
+                        {% endif %}
+                        <a href="{% url 'verretiro' Retiro.id %}" class="btn btn-info btn-sm">
+                                <i class="fas fa-eye"></i></a>
                     </td>
-                    <td>
-                        {% for asignacion in asignaciones %}
-                            <input type="text" class="form-control" value="{{asignacion.contacto}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {% for asignacion in asignaciones %}
-                            <input type="text" class="form-control" value="{{asignacion.stado}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {% for asignacion in asignaciones %}
-                            <input type="text" class="form-control" value="{{asignacion.fecha_asignacion}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <TD WIDTH="250" HEIGHT="200">
-                        {% for asignacion in asignaciones %}
-                            <input type="text" class="form-control" value="{{asignacion.modelo}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td WIDTH="60" HEIGHT="60">
-                        {% for asignacion in asignaciones %}
-                            <input type="text" class="form-control" value="#" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td WIDTH="140" HEIGHT="140">
-                        {% for asignacion in asignaciones %}
-                            <a href="{% url 'instalar'%}" type="button" class="btn btn-danger">Editar</a>  <button type="button" class="btn btn-danger">Ver</button>
-                        {% endfor %}
-                    </td>
-
-
                 </tr>
+            {% endfor %}
             </tbody>
         </table>
+    <script>
+        $(document).ready(function(){
+             var table = $('#retiros').DataTable({
+                 orderCellsTop: true,
+                           fixedHeader: true
+                  });
+              });
+              /*$('#retiros thead tr').clone(true).appendTo( '#retiros thead' );
+              $('#retiros thead tr:eq(1) th').each( function (i) {
+               var title = $(this).text(); //es el nombre de la columna
+               $(this).html( '<input type="text" placeholder="Search...'+title+'" />' );
+
+               $( 'input', this ).on( 'keyup change', function () {
+                if ( table.column(i).search() !== this.value ) {
+                table
+                .column(i)
+                 .search( this.value )
+                  .draw();
+              }
+           } );
+         } );*/
+          $(document).ready(function() {
+        // Inicializa DataTables al cargar la página
+        var table = $('#retiros').DataTable({
+            orderCellsTop: true,
+            fixedHeader: true
+        });
+
+        // Captura el evento de envío del formulario
+        $('#filtrarForm').submit(function(e) {
+            // Previene el envío normal del formulario
+            e.preventDefault();
+
+            // Realiza una solicitud AJAX al servidor con los datos del formulario
+            $.ajax({
+                type: 'GET',
+                url: '{% url "listaretiros" %}',  // Asegúrate de tener el nombre correcto de la URL
+                data: $('#filtrarForm').serialize(),  // Serializa los datos del formulario
+                success: function(data) {
+                    // Limpia y actualiza el contenido de la tabla con la respuesta del servidor
+                    table.clear().draw();
+                    table.rows.add($(data)).draw();
+                },
+                error: function(error) {
+                    console.log('Error en la solicitud AJAX:', error);
+                }
+            });
+        });
+
+
+        </script>
       <p></p>
 
       <center>

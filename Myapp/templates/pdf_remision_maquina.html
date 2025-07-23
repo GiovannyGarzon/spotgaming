@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Remisión PDF</title>
+</head>
+<body>
+    <h1>Remisión ID: {{ remision.id }}</h1>
+    <p>Cliente: {{ remision.cliente.nombre }}</p>
+    <p>Fecha: {{ remision.fecha }}</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Descripción</th>
+                <th>Cantidad</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items_remision %}
+            <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.descripcion }}</td>
+                <td>{{ item.cantidad }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

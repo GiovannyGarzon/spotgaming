@@ -1,0 +1,17 @@
+{% extends 'menuauditoria.html' %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+    <h2 class="text-success">✅ ¡Liquidación realizada con éxito!</h2>
+    <p>Tu liquidación se ha completado correctamente.</p>
+
+    <div class="mt-4">
+        <a href="{% url 'liquidar_maquinas' %}" class="btn btn-primary">
+            🔄 Hacer otra liquidación
+        </a>
+        <a href="{% url 'spotgaming'%}" class="btn btn-secondary">
+            🏠 Volver al inicio
+        </a>
+    </div>
+</div>
+{% endblock %}

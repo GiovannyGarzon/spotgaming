@@ -1,0 +1,502 @@
+{% load crispy_forms_tags %}
+<html>
+<head>
+  <meta charset="utf-8">
+  <title> Ver Maquina </title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+  <link rel="" href="https://cdn.datatables.net/fixedheader/3.1.6/css/fixedHeader.dataTables.min.css">
+
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="nav-link" href="{% url 'spotgaming'%}" style="color:#F3AC0A;" ><b><big>SPOTgaming</big></b></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{% url 'spotgaming'%}">Home</a>
+                </li>
+            </ul>
+            <a class="nav-link active" aria-current="page" href="{% url 'spotgaming'%}">Home</a>
+        </div>
+    </div>
+</nav>
+<br>
+<table align="center" border="1" width="90%" id="table1" cellspacing="1" cellpadding="0" style="border: 1px solid #000000; padding-left:0; padding-right:0">
+    <tbody>
+    <tr>
+        <td bgcolor="#808080" align="center">
+            <b><font face="Tahoma" size="3" color="#F7DC6F">Datos de Maquina</font></b>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<p></p>
+<style>
+     form {
+      /* Centrar el formulario en la página */
+      margin: 0 auto;
+      width: 1300px;
+      /* Esquema del formulario */
+      padding: 1em;
+      border: 1px solid #CCC;
+      border-radius: 1em;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    form li + li {
+      margin-top: 1em;
+    }
+    input,
+    textarea {
+      /* Para asegurarse de que todos los campos de texto tienen la misma configuración de letra
+         Por defecto, las áreas de texto tienen un tipo de letra monoespaciada */
+      font: 1em sans-serif;
+
+      /* Tamaño uniforme del campo de texto */
+      width: 300px;
+      box-sizing: border-box;
+
+      /* Hacer coincidir los bordes del campo del formulario */
+      border: 1px solid #999;
+    }
+    input:focus,
+    textarea:focus {
+      /* Destacado adicional para elementos que tienen el cursor */
+      border-color: #000;
+    }
+    textarea {
+      /* Alinear los campos de texto multilínea con sus etiquetas */
+      vertical-align: top;
+      /* Proporcionar espacio para escribir texto */
+      height: 5em;
+    }
+    .button {
+      /* Alinear los botones con los campos de texto */
+      padding-left: 90px; /* mismo tamaño que los elementos de la etiqueta */
+    }
+    button {
+      /* Este margen adicional representa aproximadamente el mismo espacio que el espacio
+         entre las etiquetas y sus campos de texto */
+      margin-left: .5em;
+    }
+</style>
+<center>
+    <form class="row g-3" >
+        {% csrf_token %}
+        <input type="hidden" id="id" name="id" value="{{maquinas.id}}">
+        <div class="col-md-6">
+            <label for="inputcodigo" class="form-label">ID Codigo:</label>
+            <input type="texto" class="form-control" id="inputcodigo" name="codigo" value="{{maquinas.id_codigo}}" readonly onmousedown="return false;">
+        </div>
+        <div class="col-md-6">
+            <label for="inputstatus" class="form-label">Status Actual:</label>
+            <select id="inputstatusvisible" name="statusvisible" class="form-select" readonly onmousedown="return false;">
+                <option value="{{maquinas.id_status.id}}">{{maquinas.id_status}}</option>
+                {% for Status in listastatus %}
+                <option value="{{Status.id}}">{{Status.nombre}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <input type="hidden" id="inputstatus" name="status" value="{{maquinas.id_status.id}}">
+        <div class="col-md-2">
+            <label for="inputmodelo" class="form-label">Modelo:</label>
+            <input type="texto" class="form-control" id="inputmodelomaquinavisible" name="modelomaquinavisible" minlength="5" value="{{maquinas.id_modelo_igg}}" readonly onmousedown="return false;">
+        </div>
+        <input type="hidden" id="inputmodelo" name="modelomaquina" value="{{maquinas.id_modelo_igg.id}}" readonly onmousedown="return false;">
+        <div class="col-md-2">
+            <label for="inputpropiedad" class="form-label">Propiedad Maquina:</label>
+            <input type="texto" class="form-control" id="inputpropiedad" name="propiedadmostrar" value="{{maquinas.pripiedad}}" readonly onmousedown="return false;">
+        </div>
+        <input type="hidden" id="inputpropiedadoculto" name="propiedad" value="{{maquinas.pripiedad.id}}">
+        <div class="col-md-2">
+            <label for="inputmarca" class="form-label">Marca:</label>
+            <input type="texto" class="form-control" id="inputmarcavisible" name="marcavisible" value="{{maquinas.id_marca}}" readonly onmousedown="return false;">
+        </div>
+        <input type="hidden" id="inputmarca" name="marca" value="{{maquinas.id_marca.id}}">
+        <div class="col-md-2">
+            <label for="inputcondicion" class="form-label">Condición Actual:</label>
+            <input type="texto" class="form-control" id="inputcondicionvisible" name="condicionvisible" value="{{maquinas.id_condicion}}" readonly onmousedown="return false;">
+        </div>
+        <input type="hidden" class="form-control" id="inputcondicion" name="condicion" value="{{maquinas.id_condicion.id}}">
+        <div class="col-md-2">
+            <label for="inputfamilia" class="form-label">Familia:</label>
+            <input type="texto" class="form-control" id="inputfamiliavisible" name="familia" value="{{maquinas.familia}}" readonly onmousedown="return false;">
+        </div>
+        <input type="hidden" id="inputfamilia" name="familia" value="{{maquinas.familia.id}}">
+        <div class="col-md-2">
+            <label for="inputtipomaquina" class="form-label">Tipo Maquina:</label>
+            <input type="texto" class="form-control" id="inputtipomaquinavisible" name="tipomaquinavisible" value="{{maquinas.id_tipo_maquina}}" readonly onmousedown="return false;">
+        </div>
+        <input type="hidden" id="inputtipomaquina" name="tipomaquina" value="{{maquinas.id_tipo_maquina.id}}">
+        <div class="col-md-4">
+            <label for="inputcliente" class="form-label">Cliente Actual:</label>
+            <input type="texto" class="form-control" id="inputclientevisible" name="clientevisible" value="{{maquinas.clientes.nombre}}" readonly onmousedown="return false;">
+        </div>
+        <input type="hidden" id="inputcliente" name="cliente" value="{{maquinas.clientes.id}}">
+        <div class="col-md-4">
+            <label for="inputrazon" class="form-label">Razón Social Actua:</label>
+            <input type="texto" class="form-control" id="inputrazonvisible" name="razonvisible" value="{{maquinas.razon.nombre}}" readonly onmousedown="return false;">
+        </div>
+        <input type="hidden" id="inputrazon" name="razon" value="{{maquinas.razon.id}}">
+        <div class="col-md-4">
+            <label for="inputsala" class="form-label"> Sala / Punto Actual:</label>
+            <input type="texto" class="form-control" id="inputsalavisible" name="salavisible" value="{{maquinas.salas.nombre}}" readonly onmousedown="return false;">
+        </div>
+        <input type="hidden" id="inputsala" name="sala" value="{{maquinas.salas.id}}">
+        <div class="col-md-2">
+            <label for="inputserialpmv" class="form-label"># Serie PMV:</label>
+            <input type="texto" class="form-control" id="inputserialpmv" name="serialpmv" value="{{maquinas.serie_PMV}}" readonly onmousedown="return false;">
+        </div>
+        <div class="col-md-2">
+            <label for="inputserialigg" class="form-label"># Serie IGG:</label>
+            <input type="texto" class="form-control" id="inputserialigg" name="serialigg" value="{{maquinas.serie_IGG}}" readonly onmousedown="return false;">
+        </div>
+        <div class="col-md-2">
+            <label for="inputidinspired" class="form-label">ID Inspired Actual:</label>
+            <input type="texto" class="form-control" id="inputidinspired" name="idinspired" value="{{maquinas.id_inspired}}" readonly onmousedown="return false;">
+        </div>
+        <div class="col-md-2">
+            <label for="inputposicion" class="form-label">Posición:</label>
+            <input type="texto" class="form-control" id="inputposicion" name="posicion" value="{{maquinas.id_posicion}}" readonly onmousedown="return false;">
+        </div>
+        <div class="col-md-2">
+            <label for="inputmenu" class="form-label"> Menu Mix:</label>
+            <input type="texto" class="form-control" id="inputmenuvisible" name="menuvisible" value="{{maquinas.menu_mix}}" readonly onmousedown="return false;">
+        </div>
+        <input type="hidden" id="inputmenu" name="menu" value="{{maquinas.menu_mix.id}}">
+        <div class="col-md-2">
+            <label for="inputfactura" class="form-label"> Factura PMV:</label>
+            <input type="texto" class="form-control" id="inputfactura" name="factura" value="{{maquinas.factura_PMV}}" readonly onmousedown="return false;">
+        </div>
+        <div class="col-md-2">
+            <label for="inputreservacion" class="form-label"> Inf. Adicional Condición:</label>
+            <input type="texto" class="form-control" id="inputreservacion" name="reservacion" value="{{maquinas.reservacion}}" readonly onmousedown="return false;">
+        </div>
+        <div class="col-md-2">
+            <label for="inputactivo" class="form-label">Registro Activo:</label>
+            <select id="inputactivo" class="form-select" name="activo" readonly onmousedown="return false;">
+                <option value="{{maquinas.activo}}">
+                    <script>
+                        if ({{maquinas.activo}} == 1){
+                                document.write("Si")
+                        } else {
+                                 document.write("No")
+                                 }
+                    </script>
+                </option>
+                <option value="0">No</option>
+                <option value="1">Si</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label for="inputvendida" class="form-label">Vendida:</label>
+            <select id="inputvendida" class="form-select" name="vendida" readonly onmousedown="return false;">
+                <option value="{{maquinas.vendida}}">
+                    <script>
+                        if ({{maquinas.activo}} == 1){
+                                document.write("Si")
+                        } else {
+                                 document.write("No")
+                                 }
+                    </script>
+                </option>
+                <option value="0">No</option>
+                <option value="1">Si</option>
+            </select>
+        </div>
+        <p></p>
+        <table align="center" border="1" width="90%" id="table2" cellspacing="1" cellpadding="0" style="border: 1px solid #000000; padding-left:0; padding-right:0">
+            <tbody>
+            <tr>
+                <td bgcolor="#808080" align="center">
+                    <b><font face="Tahoma" size="2" color="#FFFFFF">Datos de Operacion / Venta / Garantia</font></b>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="col-md-2">
+            <label for="inputoperacion" class="form-label"> Modalidad Operación:</label>
+            <input type="texto" class="form-control" id="inputoperacion" name="operacion" value="{{maquinas.tipo_operacion}}" readonly onmousedown="return false;">
+        </div>
+        <div class="col-md-2">
+            <label for="inputliquida" class="form-label">Liquidar Imp. Coljuegos:</label>
+            <select id="inputliquida" class="form-select" name="impuestoliquida" readonly onmousedown="return false;">
+                <option value="{{maquinas.id_contrato}}">
+                    <script>
+                        if ({{maquinas.id_contrato}} == 1){
+                                document.write("Si")
+                        } else {
+                                 document.write("No")
+                                 }
+                    </script>
+                </option>
+                <option value="0">No</option>
+                <option value="1">Si</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="inputnuc" class="form-label"> NUC:</label>
+            <input type="texto" class="form-control" id="inputnuc" name="nuc" value="{{maquinas.nuc}}" readonly onmousedown="return false;">
+        </div>
+        <div class="col-md-2">
+            <label for="inputtipoimpuesto" class="form-label">Tipo Impuesto Coljuegos:</label>
+            <select id="inputtipoimpuesto" class="form-select" name="tipoimpuesto" readonly onmousedown="return false;">
+                <option value="{{maquinas.tipo_coljuegos}}"> {{maquinas.tipo_coljuegos}}</option>
+                <option value="TF">SOLO TARIFA FIJA</option>
+                <option value="TV">SOLO TARIFA VARIABLE</option>
+                <option value="FV">AMBAS FIJA O VARIABLE</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label for="inputresolucion" class="form-label"># Resolucion Coljuegos:</label>
+            <input type="texto" class="form-control" id="inputresolucion" name="resolucion" value="{{maquinas.contratoCol}}" readonly onmousedown="return false;">
+        </div>
+        <div class="col-md-3">
+            <label for="inputtipoparticipacion" class="form-label">Tipo Participación:</label>
+            <select id="inputtipoparticipacion" class="form-select" name="tipoparticipacion" readonly onmousedown="return false;">
+                <option value="{{maquinas.tipoparticipacion}}">{{maquinas.tipoparticipacion}}</option>
+                <option value="NO TIENE">NO TIENE</option>
+                <option value="INDEFINIDO">INDEFINIDO</option>
+                <option value="VENCIMIENTO">VENCIMIENTO</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="inputtiposoporteremoto" class="form-label">Tipo Soporte Remoto:</label>
+            <select id="inputtiposoporteremoto" class="form-select" name="soporteremoto" readonly onmousedown="return false;">
+                <option value="{{maquinas.tipoparticipacion}}">{{maquinas.tiposoporteremoto}}</option>
+                <option value="NO TIENE">NO TIENE</option>
+                <option value="INDEFINIDO">INDEFINIDO</option>
+                <option value="VENCIMIENTO">VENCIMIENTO</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="inputtipogarantiahadware" class="form-label">Tipo Garantía Hardware:</label>
+            <select id="inputtipogarantiahadware" class="form-select" name="grantiahadware" readonly onmousedown="return false;">
+                <option value="{{maquinas.tipoparticipacion}}">{{maquinas.tipogarantiahadware}}</option>
+                <option value="NO TIENE">NO TIENE</option>
+                <option value="INDEFINIDO">INDEFINIDO</option>
+                <option value="VENCIMIENTO">VENCIMIENTO</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="inputtipoactualizacion" class="form-label">Tipo Actualización:</label>
+            <select id="inputtipoactualizacion" class="form-select" name="tipoactualizacion" readonly onmousedown="return false;">
+                <option value="{{maquinas.tipoparticipacion}}">{{maquinas.tipoactualizacion}}</option>
+                <option value="NO TIENE">NO TIENE</option>
+                <option value="INDEFINIDO">INDEFINIDO</option>
+                <option value="VENCIMIENTO">VENCIMIENTO</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+        <label for="inputfechavenceliquidacion" class="form-label">Fecha Vence Liquidación:</label>
+        <input type="date" class="form-control" id="inputfechavenceliquidacion" name="fechavenceliquidacion" readonly onmousedown="return false;" value="{{maquinas.fechavenceliquidacion|date:"Y-m-d"}}">
+        </div>
+        <div class="col-md-3">
+        <label for="inputfechavencesoporte" class="form-label">Fecha Vence Soporte:</label>
+        <input type="date" class="form-control" id="inputfechavencesoporte" name="fechavencesoporte" readonly onmousedown="return false;" value="{{maquinas.fechavenceliquidacion|date:"Y-m-d"}}">
+        </div>
+        <div class="col-md-3">
+        <label for="inputfechavencegarantia" class="form-label">Fecha Vence Garantía:</label>
+        <input type="date" class="form-control" id="inputfechavencegarantia" name="inputfechavencegarantia" readonly onmousedown="return false;" value="{{maquinas.fechavenceliquidacion|date:"Y-m-d"}}">
+        </div>
+        <div class="col-md-3">
+        <label for="inputvenceactualizacion" class="form-label">Fecha Vence Actualización:</label>
+        <input type="date" class="form-control" id="inputvenceactualizacion" name="inputvenceactualizacion" readonly onmousedown="return false;" value="{{maquinas.fechavenceliquidacion|date:"Y-m-d"}}">
+        </div>
+        <table align="center" border="1" width="90%" id="table3" cellspacing="1" cellpadding="0" style="border: 1px solid #000000; padding-left:0; padding-right:0">
+            <tbody>
+            <tr>
+                <td bgcolor="#808080" align="center">
+                    <b><font face="Tahoma" size="2" color="#FFFFFF">Datos de Fechas</font></b>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="col-md-4">
+        <label for="inputfechaproduccion" class="form-label">Fecha Produccion:</label>
+        <input type="date" class="form-control" id="inputfechaproduccion" name="fechaproduccion" readonly onmousedown="return false;" value="{{maquinas.fecha_produccion|date:"Y-m-d"}}">
+        </div>
+        <div class="col-md-4">
+        <label for="inputfechainstalacion" class="form-label">Fecha Ult. Instalación:</label>
+        <input type="date" class="form-control" id="inputfechainstalacion" name="fechainstalacion" readonly onmousedown="return false;" value="{{maquinas.fecha_instalacion|date:"Y-m-d"}}">
+        </div>
+        <div class="col-md-4">
+        <label for="inputfechaliquidacion" class="form-label"> Fecha Ult. Liquidación:</label>
+        <input type="date" class="form-control" id="inputfechaliquidacion" name="fechaliquidacion" readonly onmousedown="return false;" value="{{maquinas.fecha_liquidacion|date:"Y-m-d"}}">
+        </div>
+        <div class="col-md-4">
+        <label for="inputfechadespacho" class="form-label"> Fecha  Ult. Despacho:</label>
+        <input type="date" class="form-control" id="inputfechadespacho" name="fechadespacho" readonly onmousedown="return false;" value="{{maquinas.fecha_despacho|date:"Y-m-d"}}">
+        </div>
+        <div class="col-md-4">
+        <label for="inputfecharetiro" class="form-label">  Fecha Ultimo Retiro:</label>
+        <input type="date" class="form-control" id="inputfecharetiro" name="fecharetiro" readonly onmousedown="return false;" value="{{maquinas.fecha_retiro|date:"Y-m-d"}}">
+        </div>
+        <div class="col-md-4">
+        <label for="inputfechacobro" class="form-label">  Fecha Ultimo Cobro:</label>
+        <input type="date" class="form-control" id="inputfechacobro" name="fechacobro" readonly onmousedown="return false;" value="{{maquinas.fecha_cobro|date:"Y-m-d"}}">
+        </div>
+
+        <table align="center" border="1" width="90%" id="table4" cellspacing="1" cellpadding="0" style="border: 1px solid #000000; padding-left:0; padding-right:0">
+            <tbody>
+                <tr>
+                    <td colspan="6" bgcolor="#808080" align="center">
+                        <b>
+                            <font face="Tahomas" size="2" color="#FFFFFF">Numeros de Series</font>
+                        </b>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center" bgcolor="#808080" style="border-right: 1px solid #000000; border-top: 1px solid #00000">
+                        <font face="Tahoma" size="1" color="#FFFFFF">Descripción</font>
+                    </td>
+                    <td align="center" bgcolor="#808080" style="border-right: 1px solid #000000; border-top: 1px solid #00000">
+                        <font face="Tahoma" size="1" color="#FFFFFF"># Serial</font>
+                    </td>
+                    <td align="center" bgcolor="#808080" style="border-right: 1px solid #000000; border-top: 1px solid #00000">
+                        <font face="Tahoma" size="1" color="#FFFFFF"># Manifiesto</font>
+                    </td>
+                    <td align="center" bgcolor="#808080" style="border-right: 1px solid #000000; border-top: 1px solid #00000">
+                        <font face="Tahoma" size="1" color="#FFFFFF">Descripción</font>
+                    </td>
+                    <td align="center" bgcolor="#808080" style="border-right: 1px solid #000000; border-top: 1px solid #00000">
+                        <font face="Tahoma" size="1" color="#FFFFFF"># Serial</font>
+                    </td>
+                    <td align="center" bgcolor="#808080" style="border-right: 1px solid #000000; border-top: 1px solid #00000">
+                        <font face="Tahoma" size="1" color="#FFFFFF"># Manifiesto</font>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left" style="border-right: 1px solid #000000; border-top: 1px solid #000000" bgcolor="#808080">
+                        <font face="Tahoma" size="2" color="#FFFFFF"># CPU:</font>
+                    </td>
+                    <td style="border-right: 1px solid #000000; border-top: 1px solid #000000" align="center">
+                        <input type="text" name="serialCPU" value="{{maquinas.erial_CPU}}" size="18" style="border:1px solid #333333; font-family: Tahoma; font-size: 10pt" maxlength="50" tabindex="80">
+                    </td>
+                    <td style="border-right: 1px solid #000000; border-top: 1px solid #000000" align="center">
+                        <input type="text" name="declaraCPU" value="{{maquinas.declara_CPU}}" size="18" style="border:1px solid #333333; font-family: Tahoma; font-size: 10pt" maxlength="20" tabindex="81">
+                    </td>
+                    <td align="left" style="border-right: 1px solid #000000; border-top: 1px solid #000000" bgcolor="#808080">
+                        <font face="Tahoma" size="2" color="#FFFFFF"># Cabezal Bill:</font>
+                    </td>
+                    <td style="border-right: 1px solid #000000; border-top: 1px solid #000000" align="center">
+                        <input type="text" name="serialcabezal" value="{{maquinas.serial_cabezal}}" size="18" style="border:1px solid #333333; font-family: Tahoma; font-size: 10pt" maxlength="50" tabindex="80">
+                    </td>
+                    <td style="border-right: 1px solid #000000; border-top: 1px solid #000000" align="center">
+                        <input type="text" name="declaracabezal" value="{{maquinas.declara_cabezal}}" size="18" style="border:1px solid #333333; font-family: Tahoma; font-size: 10pt" maxlength="20" tabindex="81">
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left" style="border-right: 1px solid #000000; border-top: 1px solid #000000" bgcolor="#808080">
+                        <font face="Tahoma" size="2" color="#FFFFFF"># Hard Disk:</font>
+                    </td>
+                    <td style="border-right: 1px solid #000000; border-top: 1px solid #000000" align="center">
+                        <input type="text" name="serialHD" value="{{maquinas.serial_HD}}" size="18" style="border:1px solid #333333; font-family: Tahoma; font-size: 10pt" maxlength="50" tabindex="80">
+                    </td>
+                    <td style="border-right: 1px solid #000000; border-top: 1px solid #000000" align="center">
+                        <input type="text" name="declaraHD" value="{{maquinas.declara_HD}}" size="18" style="border:1px solid #333333; font-family: Tahoma; font-size: 10pt" maxlength="20" tabindex="81">
+                    </td>
+                    <td align="left" style="border-right: 1px solid #000000; border-top: 1px solid #000000" bgcolor="#808080">
+                        <font face="Tahoma" size="2" color="#FFFFFF"># Staker Bill.:</font>
+                    </td>
+                    <td style="border-right: 1px solid #000000; border-top: 1px solid #000000" align="center">
+                        <input type="text" name="serialstaker" value="{{maquinas.serial_staker}}" size="18" style="border:1px solid #333333; font-family: Tahoma; font-size: 10pt" maxlength="50" tabindex="80">
+                    </td>
+                    <td style="border-right: 1px solid #000000; border-top: 1px solid #000000" align="center">
+                        <input type="text" name="declarastaker" value="{{maquinas.declara_staker}}" size="18" style="border:1px solid #333333; font-family: Tahoma; font-size: 10pt" maxlength="20" tabindex="81">
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left" style="border-right: 1px solid #000000; border-top: 1px solid #000000" bgcolor="#808080">
+                        <font face="Tahoma" size="2" color="#FFFFFF"># Intrusion:</font>
+                    </td>
+                    <td style="border-right: 1px solid #000000; border-top: 1px solid #000000" align="center">
+                        <input type="text" name="serialintrusion" value="{{maquinas.serial_intrusion}}" size="18" style="border:1px solid #333333; font-family: Tahoma; font-size: 10pt" maxlength="50" tabindex="80">
+                    </td>
+                    <td style="border-right: 1px solid #000000; border-top: 1px solid #000000" align="center">
+                        <input type="text" name="declaraintrusion" value="{{maquinas.serial_intrusion}}" size="18" style="border:1px solid #333333; font-family: Tahoma; font-size: 10pt" maxlength="20" tabindex="81">
+                    </td>
+                    <td align="left" style="border-right: 1px solid #000000; border-top: 1px solid #000000" bgcolor="#808080">
+                        <font face="Tahoma" size="2" color="#FFFFFF"># Base Bill.:</font>
+                    </td>
+                    <td style="border-right: 1px solid #000000; border-top: 1px solid #000000" align="center">
+                        <input type="text" name="serialbaser" value="{{maquinas.serial_base}}" size="18" style="border:1px solid #333333; font-family: Tahoma; font-size: 10pt" maxlength="50" tabindex="80">
+                    </td>
+                    <td style="border-right: 1px solid #000000; border-top: 1px solid #000000" align="center">
+                        <input type="text" name="declarabase" value="{{maquinas.declara_base}}" size="18" style="border:1px solid #333333; font-family: Tahoma; font-size: 10pt" maxlength="20" tabindex="81">
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left" style="border-right: 1px solid #000000; border-top: 1px solid #000000" bgcolor="#808080">
+                        <font face="Tahoma" size="2" color="#FFFFFF"># Serial PAYLINK:</font>
+                    </td>
+                    <td style="border-right: 1px solid #000000; border-top: 1px solid #000000" align="center">
+                        <input type="text" name="serialpaylink" value="{{maquinas.serial_pay_link}}" size="18" style="border:1px solid #333333; font-family: Tahoma; font-size: 10pt" maxlength="50" tabindex="80">
+                    </td>
+                    <td style="border-right: 1px solid #000000; border-top: 1px solid #000000" align="center">
+                        <input type="text" name="declarapaylink" value="{{maquinas.declara_pay_link}}" size="18" style="border:1px solid #333333; font-family: Tahoma; font-size: 10pt" maxlength="20" tabindex="81">
+                    </td>
+                    <td align="left" style="border-right: 1px solid #000000; border-top: 1px solid #000000" bgcolor="#808080">
+                        <font face="Tahoma" size="2" color="#FFFFFF"># Monitor Superior:</font>
+                    </td>
+                    <td style="border-right: 1px solid #000000; border-top: 1px solid #000000" align="center">
+                        <input type="text" name="serialmonitorsup" value="{{maquinas.serial_monitor1}}" size="18" style="border:1px solid #333333; font-family: Tahoma; font-size: 10pt" maxlength="50" tabindex="80">
+                    </td>
+                    <td style="border-right: 1px solid #000000; border-top: 1px solid #000000" align="center">
+                        <input type="text" name="declaramonitorsup" value="{{maquinas.declara_monitor1}}" size="18" style="border:1px solid #333333; font-family: Tahoma; font-size: 10pt" maxlength="20" tabindex="81">
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left" style="border-right: 1px solid #000000; border-top: 1px solid #000000" bgcolor="#808080">
+                        <font face="Tahoma" size="2" color="#FFFFFF"># Serial Print:</font>
+                    </td>
+                    <td style="border-right: 1px solid #000000; border-top: 1px solid #000000" align="center">
+                        <input type="text" name="serialprint" value="{{maquinas.serial_printer}}" size="18" style="border:1px solid #333333; font-family: Tahoma; font-size: 10pt" maxlength="50" tabindex="80">
+                    </td>
+                    <td style="border-right: 1px solid #000000; border-top: 1px solid #000000" align="center">
+                        <input type="text" name="declaraprint" value="{{maquinas.declara_printer}}" size="18" style="border:1px solid #333333; font-family: Tahoma; font-size: 10pt" maxlength="20" tabindex="81">
+                    </td>
+                    <td align="left" style="border-right: 1px solid #000000; border-top: 1px solid #000000" bgcolor="#808080">
+                        <font face="Tahoma" size="2" color="#FFFFFF"># Monitor Inferior:</font>
+                    </td>
+                    <td style="border-right: 1px solid #000000; border-top: 1px solid #000000" align="center">
+                        <input type="text" name="serialmonitorinf" value="{{maquinas.serial_monitor2}}" size="18" style="border:1px solid #333333; font-family: Tahoma; font-size: 10pt" maxlength="50" tabindex="80">
+                    </td>
+                    <td style="border-right: 1px solid #000000; border-top: 1px solid #000000" align="center">
+                        <input type="text" name="declaramonitorinf" value="{{maquinas.declara_monitor2}}" size="18" style="border:1px solid #333333; font-family: Tahoma; font-size: 10pt" maxlength="20" tabindex="81">
+                    </td>
+                </tr>
+
+            </tbody>
+            <tbody>
+
+            </tbody>
+        </table>
+        <center>
+            <fieldset id="borde2">
+                <button type="button" class="btn btn-info" onclick="window.location.href='{% url 'verinstalacion' maquinas.id %}'">Instalaciones</button>
+                <button type="button" class="btn btn-info" onclick="window.location.href='{% url 'verfallas' maquinas.id %}'">Fallas</button>
+                <!--<button type="submit" class="btn btn-info">Transmisión</button>--!>
+                <button type="button" class="btn btn-info" onclick="window.location.href='{% url 'verremisionmaquina' maquinas.id %}'">Remisiones</button>
+                <p></p>
+                <button onclick="window.print();" class="btn btn-info">Imprimir</button>
+                <button type="submit" class="btn btn-info">Guardar</button>
+                <a href="{% url 'listamaquina' %}" type="button" class="btn btn-info">Cerrar</a>
+            </fieldset>
+        </center>
+    </form>
+    <p></p>
+</center>
+</body>
+</html>

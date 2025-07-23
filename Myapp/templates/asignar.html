@@ -1,91 +1,126 @@
 {% extends 'menuinstalacion.html' %}
 {% load crispy_forms_tags %}
 {% block content%}
-
-
-
-
-  <h1> Asignar Maquinas</h1>
+  <h1> Datos de la Asignación de Maquinas</h1>
   <p></p>
-<form class="row g-3">
+    <form class="row g-3" action="{% url 'guardarinformacion' %}"  method="POST">
+    {% csrf_token %}
       <div class="col-md-6">
         <label for="inputnumero" class="form-label">Numero_ASG:</label>
-        <input type="email" class="form-control" id="inputnumero">
+        <input type="text" class="form-control" id="inputnumero" name="numero" readonly onmousedown="return false;">
       </div>
       <div class="col-md-6">
-        <label for="inputfecharegistro" class="form-label">Fecha registro:</label>
-        <input type="date" class="form-control" id="inputfecharegistro">
+        <label for="fechaActual" class="form-label">Fecha registro:</label>
+        <input type="date" class="form-control" name="fecha_actual" id="fechaActual" required readonly onmousedown="return false;">
+          <script>
+              // Obtener la fecha actual
+              var fechaHoy = new Date();
+
+              // Formatear la fecha como YYYY-MM-DD (formato reconocido por el campo de fecha)
+              var dia = ("0" + fechaHoy.getDate()).slice(-2);
+              var mes = ("0" + (fechaHoy.getMonth() + 1)).slice(-2);
+              var anio = fechaHoy.getFullYear();
+              var fechaFormateada = anio + "-" + mes + "-" + dia;
+
+              // Establecer la fecha formateada como valor predeterminado del campo de fecha
+                document.getElementById("fechaActual").value = fechaFormateada;
+          </script>
       </div>
-      <div class="col-md-12">
-        <label for="inputcliente" class="form-label">Cliente:</label><br>
-            <select class="col-md-12" id="inputcliente" class="form-selec">
-                <option>-------------------------</option>
-                {% for Cliente in clientes %}
-                    <option value="{{Cliente.nombre}}">{{Cliente.nombre}}</option>
-                {% endfor %}
+      <div class="col-md-24">
+         <label for="inputcliente" class="form-label">Cliente:</label>
+            <select id="inputcliente" class="form-select" name="cliente" required>
+                <option value="">Todos los clientes...</option>
+                    {% for Cliente in clientes %}
+                        <option value="{{Cliente.id}}">{{Cliente.nombre}}</option>
+                    {% endfor %}
             </select>
       </div>
-
       <div class="col-md-6">
         <label for="inputfechaasginacion" class="form-label">Fecha asignación:</label>
-        <input type="date" class="form-control" id="inputfechaasginacion" >
+        <input type="date" class="form-control" name="fechaasignacion" id="inputfechaasginacion" required>
       </div>
-      <div class="col-md-4">
+      <!--<div class="col-md-4">
         <label for="modalidad" class="form-label">Modalidad:</label>
-        <select id="modalidad" class="form-select">
-            <option selected>-------------------</option>
-            <option >SOLO PARTICIPACION</option>
-            <option >PARTICIPACION CON OPC COMPRA</option>
-            <option >VENTA CON PARTICIPACION</option>
-            <option >VENTA SIN PARTICIPACION</option>
-            <option >VENTA CON CUOTA FIJA</option>
-            <option >ARRENDAIENTO MENSUAL</option>
+        <select id="modalidad" class="form-select" name="modalidad" required>
+            <option value="">Seleccione---------------</option>
+            <option value="PA">SOLO PARTICIPACION</option>
+            <option value="OC">PARTICIPACION CON OPC COMPRA</option>
+            <option value="VP">VENTA CON PARTICIPACION</option>
+            <option value="VS">VENTA SIN PARTICIPACION</option>
+            <option value="VF">VENTA CON CUOTA FIJA</option>
+            <option value="AR">ARRENDAIENTO MENSUAL</option>
         </select>
-      </div>
+      </div>--!>
+        <div class="col-md-4">
+            <label for="modalidad" class="form-label">Modalidad:</label>
+            <select id="modalidad" class="form-select" name="modalidad" required>
+                <option value="">Seleccione---------------</option>
+                {% for Status in operaciones %}
+                    <option value="{{Status.id}}">{{Status.nombre}}</option>
+                {% endfor %}
+            </select>
+        </div>
       <div class="col-md-6">
         <label for="inputcontacto" class="form-label">Contacto:</label>
-        <input type="text" class="form-control" id="inputcontacto">
+        <input type="text" class="form-control" name="contacto" id="inputcontacto" required>
       </div>
-      <div class="col-md-4">
-        <label for="inputState" class="form-label">Status:</label>
-        <select id="inputState" class="form-select">
-                <option selected>-------------------</option>
-                {% for Asignacione in asignaciones %}
-                    <option value="{{Asignacione.stado}}"> {{Asignacione.stado}} </option>
-                {% endfor %}
-
-
-        </select>
-      </div>
-      <!--<div class="col-md-2">
-        <label for="inputZip" class="form-label">Zip</label>
-        <input type="text" class="form-control" id="inputZip">
-      </div>
-      <div class="col-12">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="gridCheck">
-          <label class="form-check-label" for="gridCheck">
-            Check me out
-          </label>
+        <div class="col-md-4">
+            <label for="inputState" class="form-label">Status:</label>
+            <select id="inputState" class="form-select" name="status" required>
+                <option selected value="">-------------------</option>
+                <option value="1">ABIERTA</option>
+                <option VALUE="2">PRE ASIGNADA</option>
+                <option value="3">ASIGNADA</option>
+                <option value="4">ANULADA</option>
+            </select>
         </div>
-      </div>
-      <div class="col-12">
-        <button type="submit" class="btn btn-primary">Sign in</button>
-      </div>--!>
+
+        <table border="0" width="99%" id="table2" cellspacing="1" cellpadding="0" style="border: 1px solid #000000; padding-left:0; padding-right:0">
+            <tbody><tr>
+                <td bgcolor="#808080" align="center">
+                    <b><font face="Tahoma" size="2" color="#FFFFFF">Maquinas y/o Seriales Incluidos en esta Asignación</font></b></td>
+            </tr>
+            <tr>
+
+            </tr>
+            </tbody>
+        </table>
+      <table class="table table-bordered" style="text-align:center;">
+        <thead>
+            <tr>
+                <!--<th scope="col">ID</th>--!>
+                <th WIDTH="30" scope="col">ID</th>
+                <th WIDTH="100" scope="col"># Serie PMV</th>
+                <th WIDTH="130" scope="col">Modelo</th>
+                <th WIDTH="30" scope="col">Mod. Ope.</th>
+                <th WIDTH="30" scope="col">C/ Res.</th>
+                <th WIDTH="30" scope="col">Liq. Maq.</th>
+                <th WIDTH="30" scope="col">%. Part.</th>
+                <th WIDTH="30" scope="col">Maq. Vta.</th>
+                <th WIDTH="30" scope="col">Sop. Rem.</th>
+                <th WIDTH="30" scope="col">Act. Jueg.</th>
+                <th WIDTH="30" scope="col">Gar. HRW</th>
+                <th WIDTH="60" scope="col">NUC Coljuegos</th>
+                <th WIDTH="150" scope="col">Sala / Punto</th>
+                <th WIDTH="50" scope="col">Opciones</th>
+             </tr>
+        </thead>
+            <tbody>
+            </tbody>
+        </table>
       <p></p>
       <p></p>
       <p></p>
       <p></p>
       <center>
-      <fieldset id="borde2">
-				<input type="button" value="Agregar serie">
-				<input type="button" value="Reporte">
-				<input type="button" value="Imprimir">
-				<input type="submit" value="Guardar">
-				<a href="{% url 'listaasignacion'%}" type="button">Cerrar</a>
-      </fieldset>
-       </center>
+        <fieldset id="borde2">
 
-
-</form>
+                <a type="button" class="btn btn-info">Agregar Serie</a>
+                <a type="button" class="btn btn-info">Reporte</a>
+                <a type="button" class="btn btn-info">Imprimir</a>
+                <button type="submit" class="btn btn-info">Guardar</button>
+                <a href="{% url 'listaasignacion'%}" type="button" class="btn btn-info">Cerrar</a>
+        </fieldset>
+      </center>
+    </form>
 {% endblock%}

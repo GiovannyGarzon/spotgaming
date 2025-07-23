@@ -1,0 +1,172 @@
+{% extends 'menuinstalacion.html' %}
+{% block title %}Ver Retiro de Máquinas{% endblock %}
+{% load crispy_forms_tags %}
+{% block content%}
+<h1> Ver Retiro Maquinas</h1>
+<p></p>
+<form class="row g-3" action="{% url 'formeditarretiro' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" class="form-control" id="inpuitid" name="id" value="{{retiros.id}}" readonly>
+    <div class="col-md-6">
+        <label for="inputnumero" class="form-label">Numero_RTO:</label>
+        <input type="text" class="form-control" id="inputnumero" name="numero" value="RET-000{{retiros.id}}" readonly>
+    </div>
+    <div class="col-md-6">
+        <label for="inputfecharegistroedicion" class="form-label">Fecha registro:</label>
+        <input type="text" class="form-control" name="fecharegistroedicion" id="inputfecharegistroedicion"
+               value="{{retiros.fecha|date:'Y-m-d' }}" readonly>
+    </div>
+    <div class="col-md-6">
+        <label for="inputclienteeditar" class="form-label">Cliente:</label>
+        <input type="text" class="form-control" id="inputclienteeditar" value="{{retiros.clientes.nombre}}" readonly>
+        <input type="hidden" class="form-control" id="inputclienteoculto" name="clienteoculto" value="{{retiros.clientes}}" readonly>
+    </div>
+
+    <div class="col-md-6">
+        <label for="inputfecharetiro" class="form-label">Fecha retiro:</label>
+        <input type="date" class="form-control" id="inputfecharetiro" name="fecharetiro" value="{% if retiros.fecha_retiro %}{{ retiros.fecha_retiro|date:'Y-m-d' }}{% endif %}" >
+    </div>
+    <div class="col-md-6">
+        <label for="inputcontacto" class="form-label">Contacto:</label>
+        <input type="text" class="form-control" id="inputcontacto" name="contacto" value="{{retiros.contacto}}" readonly>
+    </div>
+    <div class="col-md-6">
+        <label for="inputfechaingreso" class="form-label">Fecha recibido bodega:</label>
+        <input type="date" class="form-control" id="inputfechaingreso" name="fecharecibidobodega" value="{% if retiros.fecha_recibido %}{{ retiros.fecha_recibido }}{% endif %}" required>
+    </div>
+    <div class="col-md-6">
+        <label for="inputrecibidopor" class="form-label">Recibido por:</label>
+        <input type="text" class="form-control" id="inputrecibidopor" name="recibidopor" value="{{retiros.recibido}}" readonly>
+    </div>
+    <div class="col-md-6">
+        <label for="inputfechaums" class="form-label">Fecha procesado UMS:</label>
+        <input type="date" class="form-control" id="inputfechaums" name="fechaums" value="{% if retiros.fecha_traslado %}{{ retiros.fecha_traslado }}{% endif %}" readonly>
+    </div>
+    <div class="col-md-6">
+        <label for="inputconductor" class="form-label">Conductor:</label>
+        <input type="text" class="form-control" id="inputconductor" name="conductor" value="{{retiros.conductor}}" readonly>
+    </div>
+    <div class="col-md-6">
+        <label for="inputguia" class="form-label">Guia de envio:</label>
+        <input type="text" class="form-control" id="inputguia" name="guia" value="{{retiros.guia}}" readonly>
+    </div>
+    <div class="col-md-6">
+        <label for="inputplaca" class="form-label">Placa:</label>
+        <input type="text" class="form-control" id="inputplaca" name="placa" value="{{retiros.placa}}" readonly>
+    </div>
+    <div class="col-md-4">
+        <label for="inputformatransporte" class="form-label">Forma de envío:</label>
+        <select id="inputformatransporte" class="form-select" name="formaenvio" readonly>
+            <option value="" {% if not retiros.transporte %}selected{% endif %}>-- Ninguno --</option>
+            {% for trasporte_options in trasporte_options %}
+            <option value="{{trasporte_options.id}}" {% if trasporte_options.id == retiros.transporte.id %}selected{% endif %}> {{trasporte_options.nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-6">
+        <label for="inputumsresponsable" class="form-label">UMS Responsable:</label>
+        <input type="text" class="form-control" name="umsresponsable" id="inputumsresponsable" value="{{ retiros.ums_responsable }}" readonly>
+    </div>
+    <div class="col-md-4">
+        <label for="inputstatus" class="form-label">Status:</label>
+        <select id="inputstatus" class="form-select" name="statusretirovisible" readonly>
+            {% for status_option in status_options %}
+            <option value="{{ status_option.id }}" {% if status_option.id == retiros.id_status.id %}selected{% endif %}>
+                {{ status_option.nombre }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    <p></p>
+    <p></p>
+    <table class="table table-bordered" id="retiros" style="text-align:center;">
+        <thead>
+        <tr>
+            <th>Sala</th>
+            <th>Número de Serie</th>
+            <th>IGG</th>
+            <th>Posición</th>
+            <th>UMS</th>
+            <th>Fecha retiro</th>
+            <th>Opciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for serial in seriales_relacionados %}
+        <tr>
+            <td>{{ serial.sala.nombre }}</td>
+            <td>{{ serial.maquina.serie_PMV }}</td>
+            <td>{{ serial.igg }}</td>
+            <td>{{ serial.posicion }}</td>
+            <td>{% if serial.ums == "on" %}X
+                {% endif %}</td>
+            <td>{{ serial.fecha }}</td>
+            <td><a type="button" class="btn btn-danger open-edit-modal"
+                   data-retiro-id="{{ retiros.id }}"
+                   data-serial-id="{{ movimientos.maquina.id }}"
+                   data-cliente="{{ serial.cliente.id }}"
+                   data-sala="{{ serial.sala.id }}"
+                   data-inspired="{{ serial.maquina.id_inspired }}"
+                   data-posicion="{{ serial.maquina.id_posicion }}"
+                   data-ums="{{ serial.ums }}"
+            >Editar</a> / <button type="button" class="btn btn-danger">Ver</button></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <p></p>
+    <p></p>
+    <center>
+        <fieldset id="borde2">
+            <button type="button" class="btn btn-info" id="openModalButton" data-retiro-id="{{ retiros.id }}">Agregar serie</button>
+            <!--<button type="button" class="btn btn-info" id="openModalButton" data-retiro-id="{{ retiros.id }}">Agregar serie</button>--!>
+            <input type="button" class="btn btn-info" value="Reporte">
+            <input type="button" class="btn btn-info" value="Imprimir">
+            <button type="submit" class="btn btn-info">Guardar</button>
+            <a href="{% url 'listaretiros' %}" type="button" class="btn btn-info" >Cerrar</a>
+        </fieldset>
+    </center>
+</form>
+<script>
+    // pantalla emergente
+           document.getElementById('openModalButton').addEventListener('click', function() {
+
+           // Obtener el id del retiro desde el atributo data
+            var retiroId = this.getAttribute('data-retiro-id');
+
+            console.log('ID del retiro:', retiroId);
+
+          // Especifica la URL que deseas abrir en la ventana emergente
+          //var url = '/retiroserial/' + retiroId + '/';
+          var url = '/retiroserial/?retiro_id=' + retiroId;
+
+          // Abre la URL en una nueva ventana con las dimensiones deseadas
+          var popup = window.open(url, 'RetiroSerial', 'width=600,height=700');
+
+          // Puede ser til darle el foco a la nueva ventana emergente
+          if (popup) {
+            popup.focus();
+          }
+        });
+
+        document.querySelectorAll('.open-edit-modal').forEach(function(button) {
+        button.addEventListener('click', function() {
+            var retiroId = this.getAttribute('data-retiro-id');
+            var serialId = this.getAttribute('data-serial-id');
+            var cliente = this.getAttribute('data-cliente');
+            var sala = this.getAttribute('data-sala');
+            var inspired = this.getAttribute('data-inspired');
+            var posicion = this.getAttribute('data-posicion');
+            var ums = this.getAttribute('data-ums');
+
+            // Construye la URL para la ventana emergente y pasa los datos como parámetros
+            var url = '/editarretiroserial/?retiro_id=' + retiroId + '&serial_id=' + serialId + '&cliente=' + cliente + '&sala=' + sala + '&inspired=' + inspired + '&posicion=' + posicion + '&ums=' + ums;
+
+            var popup = window.open(url, 'editarretiroserial', 'width=600,height=700');
+            if (popup) {
+                popup.focus();
+            }
+            });
+        });
+</script>
+{% endblock%}

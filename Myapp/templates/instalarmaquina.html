@@ -1,10 +1,143 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'menuinstalacion.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content%}
+<!-- Creamos formulario para asignar los seriales uno por uno--!>
+
+
+    <h1>   Asignación de Codigos IGG a una Serie </h1>
+<p></p>
+<!-- Creamos formulario para asignar los seriales uno por uno--!>
+
+    <p></p>
+<form class="row g-3">
+
+    <div class="col-md-4">
+        <label for="inputseriepmv" class="form-label"># Serie PMV a Asignar:</label>
+        <input type="text" class="form-control" id="inputseriepmv">
+    </div>
+    <div class="col-md-4">si
+        <label for="inputcodigo" class="form-label">Codigo Maquina:</label>
+        <input type="date" class="form-control" id="inputcodigo">
+    </div>
+    <div class="col-md-4">
+        <label for="inputfactura" class="form-label">Factura PMV:</label>
+        <input type="text" class="form-control" id="inputfactura">
+    </div>
+    <table border="0" width="99%" id="table2" cellspacing="1" cellpadding="0" style="border: 1px solid #000000; padding-left:0; padding-right:0">
+        <tbody><tr>
+            <td bgcolor="#808080" align="center">
+                <b><font face="Tahoma" size="2" color="#FFFFFF">Datos de esta Asignación</font></b></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="col-md-24">
+        <label for="inputclienteasignado" class="form-label">Cliente Asignado:</label>
+        <input type="text" class="form-control" id="inputclienteasignado">
+    </div>
+    <div class="col-md-4">
+        <label for="inputmodopera" class="form-label">Sala / Punto Asignado:</label>
+        <input type="text" class="form-control" id="inputmodopera" readonly onmousedown="return false;">
+    </div>
+    <div class="col-md-4">
+        <label for="inputidinspired" class="form-label">ID Inspired:</label>
+        <input type="text" class="form-control" id="inputidinspired" >
+    </div>
+    <div class="col-md-4">
+        <label for="inputfechainstalacion" class="form-label">Fecha Instalación:</label>
+        <input type="text" class="form-control" id="inputfechainstalacion" >
+    </div>
+    <div class="col-md-4">
+        <label for="inputmaqvendida" class="form-label" ></label><br>
+        <input type="checkbox" id="inputmaqvendida" value="maquinavendida"> Maquina es Vendida:
+    </div>
+    <div class="col-md-4">
+        <label for="inputinternet" class="form-label" ></label><br>
+        <input type="checkbox" id="inputinternet" value="maquinaconectada"> Conexión a Internet:
+    </div>
+    <div class="col-md-4">
+        <label for="inputoperacion" class="form-label" ></label><br>
+        <input type="checkbox" id="inputoperacion" value="maquinaoperacion"> Maquina en Operación:
+    </div>
+    <div class="col-md-4">
+        <label for="inputUMS" class="form-label" ></label><br>
+        <input type="checkbox" id="inputUMS" value="maquinaUMS"> UMS Procesado:
+    </div>
+    <table border="0" width="99%" id="table2" cellspacing="1" cellpadding="0" style="border: 1px solid #000000; padding-left:0; padding-right:0">
+        <tbody><tr>
+            <td bgcolor="#808080" align="center">
+                <b><font face="Tahoma" size="2" color="#FFFFFF">Modalidad de Conttrato</font></b></td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="col-md-3">
+    <label for="inputParticipación" class="form-label"> Tipo Participación:</label>
+            <select id="inputParticipación" class="form-select">
+                <option>VENCIMIENTO</option>
+                <option>INDEFINIDA</option>
+                <option>NO TIENE</option>
+            </select>
+     </div>
+    <div class="col-md-3">
+         <label for="inputtiposoporte" class="form-label"> Tipo Soporte Remoto:</label>
+            <select id="inputtiposoporte" class="form-select">
+                <option>VENCIMIENTO</option>
+                <option>INDEFINIDA</option>
+                <option>NO TIENE</option>
+            </select>
+    </div>
+    <div class="col-md-3">
+         <label for="inputgarantia" class="form-label"> Tipo Garantía Hardware:</label>
+            <select id="inputgarantia" class="form-select">
+                <option>VENCIMIENTO</option>
+                <option>INDEFINIDA</option>
+                <option>NO TIENE</option>
+            </select>
+    </div>
+    <div class="col-md-3">
+         <label for="inputactualizacion" class="form-label"> Tipo Actualización:</label>
+            <select id="inputactualizacion" class="form-select">
+                <option>VENCIMIENTO</option>
+                <option>INDEFINIDA</option>
+                <option>NO TIENE</option>
+            </select>
+    </div>
+    <div class="col-md-3">
+        <label for="inputtiempoparti" class="form-label">Tiempo:</label>
+        <input type="text" class="form-control" id="inputtiempoparti" >
+        <label>(Meses)</label>
+    </div>
+    <div class="col-md-3">
+        <label for="inputtiemposopor" class="form-label">Tiempo:</label>
+        <input type="text" class="form-control" id="inputtiemposopor" >
+        <label>(Meses)</label>
+    </div>
+    <div class="col-md-3">
+        <label for="inputtiempogaran" class="form-label">Tiempo:</label>
+        <input type="text" class="form-control" id="inputtiempogaran" >
+        <label>(Meses)</label>
+    </div>
+    <div class="col-md-3">
+        <label for="inputtiempoactuali" class="form-label">Tiempo:</label>
+        <input type="text" class="form-control" id="inputtiempoactuali" >
+        <label>(Meses)</label>
+    </div>
+    <div class="col-md-6">
+        <label for="input%parti" class="form-label">% Participación:</label>
+        <input type="text" class="form-control" id="input%parti" value="0.00">
+    </div>
+
+    <p></p>
+    <p></p>
+    <p></p>
+    <center>
+        <fieldset id="borde2" >
+                <a type="button" class="btn btn-info">Imprimir</a>
+                <button type="submit" class="btn btn-info">Guardar</button>
+                <a href="{% url 'instalar'%}" type="button" class="btn btn-info">Cerrar</a>
+        </fieldset>
+      </center>
+</form>
+
+{% endblock%}

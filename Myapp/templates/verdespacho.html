@@ -1,0 +1,215 @@
+{% extends 'menuinstalacion.html' %}
+
+{% block content%}
+  <p></p>
+  <h1> Despachar Maquinas</h1>
+  <p></p>
+
+{% if messages %}
+<div class="alert alert-success">
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+    <form class="row g-3" action="{% url 'guardardespacho' %}"  method="POST">
+        {% csrf_token %}
+        <input type="hidden" class="form-control" name="fechaasignacion" id="inputfechaasginacion" readonly onmousedown="return false;" value="{{asignacion.fecha_asignacion|date:"Y-m-d"}}" required>
+        <input type="hidden" class="form-control" name="fechacodigos" id="inputfechacodigo" readonly onmousedown="return false;" value="{{asignacion.fecha_codigos|date:"Y-m-d"}}" required>
+        <input type="hidden" class="form-control" name="modalidad" id="inputmodalidadoculata" value="{{asignacion.operacion.id}}" readonly onmousedown="return false;">
+
+      <div class="col-md-6">
+        <label for="inputnumero" class="form-label">Numero_ASG:</label>
+        <input type="texto" class="form-control"  value="ASG00-{{asignacion.id}}" readonly onmousedown="return false;">
+        <input type="hidden" class="form-control" id="inputnumero" name="numero"   value="{{asignacion.id}}" readonly onmousedown="return false;">
+      </div>
+      <div class="col-md-6">
+        <label for="inputfecharegistro" class="form-label">Fecha registro:</label>
+          <p><input type="date" class="form-control"  name="fecharegistro" id="inputfecharegistro" readonly onmousedown="return false;" value="{{asignacion.fecha|date:"Y-m-d" }}"></p>
+      </div>
+      <div class="col-6">
+        <label for="inputcliente" class="form-label">Cliente:</label>
+        <input type="text" class="form-control" id="inputcliente" value="{{asignacion.clientes.nombre}}" readonly onmousedown="return false;">
+          <input type="hidden" class="form-control" id="inputclienteoculto" name="cliente" value="{{asignacion.clientes}}" >
+      </div>
+		<div class="col-md-6">
+        <label for="inputfechadespacho" class="form-label">Fecha despacho:</label>
+        <input type="date" class="form-control" id="inputfechadespacho" name="fechadespacho" readonly onmousedown="return false;" value="{{asignacion.fecha_despacho|date:"Y-m-d"}}">
+      </div>
+		<div class="col-md-4">
+        <label for="inputcontacto" class="form-label">Contacto:</label>
+        <input type="text" class="form-control" id="inputcontacto" name="contacto" readonly onmousedown="return false;" value="{{asignacion.contacto}}">
+      </div>
+        <div class="col-md-8">
+        <label for="inputdireccion" class="form-label">Dirección de envio:</label>
+        <input type="text" class="form-control" id="inputdireccion" name="direccion" readonly onmousedown="return false;" value="{{asignacion.direccion}}">
+      </div>
+      <div class="col-md-4">
+        <label for="inputconductor" class="form-label">Conductor:</label>
+        <input type="text" class="form-control" id="inputconductor" name="conductor" readonly onmousedown="return false;" value="{{asignacion.conductor}}">
+      </div>
+        <div class="col-md-4">
+            <label for="inputformaenvio" class="form-label">Forma de envío:</label>
+            <select id="inputformaenvio" class="form-select" name="transporte" readonly onmousedown="return false;">
+                <option value="">Seleccione...</option>
+                {% if asignacion.transporte %}
+                <option value="{{ asignacion.transporte.id }}" selected>{{ asignacion.transporte.nombre }}</option>
+                {% endif %}
+                {% for Transporte in transportes %}
+                {% if not asignacion.transporte or Transporte.id != asignacion.transporte.id %}
+                <option value="{{ Transporte.id }}">{{ Transporte.nombre }}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+		<div class="col-md-4">
+        <label for="inputplaca" class="form-label">Placa carro:</label>
+        <input type="text" class="form-control" id="inputplaca" name="placa" value="{{asignacion.placa}}" readonly onmousedown="return false;">
+      </div>
+		<div class="col-md-6">
+        <label for="inputguia" class="form-label"># Guia de Envío:</label>
+        <input type="text" class="form-control" id="inputguia" name="guia" value="{{asignacion.guia}}" readonly onmousedown="return false;">
+      </div>
+      <div class="col-md-4">
+            <label for="inputState" class="form-label">Status:</label>
+            <select id="inputState" class="form-select" name="status" readonly onmousedown="return false;">
+                <option value="">-------------------</option>
+                {% for StatusAsignacion in asignaciones %}
+                    <option value="{{ StatusAsignacion.id }}" {% if StatusAsignacion.id == asignacion.stado.id %} selected {% endif %}>
+                        {{ StatusAsignacion.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+      </div>
+      <!--<div class="col-md-2">
+        <label for="inputZip" class="form-label">Zip</label>
+        <input type="text" class="form-control" id="inputZip">
+      </div>
+      <div class="col-12">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="gridCheck">
+          <label class="form-check-label" for="gridCheck">
+            Check me out
+          </label>
+        </div>
+      </div>
+      <div class="col-12">
+        <button type="submit" class="btn btn-primary">Sign in</button>
+      </div>--!>
+    <table border="0" width="900px" id="table2" cellspacing="1" cellpadding="0" style="border: 1px solid #000000; padding-left: 0; padding-right: 0">
+            <tbody><tr>
+                <td bgcolor="#808080" align="center">
+                    <b><font face="Tahoma" size="2" color="#FFFFFF">Maquinas y/o Seriales Incluidos en esta Solicitud de Conectividad</font></b></td>
+            </tr>
+            </tbody>
+    </table>
+    <fieldset style="border:2px solid black">
+      <table class="table table-bordered" style="text-align:center;">
+        <thead>
+            <tr>
+                <th WIDTH="30" scope="col">ID</th>
+                <th WIDTH="80" scope="col"># Serie PMV</th>
+                <th WIDTH="100" scope="col">Modelo</th>
+                <th WIDTH="30" scope="col">Fecha Prod.</th>
+                <th WIDTH="30" scope="col">ID Inspired</th>
+                <th WIDTH="20" scope="col">Despacho</th>
+                <th WIDTH="140" scope="col">Sala / Punto</th>
+                <th WIDTH="50" scope="col">Opciones</th>
+             </tr>
+        </thead>
+            <tbody>
+            {% for Seriales in seriales %}
+                <tr>
+                    <td>{{Seriales.id}}</td>
+                    <td>{{Seriales.serie_pmv.serie_PMV}}</td>
+                    <td>{{Seriales.serie_pmv.familia}}</td>
+                    <td></td>
+                    <td>{{Seriales.id_inspired}} / {{Seriales.id_posicion}}</td>
+                    <td>{% if Seriales.despacho == 1 %}x{% endif %}</td>
+                    <td>{{Seriales.id_sala.nombre}}</td>
+                    <td>
+                        <a href="{% url 'verserialdespacho' Seriales.id_asignacion Seriales.id %}" class="btn btn-info btn-sm">
+                        <i class="fas fa-eye"></i></a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </fieldset>
+      <p></p>
+      <p></p>
+         <div class="col-md-12">
+            <label for="inputobservacion" class="form-label">Observación:</label>
+            <textarea class="form-control" id="inputobservacion" name="observacion" rows="4" readonly onmousedown="return false;">{{ remision.observacion }}</textarea>
+         </div>
+        <div class="col-md-12">
+            <div class="row">
+                <!-- Campo Firma Cliente -->
+                <div class="col-md-6 text-center">
+                    <label for="firma_cliente" style="display: block; font-weight: bold;">Firma Cliente</label>
+                    <div id="firma_cliente" style="border: 1px solid black; height: 50px; margin-top: 10px;"></div>
+                </div>
+                <!-- Campo Firma SPOTGAMING -->
+                <div class="col-md-6 text-center">
+                    <label for="firma_spotgaming" style="display: block; font-weight: bold;">Firma SPOTGAMING</label>
+                    <div id="firma_spotgaming" style="border: 1px solid black; height: 50px; margin-top: 10px;"></div>
+                </div>
+            </div>
+        </div>
+        <P></P>
+        <center>
+			<fieldset id="borde2">
+				<a href="{% url 'generar_pdf' asignacion.id %}" class="btn btn-info">Remisión</a>
+				<button type="button" id="btnImprimir" class="btn btn-info">Imprimir</button>
+				<button type="submit" class="btn btn-info" value="Guardar">Guardar</button>
+				<a href="{% url 'listaremisiones' %}" class="btn btn-info">Cerrar</a>
+			</fieldset>
+        </center>
+        <P></P>
+	</form>
+
+	</body>
+
+</html>
+<style>
+    @media print {
+        /* Estilos para la tabla */
+        table th, table td {
+            font-size: 8px; /* Tamaño de fuente más pequeño */
+            padding: 4px; /* Reducir padding */
+        }
+
+        /* Ajustar la página para impresión */
+        @page {
+            size: A0 landscape; /* Asegura que la página sea más ancha si es necesario */
+            margin: 10mm; /* Márgenes más pequeños */
+        }
+
+        /* Asegura que la tabla no se desborde */
+        table {
+            width: 100%; /* Tabla con ancho del 100% */
+            table-layout: fixed; /* Hace que las celdas tengan un ancho fijo */
+        }
+
+        /* Hacer los botones más pequeños */
+        .btn {
+            font-size: 8px; /* Tamaño de fuente más pequeño para botones */
+            padding: 4px 8px; /* Reducción de padding para botones */
+        }
+
+        /* Ocultar elementos no deseados en la impresión */
+        .no-print {
+            display: none;
+        }
+    }
+</style>
+
+<script>
+    document.getElementById('btnImprimir').addEventListener('click', function(event) {
+        event.preventDefault();  // Esto previene el envío del formulario
+        window.print();  // Llama a la función de impresión
+    });
+</script>
+{% endblock%}

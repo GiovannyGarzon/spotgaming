@@ -1,10 +1,125 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'menuauditoria.html' %}
+{% load crispy_forms_tags %}
+{% load humanize %}
+{% load custom_filters %}
+{% block content%}
+<p>ResumenCarga</p>
+<h1>   Resumen de Carga Diaria </h1>
+<p></p>
+
+<form class="row g-3">
+    <div class="col-md-2">
+            <label for="inputmes1" class="form-label">Mes:</label>
+            <select id="inputmes1" class="form-select" name="mes">
+                <option value="01" {% if current_month == 1 %}selected{% endif %}>Enero</option>
+                <option value="02" {% if current_month == 2 %}selected{% endif %}>Febrero</option>
+                <option value="03" {% if current_month == 3 %}selected{% endif %}>Marzo</option>
+                <option value="04" {% if current_month == 4 %}selected{% endif %}>Abril</option>
+                <option value="05" {% if current_month == 5 %}selected{% endif %}>Mayo</option>
+                <option value="06" {% if current_month == 6 %}selected{% endif %}>Junio</option>
+                <option value="07" {% if current_month == 7 %}selected{% endif %}>Julio</option>
+                <option value="08" {% if current_month == 8 %}selected{% endif %}>Agosto</option>
+                <option value="09" {% if current_month == 9 %}selected{% endif %}>Septiembre</option>
+                <option value="10" {% if current_month == 10 %}selected{% endif %}>Octubre</option>
+                <option value="11" {% if current_month == 11 %}selected{% endif %}>Noviembre</option>
+                <option value="12" {% if current_month == 12 %}selected{% endif %}>Diciembre</option>
+            </select>
+    </div>
+    <div class="col-md-4">
+        <label for="inputdelafecha" class="form-label">De la Fecha:</label>
+        <input type="date" class="form-control" id="inputdelafecha">
+    </div>
+    <p></p>
+    <div class="col-md-2">
+        <label for="inputanio" class="form-label">Año:</label>
+        <select id="inputanio" class="form-select" name="anio">
+            {% for year in years %}
+                <option value="{{ year }}" {% if year|stringformat:"s" == selected_year %}selected{% endif %}>{{ year }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label for="inputhastalafecha" class="form-label">Hasta la Fecha:</label>
+        <input type="date" class="form-control" id="inputhastalafecha">
+    </div>
+    <div class="col-md-4">
+        <label for="inputtipo" class="form-label">Tipo:</label>
+        <select id="inputtipo" class="form-select" name="tipo">
+            <option value="">Todos los tipos...</option>
+            <option>TOTAL X MAQUINAS</option>
+            <option>TOTAL X JUEGOS</option>
+        </select>
+    </div>
+
+    <fieldset id="borde2">
+        <button type="button" class="btn btn-danger">Filtrar</button>
+        <button type="button" class="btn btn-danger">Todos</button>
+    </fieldset>
+    <center>
+        <h2> Lista de Cargas Procesadas</h2>
+    </center>
+    <fieldset style="border:2px solid black">
+    <style type="text/css">
+          td, th{padding: 10px;}
+          th{
+            text-align: center;
+                font-size: 15px;
+            }
+            td{
+                font-size:80%;
+            }
+    </style>
+    <table class="table table-bordered" style="text-align:center;">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Tipo</th>
+            <th scope="col">Fecha Carga</th>
+            <th scope="col">Met</th>
+            <th scope="col">Dato</th>
+            <th scope="col"># Maq.</th>
+            <th scope="col"># Registros</th>
+            <th scope="col">$ Coin In</th>
+            <th scope="col">$ CoinOut</th>
+            <th scope="col">$ HandPay</th>
+            <th scope="col">$ JackPot</th>
+            <th scope="col">$ Bills</th>
+            <th scope="col"># Plays</th>
+            <th scope="col">$ Neto</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for CargaDiaria in listacargas %}
+        <tr>
+            <td width="5%" align="center" >{{CargaDiaria.id}}</td>
+            <td>{{CargaDiaria.tipo}}</td>
+            <td>{{CargaDiaria.fecha|date:"Y-m-d"}}</td>
+            <td>{{CargaDiaria.metodo}}</td>
+            <td>DB<br>TXT<br>MES</td>
+            <td>{{CargaDiaria.maquinasdb}}<br>{{CargaDiaria.maquinatxt}}<br>{{CargaDiaria.maquinames}}</td>
+            <td></td>
+            <td>{{CargaDiaria.coinindb|custom_intcomma}}<br>{{CargaDiaria.coinintxt|floatformat:0|intcomma}}<br>{{CargaDiaria.coininmes|floatformat:0|intcomma}}</td>
+            <td>{{CargaDiaria.coinoutdb|custom_intcomma}}<br>{{CargaDiaria.coinoutxt|custom_intcomma}}<br>{{CargaDiaria.coinoutmes|custom_intcomma}}</td>
+            <td>{{CargaDiaria.handpaydb|custom_intcomma}}<br>{{CargaDiaria.handpaytxt|custom_intcomma}}<br>{{CargaDiaria.handpaymes|custom_intcomma}}</td>
+            <td>{{CargaDiaria.jackpotdb|custom_intcomma}}<br>{{CargaDiaria.jackpottxt|custom_intcomma}}<br>{{CargaDiaria.jackpotmes|custom_intcomma}}</td>
+            <td>{{CargaDiaria.billsdb|custom_intcomma}}<br>{{CargaDiaria.billstxt|custom_intcomma}}<br>{{CargaDiaria.billsmes|custom_intcomma}}</td>
+            <td>{{CargaDiaria.playsdb|custom_intcomma}}<br>{{CargaDiaria.playstxt|custom_intcomma}}<br>{{CargaDiaria.playsmes|custom_intcomma}}</td>
+            <td>{{CargaDiaria.netodb|custom_intcomma}}<br>{{CargaDiaria.netotxt|custom_intcomma}}<br>{{CargaDiaria.netomes|custom_intcomma}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </fieldset>
+    <p>
+
+
+
+    </p>
+    <center>
+    <fieldset id="borde3">
+        <button type="button" class="btn btn-primary">Imprimir</button>
+        <a href="{% url 'menuauditoria'%}" type="button" class="btn btn-primary">Cerrar</a>
+    </fieldset>
+    </center>
+</form>
+{% endblock %}

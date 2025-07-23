@@ -1,0 +1,163 @@
+{% extends 'menuservicios.html' %}
+{% block title %}Conectividad{% endblock %}
+{% load crispy_forms_tags %}
+{% load custom_filters %}
+{% block content %}
+<fieldset id="borde" xmlns="http://www.w3.org/1999/html">
+    <h5>  Máquinas Sin Transmitir Recaudo Diario </h5>
+</fieldset>
+<br>
+<style>
+    .pfo1 {background-color: red; width: 15px; height: 15px;}
+    .pfo2 {background-color: green; width: 15px; height: 15px;}
+    .pfo3 {background-color: aqua; width: 15px; height: 15px;}
+    .pfo4 {background-color: gold; width: 15px; height: 15px;}
+    .pfo5 {background-color: sienna; width: 15px; height: 15px;}
+    .pfo6 {background-color: darkmagenta; width: 15px; height: 15px;}
+    .pfo7 {background-color: darkblue; width: 15px; height: 15px;}
+
+    form#transmision label,
+    form#transmision select,
+    form#transmision input {
+        font-size: 12px;
+    }
+    form#transmision .form-select,
+    form#transmision .form-control {
+        padding: 5px;
+        font-size: 12px;
+    }
+
+</style>
+
+<form id="transmision" name="transmision" class="row g-3" method="GET">
+    <div class="col-md-3">
+        <label for="cliente" class="form-label">Cliente</label>
+        <select id="cliente" name="cliente" class="form-select">
+            <option value="">Todos</option>
+            {% for cliente in clientes %}
+                <option value="{{ cliente.id }}" {% if request.GET.cliente == cliente.id|stringformat:"s" %}selected{% endif %}>
+                    {{ cliente.nombre }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <label for="sala" class="form-label">Sala</label>
+        <select id="sala" name="sala" class="form-select">
+            <option value="">Todas</option>
+            {% for sala in salas %}
+                <option value="{{ sala.id }}" {% if request.GET.sala == sala.id|stringformat:"s" %}selected{% endif %}>
+                    {{ sala.nombre }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <label for="status" class="form-label">Status</label>
+        <select id="status" name="status" class="form-select">
+            <option value="">Todos</option>
+            {% for TipoOperacion in listastatus %}
+                <option value="{{ TipoOperacion.id }}" {% if request.GET.status == TipoOperacion.id|stringformat:"s" %}selected{% endif %}>
+                    {{ TipoOperacion.nombre }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <label for="maquina" class="form-label">Máquina</label>
+        <select id="maquina" name="maquina" class="form-select">
+            <option value="">Todas</option>
+            {% for maquina in maquinas %}
+                <option value="{{ maquina.id }}" {% if request.GET.maquina == maquina.id|stringformat:"s" %}selected{% endif %}>
+                    {{ maquina.id_codigo }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <label for="mes" class="form-label">Mes</label>
+        <select id="mes" name="mes" class="form-select">
+            {% for num, nombre in meses %}
+                <option value="{{ num }}" {% if request.GET.mes|default:hoy.month == num %}selected{% endif %}>
+                    {{ nombre }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <label for="anio" class="form-label">Año</label>
+        <select id="anio" name="anio" class="form-select">
+            {% for year in anios %}
+                <option value="{{ year }}" {% if request.GET.anio|default:hoy.year == year %}selected{% endif %}>
+                    {{ year }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-2 align-self-end">
+        <button type="submit" class="btn btn-primary">Filtrar</button>
+        <a href="{% url 'conectividad'%}" type="reset" class="btn btn-secondary">Borrar Filtros</a>
+    </div>
+</form>
+<h5>Reporte de transmisión por día:</h5>
+<table class="table"  style="width: 100%">
+    <thead>
+        <tr>
+            <th>Cliente</th>
+            <th>Sala</th>
+            <th>Máquina</th>
+            <th width="140">Serial PMV</th>
+            <th>Inspired</th>
+            {% for day in days_in_month %}
+                <th>{{ day }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for cliente_data in conectividad %}
+            {% for sala_data in cliente_data.salas %}
+                {% for maquina_data in sala_data.maquinas %}
+                    <tr>
+                        {% if sala_data.sala_index == 0 and maquina_data.maquina_index == 0 %}
+                            <td rowspan="{{ cliente_data.total_maquinas }}" style="font-size: 10px; font-weight: bold;">
+                                {{ cliente_data.cliente.nombre }}
+                            </td>
+                        {% endif %}
+
+                        {% if maquina_data.maquina_index == 0 %}
+                            <td rowspan="{{ sala_data.maquinas|length }}" style="font-size: 10px; font-weight: bold;">
+                                {{ sala_data.sala.nombre }}
+                            </td>
+                        {% endif %}
+
+                        <td style="font-size: 10px;">{{ maquina_data.maquina.id_codigo }}</td>
+                        <td style="font-size: 9px;">{{ maquina_data.maquina.serie_PMV }}</td>
+                        <td style="font-size: 10px;">{{ maquina_data.maquina.id_inspired }} / {{ maquina_data.maquina.id_posicion }}</td>
+
+                        {% for dia in maquina_data.dias %}
+                            <td style="font-size: 14px; font-weight: bold;">
+                                {% if dia.fecha < hoy %}
+                                    {% if dia.transmitio %}
+                                        <span style="color: green;">X</span>
+                                    {% else %}
+                                        <span style="color: red;">X</span>
+                                    {% endif %}
+                                {% else %}
+                                    <span style="color: transparent;">X</span>
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

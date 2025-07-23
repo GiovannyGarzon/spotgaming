@@ -1,0 +1,189 @@
+{% extends 'menuservicios.html' %}
+{% load crispy_forms_tags %}
+{% load custom_filters %}.
+{% block content%}
+<fieldset id="borde" xmlns="http://www.w3.org/1999/html">
+    <h5> Facturaciones Mensuales </h5>
+</fieldset>
+<br>
+<style>
+    form transmision {
+      /* Centrar el formulario en la página */
+      margin: 0 auto;
+      width: 1350px;
+      /* Esquema del formulario */
+      padding: 1em;
+      border: 1px solid #CCC;
+      border-radius: 1em;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    form li + li {
+      margin-top: 1em;
+    }
+    input,
+    textarea {
+      /* Para asegurarse de que todos los campos de texto tienen la misma configuración de letra
+         Por defecto, las áreas de texto tienen un tipo de letra monoespaciada */
+      font: 1em sans-serif;
+
+      /* Tamaño uniforme del campo de texto */
+      width: 300px;
+      box-sizing: border-box;
+
+      /* Hacer coincidir los bordes del campo del formulario */
+      border: 1px solid #999;
+    }
+    input:focus,
+    textarea:focus {
+      /* Destacado adicional para elementos que tienen el cursor */
+      border-color: #000;
+    }
+    textarea {
+      /* Alinear los campos de texto multilínea con sus etiquetas */
+      vertical-align: top;
+      /* Proporcionar espacio para escribir texto */
+      height: 5em;
+    }
+    .button {
+      /* Alinear los botones con los campos de texto */
+      padding-left: 90px; /* mismo tamaño que los elementos de la etiqueta */
+    }
+    button {
+      /* Este margen adicional representa aproximadamente el mismo espacio que el espacio
+         entre las etiquetas y sus campos de texto */
+      margin-left: .5em;
+    }
+    .pfo1 {background-color: red;
+        width: 15px;
+        height: 15px;
+    }
+    .pfo2 {background-color: green;
+        width: 15px;
+        height: 15px;
+    }
+    .pfo3 {background-color: aqua;
+        width: 15px;
+        height: 15px;
+    }
+    .pfo4 {background-color: gold;
+        width: 15px;
+        height: 15px;
+    }
+    .pfo5 {background-color: sienna;
+        width: 15px;
+        height: 15px;
+    }
+    .pfo6 {background-color: darkmagenta;
+        width: 15px;
+        height: 15px;
+    }
+    .pfo7 {background-color: darkblue;
+        width: 15px;
+        height: 15px;
+    }
+</style>
+<form for="s" class="row g-3">
+    <div class="col-md-4">
+        <label for="inputcliente" class="form-label">Cliente:</label>
+        <select id="inputcliente" class="form-select">
+            <option value="">Todos los Clientes...</option>
+            {% for Cliente in clientes %}
+            <option value="{{Cliente.id}}">{{Cliente.nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label for="inputfecharegistro" class="form-label">Mes / Año:</label>
+        <input type="month" class="form-control" id="inputfecharegistro">
+    </div>
+    <div class="col-md-4">
+        <label for="inputliquidacion" class="form-label"># Liquidación</label>
+        <input id="inputliquidacion" name="liquidacion" class="form-control">
+    </div>
+    <div class="col-md-4">
+        <label for="inputstatus" class="form-label">Status:</label>
+        <select id="inputstatus" class="form-select">
+            <option>Todos los Status...</option>
+            <option>CALCULADA</option>
+            <option>VERIFICADA</option>
+            <option>CERRADA</option>
+        </select>
+    </div>
+</form>
+<br>
+    <button type="submit" id="submit" class="btn btn-danger">Filtrar</button>
+    <a href="{% url 'register'%}" type="button" class="btn btn-danger">Todos</a>
+<br>
+<td colspan="5" valign="top">
+    <table border="0" width="100%" id="table3" cellspacing="1">
+        <tbody>
+        <tr>
+            <td align="center">
+                <b>
+                    <font face="Tahoma" color="#333333">Lista de Facturaciones Procesadas</font>
+                </b>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <style type="text/css">
+          td, th{padding: 10px;}
+          th{
+            text-align: center;
+                font-size: 15px;
+            }
+            td{
+                font-size:75%;
+            }
+    </style>
+    <table class="table table-bordered" style="text-align:center;">
+        <thead>
+        <tr>
+            <th WIDTH="10" scope="col">ID</th>
+            <th WIDTH="10" scope="col"># Liquidacion</th>
+            <th WIDTH="180" scope="col">Cliente</th>
+            <th WIDTH="80" scope="col">Razon Social</th>
+            <th WIDTH="120" scope="col">Status</th>
+            <th WIDTH="120" scope="col">Periodo Liq.</th>
+            <th WIDTH="120" scope="col"># Maq </th>
+            <th WIDTH="60" scope="col">$ Ingreso (Value Retained)</th>
+            <th WIDTH="60" scope="col"> $ Impuestos / IVA / Otros</th>
+            <th WIDTH="60" scope="col">$ Descuentos</th>
+            <th WIDTH="60" scope="col">$ Neto Cliente</th>
+            <th WIDTH="60" scope="col">$ Neto IGG</th>
+            <th WIDTH="60" scope="col">Opciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for asignacion in asignaciones %}
+        <tr>
+            <td>{{asignacion.id}}</td>
+            <td>{{asignacion.clientes.nombre}}</td>
+            <td>{{asignacion.stado}}</td>
+            <td>{{asignacion.fecha_asignacion|date:"Y-m-d"}}</td>
+            <td>{{asignacion.fecha_codigos|date:"Y-m-d"}}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>{{asignacion.modelo}}</td>
+            <td></td>
+            <td><a type="button" class="btn btn-danger">Editar</a>  <button type="button" class="btn btn-danger">Ver</button></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <br>
+    <br>
+    <br>
+    <center>
+            <fieldset id="borde2">
+                <a href="#" class="btn btn-success">Imprimir</a>
+                <a href="{% url 'menuservicios' %}" class="btn btn-success">Cerrar</a>
+            </fieldset>
+      </center>
+{% endblock %}

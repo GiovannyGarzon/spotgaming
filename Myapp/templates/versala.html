@@ -1,10 +1,189 @@
-<!DOCTYPE html>
-<html lang="en">
+
+{% load crispy_forms_tags %}
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+  <meta charset="utf-8">
+  <title> Crear Sala </title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+  <link rel="" href="https://cdn.datatables.net/fixedheader/3.1.6/css/fixedHeader.dataTables.min.css">
+
 </head>
 <body>
-$END$
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="nav-link" href="{% url 'spotgaming'%}" style="color:#F3AC0A;" ><b><big>SPOTgaming</big></b></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{% url 'spotgaming'%}">Home</a>
+                </li>
+            </ul>
+            <a href="{% url 'login'%}" class="btn btn-success" type="submit">Salir</a>
+        </div>
+    </div>
+</nav>
+<br>
+<table align="center" border="1" width="90%" id="table1" cellspacing="1" cellpadding="0" style="border: 1px solid #000000; padding-left:0; padding-right:0">
+    <tbody>
+    <tr>
+        <td bgcolor="#808080" align="center">
+            <b><font face="Tahoma" size="3" color="#F7DC6F">Datos de la Sala / Punto</font></b>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<p></p>
+<style>
+        form{
+          background-color: #B8D8F1;
+           margin: 0 auto;
+           width: 1300px;
+        }
+</style>
+<center>
+    <form class="row g-3">
+        <div class="col-md-6">
+            <label for="inputcodigo" class="form-label">ID Codigo:</label>
+            <input type="texto" class="form-control" id="inputcodigo" name="codigo" value="{{salas.id_codigo}}" readonly onmousedown="return false;">
+        </div>
+        <div class="col-md-6">
+            <label for="inputdirección" class="form-label">Dirección:</label>
+            <textarea name="direccion" id="inputdirección" cols="8" class="form-control" readonly onmousedown="return false;">{{salas.direccion}}</textarea>
+        </div>
+        <div class="col-md-4">
+            <label for="inputnombre" class="form-label">Nombre:</label>
+            <input type="texto" class="form-control" id="inputnombre" name="nombre" minlength="5" value="{{salas.nombre}}" readonly onmousedown="return false;">
+        </div>
+        <div class="col-md-4">
+            <label for="inputinspired" class="form-label">ID Inspired:</label>
+            <input type="texto" class="form-control" id="inputinspired" name="inspired" value="{{salas.id_inspired}}" readonly onmousedown="return false;">
+        </div>
+        <div class="col-md-4">
+            <label for="inputcliente" class="form-label">Cliente:</label>
+            <input type="texto" class="form-control" id="inputclientevisible" name="clientevisible" value="{{salas.clientes.nombre}}" readonly onmousedown="return false;">
+        </div>
+        <input type="hidden" class="form-control" id="inputcliente" name="cliente" value="{{salas.clientes}}" readonly onmousedown="return false;">
+        <div class="col-md-4">
+            <label for="inputrazon" class="form-label">Razón Social Principal:</label>
+            <input type="texto" class="form-control" id="inputrazonvisible" name="razonsocialvisible" value="{{salas.razon.nombre}}" readonly onmousedown="return false;">
+        </div>
+        <input type="hidden" class="form-control" id="inputrazon" name="razonsocial" value="{{salas.razon}}" readonly onmousedown="return false;">
+        <div class="col-md-4">
+            <label for="inputciudad" class="form-label">Ciudad:</label>
+            <input type="texto" class="form-control" id="inputciudadvisible" name="ciudadvisible" value="{{salas.ciudad.nombre}}" readonly onmousedown="return false;">
+        </div>
+        <input type="hidden" class="form-control" id="inputciudad" name="ciudad" value="{{salas.ciudad}}" readonly onmousedown="return false;">
+        <div class="col-md-4">
+            <label for="inputdepartamento" class="form-label">Departamento:</label>
+            <input type="texto" class="form-control" id="inputdepartamentovisible" name="departamentovisible" value="{{salas.departamento.nombre}}" readonly onmousedown="return false;">
+        </div>
+        <input type="hidden" class="form-control" id="inputdepartamento" name="departamento" value="{{salas.departamento}}" readonly onmousedown="return false;">
+        <div class="col-md-4">
+            <label for="inputcontacto" class="form-label">Persona  Contacto:</label>
+            <input type="texto" class="form-control" id="inputcontacto" name="contacto" value="{{salas.contacto}}" readonly onmousedown="return false;">
+        </div>
+        <div class="col-md-4">
+            <label for="inputemail" class="form-label">E-Mail:</label>
+            <input type="texto" class="form-control" id="inputemail" name="email" value="{{salas.email}}" readonly onmousedown="return false;">
+        </div>
+        <div class="col-md-4">
+            <label for="inputtelefono" class="form-label">Teléfonos:</label>
+            <input type="texto" class="form-control" id="inputtelefono" name="telefono" value="{{salas.telefono}}" readonly onmousedown="return false;">
+        </div>
+        <p></p>
+        <table align="center" border="1" width="90%" id="table2" cellspacing="1" cellpadding="0" style="border: 1px solid #000000; padding-left:0; padding-right:0">
+            <tbody>
+            <tr>
+                <td bgcolor="#808080" align="center">
+                    <b><font face="Tahoma" size="2" color="#FFFFFF">Datos para la Liquidación Mensual</font></b>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="col-md-2">
+            <label for="inputtieneliquidacion" class="form-label">Tiene Liq. / Cobro Fijo:</label>
+            <select id="inputtieneliquidacion" class="form-select" name="tieneliquidacion" readonly onmousedown="return false;">
+                <option value="0">No</option>
+                <option value="1">Si</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label for="inputmetodo" class="form-label">Metodo:</label>
+            <select id="inputmetodo" class="form-select" name="metodo" readonly onmousedown="return false;">
+                <option>MENSUAL</option>
+                <option>RANGO DE FECHA</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="inputimpuestoscoljuegos" class="form-label"> $ Imp. ColJuegos Fijo:</label>
+            <input type="texto" class="form-control" id="inputimpuestoscoljuegos" name="impuestocoljuegos" value="{{salas.impuesto}}" readonly onmousedown="return false;">
+        </div>
+        <div class="col-md-2">
+            <label for="inputvariable" class="form-label"> % Variable:</label>
+            <input type="texto" class="form-control" id="inputvariable" name="variable" value="{{salas.variable}}" readonly onmousedown="return false;">
+        </div>
+        <div class="col-md-2">
+            <label for="inputcierreliqui" class="form-label">Cierre Liquidación:</label>
+            <select id="inputcierreliqui" class="form-select" name="cierreliquidacion" readonly onmousedown="return false;">
+                <option>ULT. DIA DELMES</option>
+                <option>1RO MES SIGUIENTE</option>
+                <option>FECHAS ALEATORIAS</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label for="inputhora" class="form-label">Hora:</label>
+            <input type="text" class="form-control" id="inputhora" name="horacierre" value="11:59:59 PM" readonly onmousedown="return false;">
+        </div>
+        <div class="col-md-6">
+            <label for="inputiva" class="form-label"> $ Valor IVA:</label>
+            <input type="texto" class="form-control" id="inputiva" name="iva" value="{{salas.iva}}" readonly onmousedown="return false;">
+        </div>
+        <div class="col-md-6">
+            <label for="inputparticipacion" class="form-label">% Participación:</label>
+            <input type="texto" class="form-control" id="inputparticipacion" name="participacion" value="{{salas.porcentaje}}" readonly onmousedown="return false;">
+        </div>
+        <div class="col-md-4">
+            <label for="inputotrosgastos" class="form-label">$ Otros Gastos:</label>
+            <input type="texto" class="form-control" id="inputotrosgastos" name="otrosgastos" value="{{salas.otros}}" readonly onmousedown="return false;">
+        </div>
+        <div class="col-md-2">
+            <label for="inputdialiquida" class="form-label"> Días Liquidar x Mes:</label>
+            <input type="texto" class="form-control" id="inputdialiquida" name="dialiquida" value="30" readonly onmousedown="return false;">
+        </div>
+        <div class="col-md-6">
+            <label for="inputdesceuntos" class="form-label">$ Otros Desceuntos:</label>
+            <input type="texto" class="form-control" id="inputdesceuntos" name="descuentos" value="{{salas.descuentos}}" readonly onmousedown="return false;">
+        </div>
+        <div class="col-md-2">
+            <label for="inputtransmision" class="form-label">Cobro x Días NO Transm.:</label>
+            <select id="inputtransmision" class="form-select" name="transmision" readonly onmousedown="return false;">
+                <option value="0">No</option>
+                <option value="1">Si</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="inputmontoxdia" class="form-label"> $ Monto x Dia:</label>
+            <input type="texto" class="form-control" id="inputmontoxdia" name="montoxdia" value="{{salas.presupuesto_dia}}" readonly onmousedown="return false;">
+        </div>
+        <p></p>
+        <div class="col-md-6">
+            <label for="registroactivo">Regsitro Activo:</label> <input id="registroactivo" type="checkbox" name="activo" disabled="">
+        </div>
+        <center>
+            <fieldset id="borde2">
+                <button type="submit" class="btn btn-info">Guardar</button>
+                <a href="{% url 'listasala' %}" type="button" class="btn btn-info">Cerrar</a>
+            </fieldset>
+        </center>
+        <p></p>
+    </form>
+</center>
 </body>
 </html>

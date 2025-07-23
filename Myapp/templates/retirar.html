@@ -1,70 +1,67 @@
 {% extends 'menuinstalacion.html' %}
 {% load crispy_forms_tags %}
 {% block content%}
-
-
-
-
   <h1> Retirar Maquinas</h1>
   <p></p>
-<form class="row g-3">
+<form class="row g-3" action="{% url 'guardarretiro' %}" method="post">
+    {% csrf_token %}
       <div class="col-md-6">
         <label for="inputnumero" class="form-label">Numero_RTO:</label>
-        <input type="text" class="form-control" id="inputnumero">
+        <input type="text" class="form-control" id="inputnumero" readonly onmousedown="return false;">
       </div>
       <div class="col-md-6">
         <label for="inputfecharegistro" class="form-label">Fecha registro:</label>
-        <input type="date" class="form-control" id="inputfecharegistro">
+        <input type="date" class="form-control" name="fecharegistro" id="inputfecharegistro">
       </div>
       <div class="col-md-6">
         <label for="inputcliente" class="form-label">Cliente:</label><br>
-            <select class="col-md-12" id="inputcliente" class="form-selec">
-                <option>-------------------------</option>
+            <select class="form-select" id="inputcliente" name="cliente" required>
+                <option value="">-------------------------</option>
                 {% for Cliente in clientes %}
-                    <option value="{{Cliente.nombre}}">{{Cliente.nombre}}</option>
+                    <option value="{{Cliente.id}}">{{Cliente.nombre}}</option>
                 {% endfor %}
             </select>
       </div>
 
       <div class="col-md-6">
-        <label for="inputfechaasginacion" class="form-label">Fecha retiro:</label>
-        <input type="date" class="form-control" id="inputfechaasginacion" >
+        <label for="inputfecharetiro" class="form-label">Fecha retiro:</label>
+        <input type="date" class="form-control" id="inputfecharetiro" name="fecharetiro" readonly>
       </div>
 
       <div class="col-md-6">
         <label for="inputcontacto" class="form-label">Contacto:</label>
-        <input type="text" class="form-control" id="inputcontacto">
+        <input type="text" class="form-control" id="inputcontacto" name="contacto" required>
       </div>
       <div class="col-md-6">
         <label for="inputfechaingreso" class="form-label">Fecha recibido bodega:</label>
-        <input type="date" class="form-control" id="inputfechaingreso" >
+        <input type="date" class="form-control" id="inputfechaingreso" readonly>
       </div>
       <div class="col-md-6">
         <label for="inputrecibidopor" class="form-label">Recibido por:</label>
-        <input type="text" class="form-control" id="inputrecibidopor">
+        <input type="text" class="form-control" id="inputrecibidopor" name="recibidopor">
       </div>
       <div class="col-md-6">
         <label for="inputfechaums" class="form-label">Fecha procesado UMS:</label>
-        <input type="date" class="form-control" id="inputfechaums" >
+        <input type="date" class="form-control" id="inputfechaums" readonly>
       </div>
       <div class="col-md-6">
         <label for="inputconductor" class="form-label">Conductor:</label>
-        <input type="text" class="form-control" id="inputconductor">
+        <input type="text" class="form-control" id="inputconductor" name="conductor">
       </div>
       <div class="col-md-6">
         <label for="inputguia" class="form-label">Guia de envio:</label>
-        <input type="text" class="form-control" id="inputguia">
+        <input type="text" class="form-control" id="inputguia" name="guia">
       </div>
       <div class="col-md-6">
         <label for="inputplaca" class="form-label">Placa:</label>
-        <input type="text" class="form-control" id="inputplaca">
+        <input type="text" class="form-control" id="inputplaca" name="placa">
       </div>
       <div class="col-md-4">
         <label for="inputformatransporte" class="form-label">Forma de envío:</label>
         <select id="inputformatransporte" class="form-select">
                 <option selected>-------------------</option>
                 {% for Transporte in transportes %}
-                    <option value="{{Transporte.nombre}}"> {{Transporte.nombre}} </option>
+                    <option value="{{Transporte.id}}"> {{Transporte.nombre}} </option>
                 {% endfor %}
         </select>
       </div>
@@ -73,44 +70,27 @@
         <input type="text" class="form-control" id="inputumsresponsable">
       </div>
       <div class="col-md-4">
-        <label for="inputState" class="form-label">Status:</label>
-        <select id="inputState" class="form-select">
-                <option selected>-------------------</option>
-                {% for Asignacione in asignaciones %}
-                    <option value="{{Asignacione.stado}}"> {{Asignacione.stado}} </option>
-                {% endfor %}
+        <label for="inputstatus" class="form-label">Status:</label>
+        <select id="inputstatus" class="form-select" name="statusretirovisible" required disabled>
+            <option selected value="1">SOLICITUD</option>
+            <option value="2">POR RETIRAR</option>
+            <option value="3">RETIRADO</option>
+            <option value="4">UMS PROCESADO</option>
         </select>
-      </div>
-
-      <!--<div class="col-md-2">
-        <label for="inputZip" class="form-label">Zip</label>
-        <input type="text" class="form-control" id="inputZip">
-      </div>
-      <div class="col-12">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="gridCheck">
-          <label class="form-check-label" for="gridCheck">
-            Check me out
-          </label>
-        </div>
-      </div>
-      <div class="col-12">
-        <button type="submit" class="btn btn-primary">Sign in</button>
-      </div>--!>
+        <input type="hidden" class="form-control" id="inputstatusoculto" name="statusretiro" value="1" readonly onmousedown="return false;">
+    </div>
       <p></p>
       <p></p>
       <p></p>
       <p></p>
       <center>
       <fieldset id="borde2">
-				<input type="button" value="Agregar serie">
-				<input type="button" value="Reporte">
-				<input type="button" value="Imprimir">
-				<input type="submit" value="Guardar">
-				<input type="button" value="Cerrar">
+				<input type="button"  class="btn btn-info" value="Agregar serie">
+				<input type="button"  class="btn btn-info" value="Reporte">
+				<input type="button"  class="btn btn-info" value="Imprimir">
+                <button type="submit" class="btn btn-info" >Crear</button>
+				<a href="{% url 'listaretiros' %}" type="button"  class="btn btn-info" >Cerrar</a>
       </fieldset>
        </center>
-
-
 </form>
 {% endblock%}

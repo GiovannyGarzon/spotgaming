@@ -1,0 +1,237 @@
+{% extends 'menusoporte.html' %}
+{% load crispy_forms_tags %}
+{% block content%}
+<h1> Ver Fallas</h1>
+<p></p>
+
+{% if messages %}
+
+<div class = "alert alert-success">
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<form class="row g-3"  action="{% url 'formeditarfalla' %}" method="POST">
+    {% csrf_token %}
+    <input type="hidden" class="form-control" id="inputid" name="idfalla"  value="{{fallas.id}}" readonly onmousedown="return false;">
+    <div class="col-md-4">
+        <label for="inputnumero" class="form-label">Numero_FAL:</label>
+        <input type="texto" class="form-control" id="inputnumero" name="numero" value="FALL00-{{fallas.id}}" readonly onmousedown="return false;">
+    </div>
+    <div class="col-md-4">
+        <label for="inputstatus" class="form-label">Status:</label>
+        <select id="inputstatus" class="form-select" name="statusfalla" readonly onmousedown="return false;">
+        {% for status_option in status_options %}
+        <option value="{{ status_option.id }}" {% if status_option.id == fallas.id_status.id %}selected{% endif %}>
+            {{ status_option.nombre }}
+        </option>
+        {% endfor %}
+    </select>
+    </div>
+    <div class="col-md-4">
+        <label for="inputCodigoMaquina" class="form-label">Código Maquina:</label>
+        <input type="text" class="form-control" id="inputCodigoMaquina" name="codigomaquina"  value="{{fallas.maquina}}" readonly onmousedown="return false;">
+    </div>
+    <input type="hidden" class="form-control" id="inputCodigoMaquinaoculto" name="codigomaquinaoculto"  value="{{fallas.maquina.id}}" readonly onmousedown="return false;">
+    <div class="col-md-4">
+        <label for="inpucliente" class="form-label">Cliente:</label>
+        <input type="text" class="form-control" id="inpucliente" name="nombrecliente"  value="{{fallas.clientes.nombre}}" readonly onmousedown="return false;">
+    </div>
+    <input type="hidden" class="form-control" id="inpuclienteoculto" name="nombreclienteoculto"  value="{{fallas.clientes}}" readonly onmousedown="return false;">
+    <div class="col-md-4">
+        <label for="inputsala" class="form-label">Sala /Punto:</label>
+        <input type="text" class="form-control" id="inputsala" name="sala"  value="{{fallas.salas.nombre}}" readonly onmousedown="return false;">
+    </div>
+    <input type="hidden" class="form-control" id="inputsalaoculto" name="salaoculto"  value="{{fallas.salas}}" readonly onmousedown="return false;">
+    <div class="col-md-2">
+        <label for="inputoperacion" class="form-label">Operación:</label>
+        <input type="text" id="inputoperacion" class="form-control" name="operacionmostrar" value="{{fallas.operacion}}" readonly onmousedown="return false;">
+        <input type="hidden" class="form-control" id="inputoperacionoculto" name="operacion">
+    </div>
+    <div class="col-md-2">
+        <label for="inputfechareporteeditar" class="form-label">Fecha Reporte:</label>
+        <input type="text" class="form-control" name="fechareporte" id="inputfechareporteeditar" value="{{fallas.fecha|date:"Y-m-d" }}" readonly onmousedown="return false;">
+    </div>
+    <div class="col-md-4">
+        <label for="inputfechaatencion" class="form-label">Fecha Solución:</label>
+        <input type="date" class="form-control" name="fechaatencion" id="inputfechaatencion" value="{{fallas.fecha_atencion}}" readonly onmousedown="return false;">
+    </div>
+    <div class="col-md-4">
+        <label for="inputfechareject" class="form-label">Fecha Reject:</label>
+        <input type="date" class="form-control" name="fechareject" id="inputfechareject" value="{{fallas.fecha_escalado}}" readonly onmousedown="return false;">
+    </div>
+    <div class="col-md-4">
+        <label for="inputreporta" class="form-label">Reportado por:</label>
+        <input type="text" class="form-control" name="reportadopor" id="inputreporta" value="{{fallas.reportado}}" readonly onmousedown="return false;">
+    </div>
+    <div class="col-md-4">
+        <label for="inputtelefono" class="form-label">Telefono de Contacto:</label>
+        <input type="text" class="form-control" name="telefono" id="inputtelefono" value="{{fallas.telefono}}" readonly onmousedown="return false;">
+    </div>
+    <div class="col-md-4">
+        <label for="inputprioridad" class="form-label">Prioridad:</label>
+        <input type="text " id="inputprioridad" class="form-control" name="prioridad" value="{{fallas.prioridad}}" readonly onmousedown="return false;">
+    </div>
+    <div class="col-md-2">
+        <label for="inputfechalaboratorio" class="form-label">Fecha en Laboratorio:</label>
+        <input type="date" class="form-control" name="fechalaboratorio" id="inputfechalaboratorio" value="{{fallas.fecha_seguridad|date:"Y-m-d"}}" readonly onmousedown="return false;">
+    </div>
+    <div class="col-md-2">
+        <label for="inputfechacierre" class="form-label">Fecha Cierre:</label>
+        <input type="text" class="form-control" name="fechacierre" id="inputfechacierre" value="{{fallas.fecha_cierre|date:"d/m/y"}}" readonly onmousedown="return false;">
+    </div>
+    <div class="col-md-2">
+        <label for="inputestado" class="form-label">Maquina Apagada:</label>
+        <select id="inputestado" class="form-select" name="estadomaquina" readonly onmousedown="return false;" readonly onmousedown="return false;">
+        <option value="{{fallas.id}}">
+                <script>if ({{fallas.apagada}} == 1){
+                               document.write("SI")
+                             }else{
+                               document.write("NO")
+                             }
+                    </script>
+            </option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label for="inputjuego" class="form-label">Juego:</label>
+        <input type="text" class="form-control" id="inputjuego" name="juego"  value="{{fallas.juego.nombre}}" readonly onmousedown="return false;">
+    </div>
+    <input type="hidden" class="form-control" id="inputjuegooculto" name="juegooculto"  value="{{fallas.juego.id}}" readonly onmousedown="return false;">
+    <div class="col-md-4">
+        <label for="inputCodigo" class="form-label">Tipo de Falla:</label>
+        <input type="text" class="form-control" id="inputCodigo" name="codigofalla"  value="{{fallas.id_error}}" readonly onmousedown="return false;">
+    </div>
+    <div class="col-md-2">
+        <label for="inpitarquitectura" class="form-label">Arquitectura:</label>
+        <input type="text" class="form-control" id="inpitarquitectura" name="arquitectura" value="{{fallas.arquitectura.nombre}}" readonly onmousedown="return false;">
+        <input type="hidden" class="form-control" id="inpitarquitecturaoculta" name="arquitecturaoculta" value="{{fallas.arquitectura.id}}" readonly onmousedown="return false;">
+    </div>
+    <input type="hidden" class="form-control" id="inputCodigooculto" name="codigofallaoculto"  value="{{fallas.id_error.id}}" readonly onmousedown="return false;">
+    <div class="col-md-48">
+        <label for="inputdescripcion" class="form-label">Descripción Falla:</label>
+        <input type="texto" class="form-control" id="inputdescripcion" name="descripcion" value="{{fallas.descripcion}}" readonly onmousedown="return false;">
+    </div>
+     <!--<div class="col-md-6">
+         <label for="inputprocedimiento" class="form-label">Procedimiento SFTP:</label>
+         <input type="text" class="form-control" id="inputprocedimiento" name="procedimiento"  value="{{fallas.id_causa.numero}} - {{fallas.id_causa.titulo}}" readonly onmousedown="return false;">
+    </div>
+    <input type="hidden" class="form-control" id="inputprocedimientooculto" name="procedimientooculto"  value="{{fallas.id_causa.id}}" readonly onmousedown="return false;">!-->
+    <div class="col-md-6">
+        <label for="inputreportada" class="form-label">Falla Registrada Por:</label>
+        <input type="texto" class="form-control" id="inputreportada" name="reportadapor" value="{{fallas.reportado}}" readonly onmousedown="return false;">
+    </div>
+    <div class="col-md-6">
+        <label for="inputpresponsable" class="form-label">Responsable:</label>
+        <input type="text" class="form-control" id="inputpresponsable" name="responsable"  value="{{fallas.tecnico.nombre}}" readonly onmousedown="return false;">
+    </div>
+    <input type="hidden" class="form-control" id="inputpresponsableoculto" name="responsableoculto"  value="{{fallas.tecnico}}" readonly onmousedown="return false;">
+    <div class="col-md-6">
+        <label for="inputatencion" class="form-label">Nivel de Atención:</label>
+        <select id="inputatencion" class="form-select" name="nivelatencion" readonly onmousedown="return false;">
+            <option value="{{fallas.atencion}}">{{fallas.atencion}}</option>
+            <option>NIVEL 1 - TECNICO LOCAL DE SALA</option>
+            <option>NIVEL 2 - SOPORTE REMOTO</option>
+            <option>NIVEL 3 - TECNICO PMV ENVIADO</option>
+        </select>
+    </div>
+    <div class="col-md-6">
+        <label for="inputresuelto" class="form-label">Resuelto por:</label>
+        <select id="inputresuelto" class="form-select" name="resueltapor" readonly onmousedown="return false;">
+            <option value="{{fallas.resuelto.id}}">{{fallas.resuelto}}</option>
+            <option value="2">SOPORTE SPOT GAMING</option>
+            <option value="3">SOPORTE INSPIRED</option>
+        </select>
+    </div>
+    <div class="col-md-6">
+        <label for="inputsolucion" class="form-label">Solucion:</label>
+        <select id="inputsolucion" class="form-select" name="solucion" readonly onmousedown="return false;" >
+            <option value="" disabled {% if not fallas.id_solucion.id %}selected{% endif %}>Todos las Soluciones...</option>
+                {% for SolucionFalla in soluciones %}
+            <option value="{{SolucionFalla.id}}"
+                    {% if fallas.id_solucion.id == SolucionFalla.id %}selected{% endif %}>
+                {{SolucionFalla.descripcion_sp}}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-48">
+        <label for="inputseguimiento" class="form-label">Ultimo Seguimiento:</label>
+        <textarea class="form-control" id="inputseguimiento" name="ultimoseguimiento" readonly onmousedown="return false;">
+        {% if ultima_novedad %}
+            {{ ultima_novedad.fechanovedad|date:"Y-m-d" }}: {{ ultima_novedad.observacion }}
+        {% endif %}
+    </textarea>
+    </div>
+    <table border="0" width="98%" id="table2" cellspacing="1" cellpadding="0" style="border: 1px solid #000000; padding-left:0; padding-right:0">
+        <tbody>
+        <tr>
+            <td bgcolor="#808080" align="center">
+                <b><font face="Tahoma" size="2" color="#FFFFFF">Seguimiento (Historial)</font></b></td</tr>
+        </tbody>
+    </table>
+
+    <style type="text/css">
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 10px;
+        text-align: center;
+        font-size: 15px; /* Tamaño de fuente para encabezados de tabla */
+    }
+
+    td {
+        font-size: 70%; /* Tamaño de fuente para datos de tabla */
+    }
+
+    th {
+        font-weight: bold; /* Opcional: hacer que los encabezados de tabla sean negritas */
+    }
+
+    </style>
+
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Fecha Novedad</th>
+            <th scope="col">Responsable</th>
+            <th scope="col">Seguimiento / Novedades</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for novedad in novedades %}
+        <tr>
+            <td>{{ novedad.id }}</td>
+            <td>{{ novedad.fechanovedad }}</td>
+            <td>{{ novedad.idtecnico.nombre }}</td>
+            <td>{{ novedad.observacion }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+      <p></p>
+      <center>
+          <fieldset id="borde2">
+              <!--<a type="button" class="btn btn-info">ENVIAR Incident</a>--!>
+              <!--<a type="button" class="btn btn-info">REJECT Incident</a>--!>
+              <!--<a type="button" class="btn btn-info">ESCALAR Incident</a>--!>
+              <!--<a href="{% url 'novedadfalla' fallas.id%}" type="submit" class="btn btn-info">+ Novedades</a>--!>
+              <!--<a type="button" class="btn btn-info">Anexos</a><br><br>--!>
+              <!--<a type="button" class="btn btn-info">Servicio Tecnico</a>--!>
+              <a href="{% url 'serviciotecnico' %}" type="submit" class="btn btn-info">Servicio Tecnico</a>
+              <!--<a type="button" class="btn btn-info">Solicitud de Despacho</a>--!>
+              <!--<a type="button" class="btn btn-info">Imprimir</a>--!>
+              <button type="submit" class="btn btn-info">Guardar</button>
+              <a href="{% url 'listareportedefallas'%}" type="button" class="btn btn-info">Cerrar</a>
+        </fieldset>
+      </center>
+    </form>
+{% endblock%}

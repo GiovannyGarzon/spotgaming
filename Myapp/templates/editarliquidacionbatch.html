@@ -1,10 +1,88 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'menuauditoria.html' %}
+{% load crispy_forms_tags %}
+{% block content%}
+<br>
+<h1>Liquidar Maquinas x Batch </h1>
+<br>
+<br>
+<form class="row g-3">
+    <div class=" col-md-4">
+        <label for="inputmesliquida" class="form-label">Mes a Liquidar: </label>
+        <input type="month" class="form-control" name="liquidames" id="inputmesliquida">
+    </div>
+    <div class="col-md-4">
+        <label for="inputfechaliquidacion" class="form-label">Fecha de Liquidacion: </label>
+        <input type="date" class="form-control" name="fechaliquidacion" size="10px" id="inputfechaliquidacion">
+    </div>
+    <div class="col-md-4">
+        <label for="inputconsecutivo" class="form-label"># Consecutivo Inicial: </label>
+        <input type="text" class="form-control" name="conesecutivo" id="inputconsecutivo">
+    </div>
+    <div class="col-md-4">
+        <label for="inputmetodo" class="form-label">Metodo Calculo: </label>
+        <select id="inputmetodo" class="form-select" name="metodliquidacion">
+            <option>Seleccione...</option>
+            <option>(COIN IN - COIN OUT)</option>
+            <option>(BILLS - HANDPAY)</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label for="inputdias" class="form-label">Dias a Liquidar: </label>
+        <input type="text" class="form-control" name="diasliquidar" id="inputdias">
+    </div>
+    <div class="col-md-2">
+        <br>
+        <label for="inputfiltrar" class="form-label"></label>
+        <input type="submit" class="btn btn-danger" id="inputfiltrar" value="Filtrar">
+    </div>
+    <div class="col-md-2">
+        <br>
+        <label for="inputtodos" class="form-label"></label>
+        <input type="submit" class="btn btn-danger" id="inputtodos" value="Todos">
+    </div>
+    <table border="0" width="99%" id="table2" cellspacing="1" cellpadding="0" style="border: 1px solid #000000; padding-left:0; padding-right:0">
+        <tbody>
+        <tr>
+            <td bgcolor="#808080" align="center">
+                <b><font face="Tahoma" size="2" color="#FFFFFF">Seleccione los Clientes a Liquidar este Mes</font></b></td>
+        </tr>
+        </tbody>
+    </table>
+    <fieldset style="border: 2px solid #000001; padding-left:2; padding-right:2">
+
+        <style type="text/css">
+          td, th{padding: 10px;}
+          th{
+            text-align: center;
+                font-size: 15px;
+            }
+            td{
+                font-size:80%;
+            }
+    </style>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th WIDTH="20" scope="col">Selección</th>
+                <th WIDTH="20" scope="col"># Liquidacion</th>
+                <th WIDTH="60" scope="col">Cliente</th>
+                <th WIDTH="40" scope="col">Razón Social</th>
+                <th WIDTH="60" scope="col">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for Liquidacione in liquidaciones %}
+        <tr>
+            <td><div class="form-ccheck form-switch"><input type="checkbox" class="form-check-input" id="txtindice"></div></td>
+            <td>{{Liquidacione.id}}</td>
+            <td>{{Liquidacione.clientes}}</td>
+            <td>{{Liquidacione.razon}}</td>
+            <td>{{Liquidacione.status}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    </fieldset>
+</form>
+{% endblock%}

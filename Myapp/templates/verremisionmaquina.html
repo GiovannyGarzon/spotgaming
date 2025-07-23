@@ -1,0 +1,43 @@
+{% extends 'menumaestro.html' %}
+{% load crispy_forms_tags %}
+{% block content%}
+<fieldset id="borde" xmlns="http://www.w3.org/1999/html">
+    <h5>  Historial de Remisiones para Maquina: {{ maquina.serie_PMV }} </h5>
+</fieldset>
+<p></p>
+<table class="table table-bordered" id="cliente" style="text-align:center;">
+    <thead>
+        <tr>
+            <th>Numero Orden</th>
+            <th>Sala / Punto</th>
+            <th>Fecha Remisión</th>
+            <th>Fecha Envio</th>
+            <th>Status</th>
+            <th>Descripcion pieza / Parte</th>
+            <th>Enviado a</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for DetalleRemision in remisiones %}
+        <tr>
+            <td>REM00-{{ DetalleRemision.remision.id }}</td>
+            <td>{{ DetalleRemision.sala }}</td>
+            <td>{{ DetalleRemision.remision.fecha|date:"Y-m-d" }}</td>
+            <td>{{ DetalleRemision.remision.fecha_envio|date:"Y-m-d" }}</td>
+            <td>{{ DetalleRemision.remision.id_status }}</td>
+            <td>{{ DetalleRemision.repuesto }}</td>
+            <td>{{ DetalleRemision.remision.contacto }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="2">No hay remisiones registradas para esta máquina.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<center>
+    <button onclick="window.print();" class="btn btn-primary">Imprimir</button>
+    <a href="{% url 'editarmaquina' maquina.id %}" class="btn btn-primary">Cerrar</a>
+</center>
+
+{% endblock%}

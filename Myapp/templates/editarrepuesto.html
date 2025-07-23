@@ -1,0 +1,267 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Repuesto</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap 5 desde CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+          crossorigin="anonymous">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-top: 80px;
+            max-width: 800px;
+        }
+        h1 {
+            color: #0d6efd;
+        }
+        .form-text {
+            font-size: 0.85rem;
+        }
+        .btn-primary {
+            width: 120px;
+        }
+        .btn-secondary {
+            width: 120px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="text-center mb-4">Editar Repuesto</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <form action="{% url 'formeditarrepuesto' %}" method="post">
+        {% csrf_token %}
+        <div class="row g-3">
+            <!-- Repuesto -->
+            <div class="col-md-6">
+                <label for="inputrepuesto" class="form-label">Repuesto:<span class="text-danger">*</span></label>
+                <select id="inputrepuesto" class="form-select" name="repuesto_id" required>
+                    <option value="">Seleccione...</option>
+                    {% for repuesto in repuestos %}
+                        <option value="{{ repuesto.id }}">{{ repuesto.nombre }}</option>
+                    {% endfor %}
+                </select>
+                <div class="form-text">Seleccione el repuesto que va subir al inventario.</div>
+            </div>
+
+            <!-- Serial -->
+            <div class="col-md-6">
+                <label for="searchSerial" class="form-label">Serial:<span class="text-danger">*</span></label>
+                <input type="text" id="searchSerial" class="form-control" placeholder="Buscar serial..." disabled>
+                <div class="form-text">Digite el serial a buscar.</div>
+                <select id="inputSerial" class="form-select mt-2" name="serial" disabled required>
+                    <option value="">Seleccione un repuesto primero</option>
+                </select>
+                <div class="form-text">Seleccione el serial del repuesto.</div>
+            </div>
+
+            <!-- Status -->
+            <div class="col-md-6">
+                <label for="inputStatus" class="form-label">Status:<span class="text-danger">*</span></label>
+                <select id="inputStatus" class="form-select" name="status" disabled required>
+                    <option value="0">Sin Cambios</option>
+                    {% for status_option in status_options %}
+                        <option value="{{ status_option.id }}">{{ status_option.nombre }}</option>
+                    {% endfor %}
+                </select>
+                <div class="form-text">Seleccione el status del repuesto.</div>
+            </div>
+
+            <!-- Estado -->
+            <div class="col-md-6">
+                <label for="inputEstado" class="form-label">Estado:<span class="text-danger">*</span></label>
+                <select id="inputEstado" class="form-select" name="estado" disabled required>
+                    <option value="0">Sin Cambios</option>
+                    {% for estado_option in estado_options %}
+                        <option value="{{ estado_option.id }}">{{ estado_option.nombre }}</option>
+                    {% endfor %}
+                </select>
+                <div class="form-text">Seleccione el estado del repuesto.</div>
+            </div>
+
+            <!-- Línea o Marca -->
+            <div class="col-md-6">
+                <label for="inputPieza" class="form-label">Línea o Marca:<span class="text-danger">*</span></label>
+                <select id="inputPieza" class="form-select" name="pieza_id" disabled required>
+                    <option value="0">Sin Cambios</option>
+                    {% for pieza in piezas_options %}
+                        <option value="{{ pieza.id }}">{{ pieza.nombre }}</option>
+                    {% endfor %}
+                </select>
+                <div class="form-text">Seleccione la línea o marca del repuesto.</div>
+            </div>
+
+            <!-- Responsable -->
+            <div class="col-md-6">
+                <label for="inputresponsable" class="form-label">Responsable:</label>
+                <input type="text" id="inputresponsable" class="form-control" name="responsable">
+                <div class="form-text">Campo opcional.</div>
+            </div>
+        </div>
+
+        <p class="text-danger mt-4 fw-bold">Los campos marcados con * son obligatorios.</p>
+
+        <div class="text-center mt-3">
+            <button type="submit" class="btn btn-primary me-2">Guardar</button>
+            <a href="{% url 'editarrepuesto' %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const repuestoSelect = document.getElementById('inputrepuesto');
+    const serialSelect = document.getElementById('inputSerial');
+    const searchSerial = document.getElementById('searchSerial');
+    const statusSelect = document.getElementById('inputStatus');
+    const estadoSelect = document.getElementById('inputEstado');
+    const piezaSelect = document.getElementById('inputPieza');
+
+    repuestoSelect.addEventListener('change', function() {
+        const repuestoId = this.value;
+        serialSelect.innerHTML = '<option value="">Cargando...</option>';
+        statusSelect.disabled = true;
+        estadoSelect.disabled = true;
+        piezaSelect.disabled = true;
+        searchSerial.disabled = true;
+
+        fetch(`/obtener_seriales/${repuestoId}/`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al cargar seriales');
+                }
+                return response.json();
+            })
+            .then(data => {
+                serialSelect.innerHTML = '<option value="">Seleccione un serial</option>';
+                data.forEach(inventario => {
+                    const option = document.createElement('option');
+                    option.value = inventario.id;
+                    option.textContent = inventario.serial;
+                    serialSelect.appendChild(option);
+                });
+                serialSelect.disabled = false;
+                searchSerial.disabled = false;
+            })
+            .catch(error => {
+                console.error('Error al cargar seriales:', error);
+                serialSelect.innerHTML = '<option value="">Error al cargar seriales</option>';
+                serialSelect.disabled = true;
+                searchSerial.disabled = true;
+            });
+    });
+
+    searchSerial.addEventListener('input', function() {
+        const filter = searchSerial.value.toLowerCase();
+        const options = serialSelect.querySelectorAll('option');
+        options.forEach(option => {
+            option.style.display = option.textContent.toLowerCase().includes(filter) ? '' : 'none';
+        });
+    });
+
+    serialSelect.addEventListener('change', function () {
+        const serialId = this.value;
+
+        if (serialId) {
+            // Habilitar campos
+            statusSelect.disabled = false;
+            estadoSelect.disabled = false;
+            piezaSelect.disabled = false;
+
+            // Obtener Status
+            fetch(`/obtener_status/${serialId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    statusSelect.innerHTML = '<option value="0">Sin Cambios</option>';
+                    data.opciones.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.id;
+                        option.textContent = item.nombre;
+                        if (item.id === data.actual) {
+                            option.selected = true;
+                        }
+                        statusSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error al cargar status:', error);
+                });
+
+            // Obtener Estado
+            fetch(`/obtener_estado/${serialId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    estadoSelect.innerHTML = '<option value="0">Sin Cambios</option>';
+                    data.opciones.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.id;
+                        option.textContent = item.nombre;
+                        if (item.id === data.actual) {
+                            option.selected = true;
+                        }
+                        estadoSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error al cargar estado:', error);
+                });
+
+            // Obtener Pieza
+            fetch(`/obtener_pieza/${serialId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    piezaSelect.innerHTML = '<option value="0">Sin Cambios</option>';
+                    data.opciones.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.id;
+                        option.textContent = item.nombre;
+                        if (item.id === data.actual) {
+                            option.selected = true;
+                        }
+                        piezaSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error al cargar pieza:', error);
+                });
+
+        } else {
+            // Deshabilitar campos si no hay serial
+            statusSelect.disabled = true;
+            estadoSelect.disabled = true;
+            piezaSelect.disabled = true;
+            // Limpiar selects (opcional)
+            statusSelect.innerHTML = '';
+            estadoSelect.innerHTML = '';
+            piezaSelect.innerHTML = '';
+        }
+    });
+});
+</script>
+</body>
+</html>

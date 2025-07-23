@@ -4,7 +4,7 @@ from .models import *
 
 class ClienteAdmin(admin.ModelAdmin):
     readonly_fields = ('create_at', 'update_at')
-    list_display = ('nit', 'id_inspired', 'nombre', 'razon', 'Grupos', 'activo', 'fallas', 'visor', 'tipo_liquida', 'dia_liquida')
+    list_display = ('id', 'nit', 'id_inspired', 'nombre', 'razon', 'Grupos', 'activo', 'emeailrecmaquina', 'visor', 'tipo_liquida', 'dia_liquida')
     list_per_page = 35#
     search_fields = ('nombre',)
     ordering = ['nombre']
@@ -17,7 +17,7 @@ class SalaAdmin(admin.ModelAdmin):
 
 class MaquinaAdmin(admin.ModelAdmin):
     readonly_fields = ('create_at', 'update_at')
-    list_display = ('id_codigo', 'serie_PMV', 'familia', 'clientes', 'id_status', 'id_condicion', 'pripiedad', 'reservacion', 'tipo_operacion')
+    list_display = ('id', 'id_codigo', 'serie_PMV', 'familia', 'clientes', 'id_status', 'id_condicion', 'pripiedad', 'reservacion', 'tipo_operacion')
     search_fields = ('id_codigo',)
     list_per_page = 35  #
 

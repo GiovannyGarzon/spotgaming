@@ -1,10 +1,196 @@
-<!DOCTYPE html>
-<html lang="en">
+{% load crispy_forms_tags %}
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>Crear Razon Social</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+    <link rel="" href="https://cdn.datatables.net/fixedheader/3.1.6/css/fixedHeader.dataTables.min.css">
 </head>
 <body>
-$END$
+<br>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="nav-link" href="{% url 'spotgaming'%}" style="color:#F3AC0A;" ><b><big>SPOTgaming</big></b></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{% url 'spotgaming'%}">Home</a>
+                </li>
+            </ul>
+
+                <a class="nav-link active" aria-current="page" href="{% url 'spotgaming'%}">Home</a>
+
+        </div>
+    </div>
+</nav>
+<br>
+<table align="center" border="1" width="90%" id="table1" cellspacing="1" cellpadding="0" style="border: 1px solid #000000; padding-left:0; padding-right:0">
+    <tbody>
+    <tr>
+        <td bgcolor="#808080" align="center">
+            <b><font face="Tahoma" size="3" color="#F7DC6F">Datos de la Razon Social</font></b>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<p></p>
+<style>
+     form {
+      /* Centrar el formulario en la página */
+      margin: 0 auto;
+      width: 1300px;
+      /* Esquema del formulario */
+      padding: 1em;
+      border: 1px solid #CCC;
+      border-radius: 1em;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    form li + li {
+      margin-top: 1em;
+    }
+    input,
+    textarea {
+      /* Para asegurarse de que todos los campos de texto tienen la misma configuración de letra
+         Por defecto, las áreas de texto tienen un tipo de letra monoespaciada */
+      font: 1em sans-serif;
+
+      /* Tamaño uniforme del campo de texto */
+      width: 300px;
+      box-sizing: border-box;
+
+      /* Hacer coincidir los bordes del campo del formulario */
+      border: 1px solid #999;
+    }
+    input:focus,
+    textarea:focus {
+      /* Destacado adicional para elementos que tienen el cursor */
+      border-color: #000;
+    }
+    textarea {
+      /* Alinear los campos de texto multilínea con sus etiquetas */
+      vertical-align: top;
+      /* Proporcionar espacio para escribir texto */
+      height: 5em;
+    }
+    .button {
+      /* Alinear los botones con los campos de texto */
+      padding-left: 90px; /* mismo tamaño que los elementos de la etiqueta */
+    }
+    button {
+      /* Este margen adicional representa aproximadamente el mismo espacio que el espacio
+         entre las etiquetas y sus campos de texto */
+      margin-left: .5em;
+    }
+</style>
+<center>
+    <form class="row g-3" action="{% url 'guardarrazon' %}" method="post">
+        {% csrf_token %}
+        <div class="col-md-2">
+            <label for="inputcodigo" class="form-label">ID Codigo:</label>
+            <input type="texto" class="form-control" id="inputcodigo" name="codigo" required>
+        </div>
+        <div class="col-md-2">
+            <label for="inputnit" class="form-label">Nit:</label>
+            <input type="texto" class="form-control" id="inputnit" name="nit" required>
+        </div>
+        <div class="col-md-4">
+            <label for="inputinspired" class="form-label">ID Inspired:</label>
+            <input type="texto" class="form-control" id="inputinspired" name="inspired" required>
+        </div>
+        <div class="col-md-4">
+            <label for="inputnombre" class="form-label">Nombre:</label>
+            <input type="texto" class="form-control" id="inputnombre" name="nombre" required>
+        </div>
+        <div class="col-md-4">
+            <label for="inputcliente" class="form-label">Cliente:</label>
+            <select id="inputcliente" class="form-select" name="cliente" required>
+                <option>Seleccione...</option>
+                {% for Cliente in listacliente %}
+                <option value="{{Cliente.id}}">{{Cliente.nombre}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="inputdepartamento" class="form-label">Departamento:</label>
+            <select id="inputdepartamento" class="form-select" name="departamento" required>
+                <option>Seleccione...</option>
+                {% for Departamento in listadepartamento %}
+                <option value="{{Departamento.id}}">{{Departamento.nombre}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="inputdirección" class="form-label">Dirección:</label>
+            <input type="text" name="direccion" id="inputdirección" cols="8" class="form-control" required>
+            <!--<input type="textArea" cols class="form-control" id="inputdirección" name="descripcionpieza">--!>
+        </div>
+        <div class="col-md-4">
+            <label for="inputcontacto" class="form-label">Representante:</label>
+            <input type="texto" class="form-control" id="inputcontacto" name="contacto" required>
+        </div>
+        <div class="col-md-4">
+            <label for="inputcedula" class="form-label">Cedula:</label>
+            <input type="texto" class="form-control" id="inputcedula" name="cedula" required>
+        </div>
+        <div class="col-md-4">
+            <label for="inputtelefono" class="form-label">Teléfonos:</label>
+            <input type="texto" class="form-control" id="inputtelefono" name="telefono" required>
+        </div>
+        <div class="col-md-2">
+            <label for="inputciudadcedula" class="form-label">Ciudad Cedula:</label>
+            <select id="inputciudadcedula" class="form-select" name="ciudadcedula" required>
+                <option>Seleccione...</option>
+                {% for Ciudad in listaciudad %}
+                <option value="{{Ciudad.id}}">{{Ciudad.nombre}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label for="inputciudadnit" class="form-label">Ciudad NIT:</label>
+            <select id="inputciudadnit" class="form-select" name="ciudadnit" required>
+                <option>Seleccione...</option>
+                {% for Ciudad in listaciudad %}
+                <option value="{{Ciudad.id}}">{{Ciudad.nombre}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="inputemail" class="form-label">E-Mail:</label>
+            <input type="texto" class="form-control" id="inputemail" name="email" required>
+        </div>
+        <div class="col-md-2">
+            <label for="inputliquidacion" class="form-label">Liquida:</label>
+            <select id="inputliquidacion" class="form-select" name="liquidacion">
+                <option value="0">No</option>
+                <option value="1">Si</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label for="inputactivo" class="form-label">Registro Activo:</label>
+            <select id="inputactivo" class="form-select" name="activo">
+                <option value="0">No</option>
+                <option value="1">Si</option>
+            </select>
+        </div>
+        <p></p>
+        <center>
+            <fieldset id="borde2">
+                <button type="submit" class="btn btn-info">Crear</button>
+                <a href="{% url 'razonsocial' %}" type="button" class="btn btn-info">Cerrar</a>
+            </fieldset>
+        </center>
+    </form>
+</center>
 </body>
 </html>

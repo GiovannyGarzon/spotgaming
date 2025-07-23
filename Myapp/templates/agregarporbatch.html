@@ -1,0 +1,154 @@
+{% extends 'menuauditoria.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<p>{{ AgregarxBatch }}</p>
+<h1> Liquidaciones de Maquinas</h1>
+<p></p>
+{% if messages %}
+    <div class="alert alert-info">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+<form class="row g-3" method="post" action="{% url 'liquidar_maquinas' %}">
+    {% csrf_token %}
+    <table border="0" width="99%" id="table1" cellspacing="1" cellpadding="0" style="border: 1px solid #000000; padding-left:0; padding-right:0">
+        <tbody><tr>
+            <td bgcolor="#808080" align="center">
+                <b><font face="Tahoma" size="2" color="#FFFFFF">Liquidar Maquinas x Batch</font></b></td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="col-md-2">
+        <label for="inputmesliquida" class="form-label">Mes a Liquidar:</label>
+        <select name="mes" id="inputmesliquida" required>
+            <option value="">-- Selecciona un mes --</option>
+            {% for mes in meses %}
+                <option value="{{ mes.numero }}" {% if mes.numero == current_month %}selected{% endif %}>
+                    {{ mes.nombre }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label for="inputano" class="form-label">Año:</label>
+        <select name="ano" id="inputano" required>
+            <option value="">-- Selecciona un año --</option>
+            {% for y in years %}
+                <option value="{{ y }}" {% if y == current_year %}selected{% endif %}>
+                    {{ y }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label for="inputmetodocalculo" class="form-label">Metodo Calculo:</label>
+        <select id="inputmetodocalculo" name="idmetodo" class="form-select" style="border:1px solid #808080; font-family: Tahoma; font-size: 10pt" size="1" tabindex="1">
+            <option selected value="" disabled>Seleccione...</option>
+            <option value="IN">(COIN IN - COIN OUT)</option>
+            <option value="NT">(BILLS - HANDPAY)</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label for="inputfecha" class="form-label">Fecha Liquidación:</label>
+        <input type="date" class="form-control" name="idfecha" id="inputfecha" required>
+    </div>
+    <div class="col-md-2">
+        <label for="inputconescutivo" class="form-label"># Consecutivo Inicial:</label>
+        <input type="number" class="form-control" id="inputconescutivo" name="consecutivo" required min="1" step="1">
+    </div>
+    <div class="col-md-2">
+        <label for="inputdias" class="form-label">Dias a Liquidar:</label>
+        <input type="text" class="form-control" name="diasaliquidar" id="inputdias">
+    </div>
+    <fieldset id="borde2">
+        <button type="button" class="btn btn-danger" id="filtrarBtn">Filtrar</button>
+        <button type="button" class="btn btn-danger">Todos</button>
+    </fieldset>
+    <table border="0" width="99%" id="table2" cellspacing="1" cellpadding="0" style="border: 1px solid #000000; padding-left:0; padding-right:0">
+        <tbody><tr>
+            <td bgcolor="#808080" align="center">
+                <b><font face="Tahoma" size="2" color="#FFFFFF">Seleccione los Clientes a Liquidar este Mes</font></b></td>
+            </tr>
+        </tbody>
+    </table>
+    <div style="max-height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-top: 15px;">
+        <style>
+            table td {
+                font-size: 12px;
+            }
+        </style>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Todos</th>
+                    <th scope="col"># Liquidación</th>
+                    <th scope="col">Cliente</th>
+                    <th scope="col">Razon Social</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for Cliente in listaclientes %}
+            <tr>
+                <td>
+                  <input type="checkbox" class="cbox" name="check" value="{{ Cliente.id }}" disabled>
+                </td>
+                <td>{{ Cliente.liquidacion_num }}</td>
+                <td>{{ Cliente.nombre }}</td>
+                <td>{{ Cliente.razon.nombre }}</td>
+                <td>
+                    {% if Cliente.liquidacion_status %}
+                        {{ Cliente.liquidacion_status }}
+                    {% else %}
+                        SIN LIQUIDAR
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <center>
+        <fieldset id="borde3">
+            <button type="submit" class="btn btn-info">Crear</button>
+            <button type="submit" class="btn btn-info">Imprimir</button>
+            <a href="{% url 'liquidar' %}" type="button" class="btn btn-info">Cerrar</a>
+        </fieldset>
+    </center>
+</form>
+
+<script>
+document.getElementById('filtrarBtn').addEventListener('click', function() {
+    const mes = document.getElementById('inputmesliquida').value;
+    const ano = document.getElementById('inputano').value;
+    const metodo = document.getElementById('inputmetodocalculo').value;
+    const fecha = document.getElementById('inputfecha').value;
+    const diasInput = document.getElementById('inputdias').value.trim();
+
+    if (!mes || !ano || !metodo || !fecha) {
+        alert('Por favor completa todos los campos antes de filtrar.');
+        return;
+    }
+
+    const dias = parseInt(diasInput, 10);
+    if (isNaN(dias) || dias <= 0) {
+        alert('Por favor ingresa un número válido de días a liquidar.');
+        return;
+    }
+
+    if (dias < 31) {
+        const confirmar = confirm('El número de días a liquidar es menor que 31. ¿Está seguro de que desea continuar?');
+        if (!confirmar) {
+            return;
+        }
+    }
+
+    const checkboxes = document.querySelectorAll('.cbox');
+    checkboxes.forEach(function(checkbox) {
+        checkbox.disabled = false;
+    });
+});
+</script>
+{% endblock %}

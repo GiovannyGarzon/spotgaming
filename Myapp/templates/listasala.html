@@ -1,116 +1,97 @@
-
 {% extends 'menumaestro.html' %}
+{% block title %}Lista Salas{% endblock %}
 {% load crispy_forms_tags %}
 {% block content%}
-
 <fieldset id="borde" xmlns="http://www.w3.org/1999/html">
     <h5>  Maestro de Salas / Puntos </h5>
- </fieldset>
+</fieldset>
 <p></p>
+
+{% if messages %}
+
+<div class="alert alert-success">
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
 <br>
 <br>
 
+<p align="right">
+    <a type="button" href="{% url 'crearsala' %}" class="btn btn-danger"> Agregar</a> <a type="button" href="{% url 'menumaestro' %}" class="btn btn-danger"> Cerrar</a>
+</p>
 
 <form class="row g-3">
-            <!--<div class="col-md-2">
-        <label for="inputZip" class="form-label">Zip</label>
-        <input type="text" class="form-control" id="inputZip">
-      </div>
-      <div class="col-12">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="gridCheck">
-          <label class="form-check-label" for="gridCheck">
-            Check me out
-          </label>
-        </div>
-      </div>
-      <div class="col-12">
-        <button type="submit" class="btn btn-primary">Sign in</button>
-      </div>--!>
 <style type="text/css">
-    th {
-        text-align: center;
+    td, th{padding: 10px;}
+    th{
+       text-align: center;
+       font-size: 15px;
+    }
+    td{
+      font-size:80%;
     }
 </style>
-        <table class="table table-bordered" id="cliente">
+    <table class="table table-bordered" id="listasala" style="text-align:center;">
         <thead>
-            <tr>
-
-                <th scope="col">Codigo</th>
-                <th scope="col">Inspired</th>
-                <th scope="col">Descripción</th>
-                <th scope="col">Ciudad</th>
-                <th scope="col">Cliente</th>
-                <!--<th scope="col">Razon Social</th>--!>
-                <th scope="col" colspan="3">Estado
-                    (activo/Liq./%)</th>
-                <th scope="col">Opciones</th>
-             </tr>
+        <tr>
+            <th WIDTH="80" scope="col">Codigo</th>
+            <th WIDTH="80" scope="col">Inspired</th>
+            <th WIDTH="120" scope="col">Descripción</th>
+            <th WIDTH="160" scope="col">Ciudad</th>
+            <th WIDTH="180" scope="col">Cliente</th>
+            <th WIDTH="180" scope="col">Razon Social</th>
+            <th WIDTH="20" scope="col">Activo</th>
+            <th WIDTH="20" scope="col">Liq.</th>
+            <th WIDTH="20"scope="col">%</th>
+            <th WIDTH="140" scope="col">Opciones</th>
+        </tr>
         </thead>
-            <tbody>
-                <tr>
+        <tbody>
+        {% for Sala in salas %}
 
-                    <td  WIDTH="120" HEIGHT="120">
-                        {% for Sala in clientes %}
-                            <input  type="text" class="form-control" value="{{Sala.id_codigo}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td WIDTH="80" HEIGHT="80">
-                        {% for Sala in clientes %}
-                            <input type="text" class="form-control" value="{{Sala.id_inspired}}" readonly onmousedown="return false;" name="clienteconectar">
-                        {% endfor %}
-                    </td>
-                    <td WIDTH="200" HEIGHT="200">
-                        {% for Sala in clientes %}
-                            <input type="text" class="form-control" value="{{Sala.nombre}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td WIDTH="180" HEIGHT="180">
-                        {% for Sala in clientes %}
-                            <input type="text" class="form-control" value="{{Sala.ciudad}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {% for Sala in clientes %}
-                            <input type="text" class="form-control" value="{{Sala.clientes}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <!--<td WIDTH="50" HEIGHT="50">
-                        {% for Sala in clientes %}
-                            <input type="text" class="form-control" value="{{Sala.razon}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>--!>
-                    <td WIDTH="35" HEIGHT="35">
-                        {% for Sala in clientes %}
-                            <input type="text" class="form-control" value="{{Sala.activo}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td WIDTH="35" HEIGHT="35">
-                        {% for Sala in clientes %}
-                            <input type="text" class="form-control" value="{{Sala.liquida}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td WIDTH="43" HEIGHT="43">
-                        {% for Sala in clientes %}
-                            <input type="text" class="form-control" value="{{Sala.porcentaje}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td WIDTH="140" HEIGHT="140">
-                        {% for Cliente in clientes %}
-                            <a href="{% url 'instalar'%}" type="button" class="btn btn-danger">Editar</a>  <button type="button" class="btn btn-danger">Ver</button>
-                        {% endfor %}
-                    </td>
-
-
-                </tr>
-            </tbody>
-        </table>
-        <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
-        <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
-        <script src="https://cdn.datatables.net/fixedheader/3.1.6/js/dataTables.fixedHeader.min.js"></script>
-        <script>
+        <tr>
+            <td>{{Sala.id_codigo}}</td>
+            <td>{{Sala.id_inspired}}</td>
+            <td>{{Sala.nombre}}</td>
+            <td>{{Sala.ciudad.nombre}}</td>
+            <td>{{Sala.clientes.nombre}}</td>
+            <td>{{Sala.razon.nombre}}</td>
+            <td><script>
+                if ({{Sala.activo}} == 1){
+                    document.write("x")
+                }else{
+                    document.write("")
+                }
+                </script></td>
+            <td><script>
+                if ({{Sala.modelo.id}} == 1){
+                    document.write("M")
+                }else{
+                    document.write("R")
+                }
+                </script></td>
+            <td>{{Sala.porcentaje}}</td>
+            <td>
+                <a href="{% url 'editarsala' Sala.id%}" class="btn btn-warning btn-sm">
+                <i class="fas fa-edit"></i></a>
+                <a href="{% url 'versala' Sala.id%}" class="btn btn-info btn-sm">
+                <i class="fas fa-eye"></i></a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedheader/3.1.6/js/dataTables.fixedHeader.min.js"></script>
+    <script>
             $(document).ready(function(){
-                var table = $('#cliente').DataTable({
+                var table = $('#listasala').DataTable({
                     orderCellsTop: true,
                     fixedHeader: true
                 });
@@ -133,7 +114,7 @@
              } );*/
 
 
-        </script>
-      <p></p>
+    </script>
+    <p></p>
 </form>
 {% endblock%}

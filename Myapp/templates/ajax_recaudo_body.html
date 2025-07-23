@@ -1,0 +1,27 @@
+<tbody id="recaudodia-body">
+    {% for recaudo in recaudo %}
+    <tr>
+        <td>{{ recaudo.id }}</td>
+        <td>{{ recaudo.clientes.nombre }}</td>
+        <td>{{ recaudo.salas.nombre }}</td>
+        <td>{{ recaudo.fecha|date:"Y-m-d" }}</td>
+        <td>{{ recaudo.fechacarga|date:"Y-m-d" }}</td>
+        <td>{{ recaudo.maquina }}</td>
+        <td>{{ recaudo.coinin }}</td>
+        <td>{{ recaudo.coinout }}</td>
+        <td>{{ recaudo.coinout }}</td>
+        <td>{{ recaudo.handpay }}</td>
+        <td>{{ recaudo.jackpot }}</td>
+        <td>{{ recaudo.bills }}</td>
+        <td>{{ recaudo.plays }}</td>
+        <td>{{ recaudo.neto }}</td>
+        <td></td>
+        <td>{{ recaudo.payback }}%</td>
+        <td></td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="16">No se encontraron recaudos que coincidan con los filtros aplicados.</td>
+    </tr>
+    {% endfor %}
+</tbody>

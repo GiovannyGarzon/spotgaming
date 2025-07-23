@@ -1,120 +1,79 @@
-
 {% extends 'menumaestro.html' %}
+{% block title %}Lista Maquinas{% endblock %}
 {% load crispy_forms_tags %}
 {% block content%}
-
 <fieldset id="borde" xmlns="http://www.w3.org/1999/html">
-    <h5>  Maestro de Clientes </h5>
- </fieldset>
+    <h5>  Maestro de Maquina </h5>
+</fieldset>
 <p></p>
 <br>
+{% if messages %}
+
+<div class = "alert alert-success">
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
 <br>
-
-
-<form class="row g-3">
-            <!--<div class="col-md-2">
-        <label for="inputZip" class="form-label">Zip</label>
-        <input type="text" class="form-control" id="inputZip">
-      </div>
-      <div class="col-12">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="gridCheck">
-          <label class="form-check-label" for="gridCheck">
-            Check me out
-          </label>
-        </div>
-      </div>
-      <div class="col-12">
-        <button type="submit" class="btn btn-primary">Sign in</button>
-      </div>--!>
 <style type="text/css">
-    th {
-        text-align: center;
-    }
-</style>
-        <table class="table table-bordered" >
-        <thead>
-            <tr>
-
-                <th scope="col">Codigo</th>
-                <th scope="col">Serie PMV</th>
-                <th scope="col">Familia</th>
-                <th scope="col">Cliente</th>
-                <th scope="col">Status</th>
-                <th scope="col">Condición</th>
-                <th scope="col">Dato Adicional</th>
-                <th scope="col">Mod.</th>
-                <th scope="col">Propiedad</th>
-                <th scope="col">Opciones</th>
-             </tr>
-        </thead>
-            <tbody>
-                <tr>
-
-                    <td  WIDTH="80" HEIGHT="80">
-                        {% for Maquina in clientes %}
-                            <input  type="text" class="form-control" value="{{Maquina.id_codigo}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td WIDTH="100" HEIGHT="100">
-                        {% for Maquina in clientes %}
-                            <input type="text" class="form-control" value="{{Maquina.serie_PMV}}" readonly onmousedown="return false;" name="clienteconectar">
-                        {% endfor %}
-                    </td>
-                    <td WIDTH="90" HEIGHT="90">
-                        {% for Maquina in clientes %}
-                            <input type="text" class="form-control" value="{{Maquina.familia}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td WIDTH="180" HEIGHT="180">
-                        {% for Maquina in clientes %}
-                            <input type="text" class="form-control" value="{{Maquina.clientes}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td WIDTH="113" HEIGHT="113">
-                        {% for Maquina in clientes %}
-                            <input type="text" class="form-control" value="{{Maquina.id_status}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td WIDTH="90" HEIGHT="90">
-                        {% for Maquina in clientes %}
-                            <input type="text" class="form-control" value="{{Maquina.id_condicion}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td WIDTH="15" HEIGHT="15">
-                        {% for Maquina in clientes %}
-                            <input type="text" class="form-control" value="{{Maquina.reservacion}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td WIDTH="15" HEIGHT="15">
-                        {% for Maquina in clientes %}
-                            <input type="text" class="form-control" value="{{Maquina.tipo_operacion}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-
-                    <td WIDTH="140" HEIGHT="140">
-                        {% for Cliente in clientes %}
-                            <a href="{% url 'instalar'%}" type="button" class="btn btn-danger">Editar</a>  <button type="button" class="btn btn-danger">Ver</button>
-                        {% endfor %}
-                    </td>
-
-
-                </tr>
-            </tbody>
-        </table>
-        <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
-        <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
-        <script src="https://cdn.datatables.net/fixedheader/3.1.6/js/dataTables.fixedHeader.min.js"></script>
-        <script>
+          td, th{padding: 10px;}
+          th{
+            text-align: center;
+                font-size: 15px;
+            }
+            td{
+                font-size:80%;
+            }
+    </style>
+<table class="table table-bordered" id="maquina" style="text-align:center;">
+    <thead>
+    <tr>
+        <th WIDTH="100" scope="col">Codigo</th>
+        <th WIDTH="100" scope="col">Serie PMV</th>
+        <th WIDTH="100" scope="col">Familia</th>
+        <th WIDTH="180" scope="col">Cliente</th>
+        <th scope="col">Status</th>
+        <th WIDTH="140" scope="col">Condición</th>
+        <th WIDTH="60" scope="col">Mod.</th>
+        <th WIDTH="140" scope="col">Propiedad</th>
+        <th WIDTH="140" scope="col">Opciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for Maquina in maquinas %}
+    <tr>
+        <td>{{Maquina.id_codigo}}</td>
+        <td>{{Maquina.serie_PMV}}</td>
+        <td>{{Maquina.familia}}</td>
+        <td>{{Maquina.clientes.nombre}}</td>
+        <td>{{Maquina.id_status}}</td>
+        <td>{{Maquina.id_condicion}}</td>
+        <td>{{Maquina.tipo_operacion}}</td>
+        <td>{{Maquina.pripiedad}}</td>
+        <td>
+            <a href="{% url 'editarmaquina' Maquina.id%}" class="btn btn-warning btn-sm">
+                <i class="fas fa-edit"></i></a>
+            <a href="{% url 'vermaquina' Maquina.id%}" class="btn btn-info btn-sm">
+                <i class="fas fa-eye"></i></a>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/fixedheader/3.1.6/js/dataTables.fixedHeader.min.js"></script>
+<script>
             $(document).ready(function(){
-                var table = $('#cliente').DataTable({
-                    orderCellsTop: true,
-                    fixedHeader: true
-                });
-            });
-
+              var table = $('#maquina').DataTable({
+                   orderCellsTop: true,
+                   fixedHeader: true
+               });
+           });
             /*$('#cliente thead tr').clone(true).appendTo( '#cliente thead' );
-
             $('#cliente thead tr:eq(1) th').each( function (i) {
                 var title = $(this).text(); //es el nombre de la columna
                 $(this).html( '<input type="text" placeholder="Search...'+title+'" />' );
@@ -128,9 +87,7 @@
                      }
                 } );
              } );*/
+</script>
+<p></p>
 
-
-        </script>
-      <p></p>
-</form>
 {% endblock%}

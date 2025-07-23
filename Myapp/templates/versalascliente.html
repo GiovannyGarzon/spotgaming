@@ -1,0 +1,48 @@
+{% extends 'menumaestro.html' %}
+{% load crispy_forms_tags %}
+{% block content%}
+<fieldset id="borde" xmlns="http://www.w3.org/1999/html">
+    <h5>  Salas del Cliente: {{ cliente.nombre }} </h5>
+</fieldset>
+<p></p>
+<style>
+    table#cliente td {
+        font-size: 10px;  /* Ajusta el tamaño de la fuente solo para las celdas <td> */
+    }
+</style>
+<table class="table table-bordered" id="cliente" style="text-align:center;">
+    <thead>
+        <tr>
+            <th>sala/Local/Punto</th>
+            <th>#Inspired</th>
+            <th>Direccion</th>
+            <th>Ciudad</th>
+            <th>Departamento</th>
+            <th>Telefono</th>
+            <th>Tipo</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for Sala in salas %}
+        <tr>
+            <td>{{ Sala.nombre }}</td>
+            <td>{{ Sala.id_inspired }}</td>
+            <td>{{ Sala.direccion }}</td>
+            <td>{{ Sala.ciudad.nombre }}</td>
+            <td>{{ Sala.departamento.nombre }}</td>
+            <td>{{ Sala.telefono }}</td>
+            <td>{{ Sala.id_tipo.nombre }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="2">No hay salas registradas para este cliente.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<center>
+    <button onclick="window.print();" class="btn btn-primary">Imprimir</button>
+    <a href="{% url 'listacliente' %}" class="btn btn-primary">Cerrar</a>
+</center>
+
+{% endblock%}

@@ -1,0 +1,328 @@
+{% extends 'menuservicios.html' %}
+{% load crispy_forms_tags %}
+{% load custom_filters %}.
+{% block content%}
+<fieldset id="borde" xmlns="http://www.w3.org/1999/html">
+    <h5>  Maquinas Sin Transmitir Recaudo Diario </h5>
+</fieldset>
+<br>
+<style>
+    .pfo1 {background-color: red;
+        width: 15px;
+        height: 15px;
+    }
+    .pfo2 {background-color: green;
+        width: 15px;
+        height: 15px;
+    }
+    .pfo3 {background-color: aqua;
+        width: 15px;
+        height: 15px;
+    }
+    .pfo4 {background-color: gold;
+        width: 15px;
+        height: 15px;
+    }
+    .pfo5 {background-color: sienna;
+        width: 15px;
+        height: 15px;
+    }
+    .pfo6 {background-color: darkmagenta;
+        width: 15px;
+        height: 15px;
+    }
+    .pfo7 {background-color: darkblue;
+        width: 15px;
+        height: 15px;
+    }
+    /* Ajustar el tamaño de la fuente para los elementos del formulario */
+    form#transmision label,
+    form#transmision select,
+    form#transmision input {
+        font-size: 12px; /* Cambia el tamaño de la fuente aquí */
+    }
+
+    /* Puedes reducir el tamaño de los selectores e inputs para que ocupen menos espacio */
+    form#transmision .form-select,
+    form#transmision .form-control {
+        padding: 5px; /* Reduce el espacio interno */
+        font-size: 12px; /* Cambia el tamaño del texto dentro de los inputs/selects */
+    }
+</style>
+<form id="transmision" name="transmision" class="row g-3">
+    <div class="col-md-4">
+        <label for="inputcliente" class="form-label">Cliente:</label>
+        <select id="inputcliente" class="form-select">
+            <option value="">Todos los Clientes...</option>
+            {% for Cliente in clientes %}
+            <option value="{{Cliente.id}}">{{Cliente.nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label for="inputsala" class="form-label">Sala:</label>
+        <select id="inputsala" class="form-select">
+            <option value="">Todas las salas...</option>
+            {% for Sala in salas %}
+            <option value="{{Sala.id}}">{{Sala.nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label for="inputcodigomaquina" class="form-label">Cod. Maquina:</label>
+        <select id="inputcodigomaquina" class="form-select">
+            <option value="">Todas las Maquinas...</option>
+            {% for Maquina in maquinas %}
+            <option value="{{Maquina.id}}">{{Maquina.id_codigo}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <!--<div class="col-md-2">
+        <label for="inputfamilia" class="form-label">Familia:</label>
+        <select id="inputfamilia" class="form-select">
+            <option value="">Todas las Familias...</option>
+            {% for FamiliaMaquina in familias %}
+            <option value="{{FamiliaMaquina.id}}">{{FamiliaMaquina.nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label for="inputmodelo" class="form-label">Modelo:</label>
+        <select id="inputmodelo" class="form-select">
+            <option value="">Todos los Modelos...</option>
+            {% for Modelo in modelos %}
+            <option value="{{Modelo.id}}">{{Modelo.nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label for="inputmodalidad" class="form-label">Modalidad:</label>
+        <select id="inputmodalidad" class="form-select" name="modalidad">
+            <option>Seleccione---------------</option>
+            <option value="PA">SOLO PARTICIPACION</option>
+            <option value="OC">PARTICIPACION CON OPC COMPRA</option>
+            <option value="VP">VENTA CON PARTICIPACION</option>
+            <option value="VS">VENTA SIN PARTICIPACION</option>
+            <option value="VF">VENTA CON CUOTA FIJA</option>
+            <option value="AR">ARRENDAIENTO MENSUAL</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label for="inputtiporeporte" class="form-label">Tipo Reporte:</label>
+        <select id="inputtiporeporte" class="form-select" name="tiporeporte">
+            <option>Todos los tipos...</option>
+            <option>TRANSMITIDO 100%</option>
+            <option>TRANSMITIDO 0%</option>
+            <option>SIN TRANSMISION ULTIMOS DIAS</option>
+            <option>ULTIMO DIA SIN CONEXION</option>
+            <option>SIN REPORTE 100%</option>
+            <option>ALGUNOS DIAS SIN REPORTE</option>
+            <option>ULTIMOS DIAS SIN NINGUN REPORTE</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+            <label for="inputciudad" class="form-label">Ciudad:</label>
+            <select id="inputciudad" class="form-select" name="ciudad" required>
+                <option>Seleccione...</option>
+                {% for Ciudad in ciudades %}
+                <option value="{{Ciudad.id}}">{{Ciudad.nombre}}</option>
+                {% endfor %}
+            </select>
+    </div>
+    <div class="col-md-4">
+            <label for="inputdepartamento" class="form-label">Departamento:</label>
+            <select id="inputdepartamento" class="form-select" name="departamento" required>
+                <option>Seleccione...</option>
+                {% for Departamento in departamentos %}
+                <option value="{{Departamento.id}}">{{Departamento.nombre}}</option>
+                {% endfor %}
+            </select>
+    </div>--!>
+    <div class="col-md-2">
+            <label for="inputmes1" class="form-label">Mes:</label>
+            <select id="inputmes1" class="form-select" name="mes">
+                <option value="01" {% if current_month == 1 %}selected{% endif %}>Enero</option>
+                <option value="02" {% if current_month == 2 %}selected{% endif %}>Febrero</option>
+                <option value="03" {% if current_month == 3 %}selected{% endif %}>Marzo</option>
+                <option value="04" {% if current_month == 4 %}selected{% endif %}>Abril</option>
+                <option value="05" {% if current_month == 5 %}selected{% endif %}>Mayo</option>
+                <option value="06" {% if current_month == 6 %}selected{% endif %}>Junio</option>
+                <option value="07" {% if current_month == 7 %}selected{% endif %}>Julio</option>
+                <option value="08" {% if current_month == 8 %}selected{% endif %}>Agosto</option>
+                <option value="09" {% if current_month == 9 %}selected{% endif %}>Septiembre</option>
+                <option value="10" {% if current_month == 10 %}selected{% endif %}>Octubre</option>
+                <option value="11" {% if current_month == 11 %}selected{% endif %}>Noviembre</option>
+                <option value="12" {% if current_month == 12 %}selected{% endif %}>Diciembre</option>
+            </select>
+        </div>
+    <div class="col-md-2">
+        <label for="inputanio" class="form-label">Año:</label>
+        <select id="inputanio" class="form-select" name="anio">
+            {% for year in years %}
+                <option value="{{ year }}">{{ year }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
+            <label for="inputpropiedad" class="form-label">Propiedad:</label>
+            <select id="inputpropiedad" class="form-select" name="propiedad" required>
+                <option>Seleccione...</option>
+                {% for Propiedad in propietarios %}
+                <option value="{{Propiedad.id}}">{{Propiedad.nombre}}</option>
+                {% endfor %}
+            </select>
+    </div>
+    <font face="tahoma" size="4" color="#333333">Leyenda (Colores)</font>
+    <div class="form-group">
+        <span style="color: green; font-size: 20px;">X</span> Día Transmitido Completo<br>
+        <span style="color: red; font-size: 20px;">X</span> Día Sin Transmisión<br>
+        <!--<label for="Día Sin Comunicación" class="pfo1"></label>
+        <input id="Día Sin Comunicación" class="sinbord" style="border:0;" value="Día Sin Comunicación">
+        <label for="Día Trasmitido Completo"  class="pfo2"></label>
+        <input id="Día Trasmitido Completo" class="sinbord" style="border:0;" value="Día Trasmitido Completo">
+        <label for="Día Sin Transmisión" class="pfo3"></label>
+        <input id="Día Sin Transmisión" class="sinbord" style="border:0;" value="Día Sin Transmisión">
+        <label for="Día Trasmitido Después" class="pfo4"></label>
+        <input id="Día Trasmitido Después" class="sinbord" style="border:0;" value="Día Trasmitido Después">
+    </div>
+    <div class="form-group">
+        <label for="Día Sin Ningún Reporte" class="pfo5"></label>
+        <input id="Día Sin Ningún Reporte" class="sinbord" style="border:0;" value="Día Sin Ningún Reporte">
+        <label for="Día Domingo / Festivo" class="pfo6"></label>
+        <input id="Día Domingo / Festivo" class="sinbord" style="border:0;" value="Día Domingo / Festivo">
+        <label for="Día con Reporte de Falla" class="pfo7"></label>
+        <input id="Día con Reporte de Falla" class="sinbord" style="border:0;" value="Día con Reporte de Falla">--!>
+    </div>
+</form>
+<br>
+    <button type="submit" id="submit" class="btn btn-danger">Filtrar</button>
+    <a href="{% url 'register'%}" type="button" class="btn btn-danger">Todos</a>
+<br>
+<td colspan="5" valign="top">
+    <table border="0" width="100%" id="table3" cellspacing="1">
+        <tbody>
+        <tr>
+            <td align="center">
+                <b>
+                    <font face="Tahoma" color="#333333">Lista de Maquinas Sin Reporte Diario</font>
+                </b>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+</td>
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    td, th {
+        font-size: 12px;
+        padding: 8px;
+        text-align: center;
+        border: none; /* Eliminar bordes individuales de las celdas */
+    }
+
+    th {
+        font-size: 14px;
+        background-color: #f2f2f2;
+    }
+
+    /* Fondo amarillo para la fila de cliente y sala */
+    .highlight-row {
+        background-color: yellow;
+    }
+
+    /* Borde alrededor del bloque de cliente y sala */
+    .cliente-sala-group {
+        border: 2px solid black; /* Borde negro alrededor de todo el bloque */
+        margin-bottom: 10px;
+    }
+</style>
+
+<!-- Tabla que muestra las máquinas sin reporte diario -->
+<table>
+    <thead>
+        <tr>
+            <th>Máquina</th>
+            <th>Serie PMV</th>
+            <th>Inspirado</th>
+            {% for day in days_of_month %}
+                <th>{{ day }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for cliente, salas in maquinas_por_cliente_sala.items %}
+            {% for sala, maquinas in salas.items %}
+                <tr>
+                    <td colspan="{% with colspan_value=days_of_month|length %}{{ colspan_value|add:3 }}{% endwith %}" class="cliente-sala-group">
+                        <!-- Agrupamos cliente y sala en una sola fila con borde -->
+                        <div class="highlight-row">
+                            {{ cliente.nombre }} - {{ sala.nombre }}
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Subfilas: Máquinas -->
+                {% for Maquina in maquinas %}
+                    <tr>
+                        <td>{{ Maquina.id_codigo }}</td>
+                        <td>{{ Maquina.serie_PMV }}</td>
+                        <td>{{ Maquina.id_inspired }} / {{ Maquina.id_posicion }}</td>
+                        {% for day in days_of_month %}
+                            <td style="background-color: {% if estado_dias_maquinas|get_item:maquina.id|get_item:day %}green{% else %}white{% endif %};">
+                                {% if estado_dias_maquinas|get_item:maquina.id|get_item:day %}
+                                    ✔️
+                                {% else %}
+                                    ❌
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+        {% endfor %}
+    </tbody>
+</table>
+<br>
+<script>
+    document.getElementById('submit').addEventListener('click', function(event) {
+        event.preventDefault();
+        // Aquí puedes hacer la petición AJAX para obtener los datos filtrados
+        // y actualizar la tabla y el "Total General Maq" dinámicamente.
+        // Por ejemplo:
+
+        // Supongamos que obtienes la cantidad de máquinas y los datos:
+        let totalMaq = 5; // ejemplo
+        let maquinas = [
+            { id: 1, nombre: "Maquina 1" },
+            { id: 2, nombre: "Maquina 2" },
+            // otros datos
+        ];
+
+        // Actualizar el texto del total de máquinas
+        document.querySelector('#maquinasSinReporte thead td').innerHTML = `<b>Total General Maq: ${totalMaq}</b>`;
+
+        // Limpiar la tabla antes de agregar nuevas filas
+        let tbody = document.querySelector('#maquinasSinReporte tbody');
+        tbody.innerHTML = '';
+
+        // Agregar las filas a la tabla
+        maquinas.forEach(function(maquina) {
+            let row = document.createElement('tr');
+            row.innerHTML = `<td>${maquina.nombre}</td>`;
+            tbody.appendChild(row);
+        });
+
+        // Mostrar o esconder el mensaje de "No hay datos"
+        if (totalMaq === 0) {
+            document.getElementById('noDataMessage').style.display = 'block';
+        } else {
+            document.getElementById('noDataMessage').style.display = 'none';
+        }
+    });
+</script>
+{% endblock %}

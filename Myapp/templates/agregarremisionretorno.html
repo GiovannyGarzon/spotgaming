@@ -1,0 +1,107 @@
+{% extends 'menualmacen.html' %}
+{% load crispy_forms_tags %}
+{% block content%}
+
+<h1> Datos de Retorno de Remisión </h1>
+<p></p>
+
+<form class="row g-3"  action="{% url 'guardarremisionretorno' %}" method="POST">
+  {% csrf_token %}
+  <div class="col-md-4">
+    <label for="inputnumerorem" class="form-label">Numero_REM:</label>
+    <input type="texto" class="form-control" id="inputnumerorem" name="numerorem" readonly onmousedown="return false;">
+  </div>
+  <div class="col-md-4">
+    <label for="inputfecharemision" class="form-label">Fecha Remisión:</label>
+    <input type="date" class="form-control" id="inputfecharemision" name="fecharemi" required>
+  </div>
+  <div class="col-md-4">
+    <label for="inputclienteremi" class="form-lable">Cliente:</label>
+    <select id="inputclienteremi" class="form-select" name="clienteremi" required>
+      <option VALUE="">Todos los clientes...</option>
+      {% for Cliente in clientes %}
+          <option value="{{Cliente.id}}">{{Cliente.nombre}}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2">
+    <label for="inputfecharecibido" class="form-label">Fecha Recibido :</label>
+    <input type="date" class="form-control" id="inputfecharecibido" name="fecharecibido">
+  </div>
+  <div class="col-md-2">
+    <label for="inputformaenvio" class="form-label">Forma de Envío:</label>
+    <select id="inputformaenvio" class="form-select" name="formaenvio" required>
+      <option value="">Formas de envio...</option>
+      {% for Transporte in transportes %}
+      <option value="{{Transporte.id}}">{{Transporte.nombre}}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2">
+    <label for="inputrecibido" class="form-label">Recibido por:</label>
+    <input type="text" class="form-control" id="inputrecibido" name="recibido" value="{{user.first_name}} {{user.last_name}}" readonly onmousedown="return false;">
+  </div>
+  <div class="col-md-6">
+    <label for="inputguia" class="form-label"># Guia de Envío:</label>
+    <input type="text" class="form-control" id="inputguia" name="guiaremi" REQUIRED>
+  </div>
+  <div class="col-md-2">
+    <label for="inputstatus" class="form-label">Status:</label>
+    <select id="inputstatus" class="form-select" name="statusremi" requiredreadonly onmousedown="return false;">
+      <option value="1">ABIERTA</option>
+      <option value="3">EN PROCESO</option>
+      <option value="2">CERRADA</option>
+    </select>
+  </div>
+  <table border="0" width="98%" id="table2" cellspacing="1" cellpadding="0" style="border: 1px solid #000000; padding-left:0; padding-right:0">
+    <tbody>
+    <tr>
+      <td bgcolor="#808080" align="center">
+        <b><font face="Tahoma" size="2" color="#FFFFFF">Detalle de la Remisión</font></b>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <!--<th scope="col">ID</th>--!>
+        <th scope="col">ID</th>
+        <th scope="col"># Serie</th>
+        <th scope="col"># Delcaración</th>
+        <th scope="col">Descripcion de la Pieza / Parte</th>
+        <th scope="col"># Serie PMV</th>
+        <th scope="col"># Referencia</th>
+        <th scope="col">Sala / Punto</th>
+        <th scope="col">Opciones</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td WIDTH="80" HEIGHT="80">
+          {% for asignacion in asignaciones %}
+            <input type="text" class="form-control" value="{{asignacion.id}}" readonly onmousedown="return false;">
+          {% endfor %}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p></p>
+  <div class="col-md-12">
+    <label for="inputobservacion" class="form-label">Observación:</label>
+    <textarea class="form-control" id="inputobservacion" name="observacion" rows="4"></textarea>
+  </div>
+  <p></p>
+  <center>
+    <fieldset id="borde2">
+      <a type="button" class="btn btn-info">Agregar Item</a>
+      <a type="button" class="btn btn-info">Agregar Reparación</a>
+      <a type="button" class="btn btn-info">Carta</a>
+      <a type="button" class="btn btn-info">Imprimir</a>
+      <button type="submit" class="btn btn-info">Crear</button>
+      <a href="{% url 'retornoremision'%}" type="button" class="btn btn-info">Cerrar</a>
+    </fieldset>
+  </center>
+</form>
+{% endblock%}

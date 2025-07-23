@@ -1,9 +1,4 @@
-Status=(
-    ('PENDIENTE', 'Pendiente'),
-    ('ATENDIDA', 'Atendida'),
-    ('INSPIRED', 'Inspired'),
-    ('SOLUCIONADA', 'Solucionada')
-)
+
 
 prioridad=(
     ('BAJA', 'Baja'),
@@ -33,7 +28,9 @@ StatusServicioTecnico=(
 )
 
 StatusRemision=(
-    ('ABIERTA', 'ABIERTA'),
+    ('PENDIENTE', 'PENDIENTE'),
+    ('ENVIADA', 'ENVIADA'),
+    ('RECIBIDA', 'RECIBIDA'),
     ('CERRADA', 'CERRADA')
 )
 

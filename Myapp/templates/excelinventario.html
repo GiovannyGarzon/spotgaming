@@ -1,0 +1,53 @@
+{% extends "menualmacen.html" %}
+{% load static %}
+
+{% block content %}
+  <h2>Inventario en Almacén: Resumen por Tipo de Repuesto</h2>
+
+  {% for resumen in resumen_repuestos %}
+    <h3>{{ resumen.tipo_repuesto_nombre }} TENEMOS {{ resumen.total_repuestos }} (repuestos)</h3>
+
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>STATUS mod statusinventario</th>
+          <th>ESTADO mod estadoinventario</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for estado, cantidad in resumen.conteo_estado.items %}
+          <tr>
+            <td>{{ estado }}</td>
+            <td>{{ cantidad }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+<h4>Resumen por Marca (Pieza)</h4>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Marca</th>
+        <th>Cantidad</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for marca, cantidad in resumen.conteo_marca.items %}
+        <tr>
+          <td>{{ marca }}</td>
+          <td>{{ cantidad }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endfor %}
+<center>
+    <fieldset id="borde2">
+        <a href="?pdf=true" type="button" class="btn btn-info">Imprimir</a>
+        <a href="{% url 'inventario' %}" type="button" class="btn btn-info">Cerrar</a>
+    </fieldset>
+</center>
+<br>
+<br>
+{% endblock %}

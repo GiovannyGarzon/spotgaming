@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-!t9$8v_n-pw3=jq*#_c^g9gqb0b+$k(n+7(s@rsz-mxw+j0ov0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["0.0.0.0", "127.0.0.1", "192.168.0.103", "localhost"]
 
 
 # Application definition
@@ -42,16 +42,19 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'Myapp',
+    'Sistema',
     'Anexos',
     'Maestro',
     'Fallas_sporte',
     'Almacen',
     'Auditoria',
     'ProcesosIGG',
+    'Movimientos',
     'crispy_forms',
+    'django.contrib.humanize',
 ]
 
-
+X_FRAME_OPTIONS='SAMEORIGIN'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
@@ -99,7 +102,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'spotgaming2',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': 'Spot2022',
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -127,7 +130,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = 'es'
+LANGUAGE_CODE = 'es-ES'
 
 TIME_ZONE = 'UTC'
 
@@ -142,7 +145,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIR = [STATIC_DIR,]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'Myapp', 'static')]
+
+# Media files (Uploaded files)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')  # Esta línea define la carpeta donde se guardarán los archivos subidos
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -155,3 +162,8 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'servidor@spotgaming.co'
 EMAIL_HOST_PASSWORD = 'Spot2021'
+LOGIN_REDIRECT_URL = 'spotgaming'
+LOGOUT_REDIRECT_URL = 'login'
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 7200 # set just 600 seconds to test
+SESSION_SAVE_EVERY_REQUEST = True

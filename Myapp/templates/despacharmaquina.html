@@ -1,10 +1,74 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'menuinstalacion.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content%}
+<!-- Creamos formulario para asignar los seriales uno por uno--!>
+
+
+    <h1> Detalle de Despacho de un Serial </h1>
+<p></p>
+<!-- Creamos formulario para asignar los seriales uno por uno--!>
+
+    <p></p>
+<form class="row g-3">
+
+    <div class="col-md-4">
+        <label for="inputseriepmv" class="form-label"># Serie PMV a Asignar:</label>
+        <input type="text" class="form-control" id="inputseriepmv">
+    </div>
+    <div class="col-md-4">
+        <label for="inputcodigo" class="form-label">Codigo Maquina:</label>
+        <input type="date" class="form-control" id="inputcodigo">
+    </div>
+    <div class="col-md-4">
+        <label for="inputfactura" class="form-label">Factura PMV:</label>
+        <input type="text" class="form-control" id="inputfactura">
+    </div>
+    <table border="0" width="99%" id="table2" cellspacing="1" cellpadding="0" style="border: 1px solid #000000; padding-left:0; padding-right:0">
+        <tbody><tr>
+            <td bgcolor="#808080" align="center">
+                <b><font face="Tahoma" size="2" color="#FFFFFF">Datos de esta Asignación x Despacho</font></b></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="col-md-24">
+        <label for="inputclienteasignado" class="form-label">Cliente Asignado:</label>
+        <input type="text" class="form-control" id="inputclienteasignado">
+    </div>
+    <div class="col-md-4">
+        <label for="inputmodopera" class="form-label">Sala / Punto Asignado:</label>
+        <input type="text" class="form-control" id="inputmodopera" readonly onmousedown="return false;">
+    </div>
+    <div class="col-md-4">
+        <label for="inputdireccion" class="form-label">Dirección:</label>
+        <input type="text" class="form-control" id="inputdireccion" readonly onmousedown="return false;">
+    </div>
+    <div class="col-md-4">
+        <label for="inputciudad" class="form-label">Ciudad:</label>
+        <input type="text" class="form-control" id="inputciudad" readonly onmousedown="return false;">
+    </div>
+    <div class="col-md-4">
+        <label for="inputidinspired" class="form-label">ID Inspired:</label>
+        <input type="text" class="form-control" id="inputidinspired" >
+    </div>
+
+    <div class="col-md-4">
+        <label for="inputmaqvendida" class="form-label" ></label><br>
+        <input type="checkbox" id="inputmaqvendida" value="maquinavendida"> Maquina Despachada:
+    </div>
+
+
+    <p></p>
+    <p></p>
+    <p></p>
+    <center>
+        <fieldset id="borde2" >
+                <a type="button" class="btn btn-info">Imprimir</a>
+                <button type="submit" class="btn btn-info">Guardar</button>
+                <a href="{% url 'despachar'%}" type="button" class="btn btn-info">Cerrar</a>
+        </fieldset>
+      </center>
+</form>
+
+{% endblock%}

@@ -2,165 +2,163 @@
 {% load crispy_forms_tags %}
 {% block content%}
 
-
-    <fieldset id="borde">
+<fieldset id="borde">
     <h5> Servicio Tecnico de Clientes</h5>
-    </fieldset>
+</fieldset>
 
-  <p></p>
+<p></p>
+{% if messages %}
+
+<div class = "alert alert-success">
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<p></p>
 <form class="row g-3">
-      <div class="col-md-4">
+    <div class="col-md-4">
         <label for="inputnumero" class="form-label">Numero TEC:</label>
         <input type="text" class="form-control" id="inputnumero" >
-      </div>
-      <div class="col-md-4">
-        <label for="inputfecharegistro" class="form-label">Mes:</label>
-        <input type="date" class="form-control" id="inputfecharegistro">
-        </div>
-       <div class="col-md-6">
-         <label for="inputcliente" class="form-label">Cliente:</label>
-            <select id="inputcliente" class="form-select">
-                <option>Todos los Clientes...</option>
-                    {% for Cliente in clientes %}
-                        <option value="{{Cliente.id}}">{{Cliente.nombre}}</option>
-                    {% endfor %}
+    </div>
+    <div class="col-md-4">
+            <label for="inputmes1" class="form-label">Mes:</label>
+            <select id="inputmes1" class="form-select" name="mes">
+                <option value="01" {% if selected_month == '01' %}selected{% endif %}>Enero</option>
+                <option value="02" {% if selected_month == '02' %}selected{% endif %}>Febrero</option>
+                <option value="03" {% if selected_month == '03' %}selected{% endif %}>Marzo</option>
+                <option value="05" {% if selected_month == '05' %}selected{% endif %}>Abril</option>
+                <option value="04" {% if selected_month == '04' %}selected{% endif %}>Mayo</option>
+                <option value="07" {% if selected_month == '07' %}selected{% endif %}>Junio</option>
+                <option value="06" {% if selected_month == '06' %}selected{% endif %}>Julio</option>
+                <option value="08" {% if selected_month == '08' %}selected{% endif %}>Agosto</option>
+                <option value="09" {% if selected_month == '09' %}selected{% endif %}>Septiembre</option>
+                <option value="10" {% if selected_month == '10' %}selected{% endif %}>Octubre</option>
+                <option value="11" {% if selected_month == '11' %}selected{% endif %}>Noviembre</option>
+                <option value="12" {% if selected_month == '12' %}selected{% endif %}>Diciembre</option>
             </select>
-        </div>
-        <div class="col-md-4">
-        <label for="inputano" class="form-label">Año:</label>
-        <input type="date" class="form-control" id="inputano">
-        </div>
-        <div class="col-md-6">
-         <label for="inputstatus" class="form-label">Status:</label>
-            <select id="inputstatus" class="form-select">
-                <option>Todos los Status...</option>
-                <option>EN PROCESO</option>
-                <option>PENDIENTE</option>
-                <option>CERRADA</option>
-            </select>
-        </div>
-        <fieldset id="borde3">
+    </div>
+    <div class="col-md-4">
+        <label for="inputstatus" class="form-label">Status:</label>
+        <select id="inputstatus" class="form-select">
+            <option>Todos los Status...</option>
+            <option>EN PROCESO</option>
+            <option>PENDIENTE</option>
+            <option>CERRADA</option>
+        </select>
+    </div>
+    <div class="col-md-6">
+        <label for="inputcliente" class="form-label">Cliente:</label>
+        <select id="inputcliente" class="form-select">
+            <option>Todos los Clientes...</option>
+            {% for Cliente in clientes %}
+            <option value="{{Cliente.id}}">{{Cliente.nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <fieldset id="borde3">
+        <button type="submit" class="btn btn-danger">Filtrar</button>
+        <a href="{% url 'listaasignacion'%}" type="button" class="btn btn-danger">Todos</a>
+    </fieldset>
+    <center>
+        <h3>Lista de Ordenes de Servicio Técnico</h3>
+    </center>
+    <style type="text/css">
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
 
-                <button type="submit" class="btn btn-danger">Filtrar</button>
-                <a href="{% url 'listaasignacion'%}" type="button" class="btn btn-danger">Todos</a>
-        </fieldset>
-        <center>
-        <h3>Lista de Fallas Reportadas</h3>
-        </center>
-            <!--<div class="col-md-2">
-        <label for="inputZip" class="form-label">Zip</label>
-        <input type="text" class="form-control" id="inputZip">
-      </div>
-      <div class="col-12">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="gridCheck">
-          <label class="form-check-label" for="gridCheck">
-            Check me out
-          </label>
-        </div>
-      </div>
-      <div class="col-12">
-        <button type="submit" class="btn btn-primary">Sign in</button>
-      </div>--!>
-        <style type="text/css">
+    th, td {
+        padding: 10px;
+        text-align: center;
+        font-size: 15px; /* Tamaño de fuente para encabezados de tabla */
+    }
 
-            td, th{
-                padding: 10px;
-            }
-            th {
-                text-align: center;
-                font-size: 15px;
-            }
-            td{
-                font-size: 5px;
-            }
+    td {
+        font-size: 80%; /* Tamaño de fuente para datos de tabla */
+    }
+
+    th {
+        font-weight: bold; /* Opcional: hacer que los encabezados de tabla sean negritas */
+    }
 
     </style>
-        <table class="table table-bordered">
+    <table class="table table-bordered" id="listaservicio">
+
         <thead>
-            <tr>
-                <!--<th scope="col">ID</th>--!>
-                <th scope="col">Numero ASG</th>
-                <th scope="col">Cliente</th>
-                <th scope="col">Contacto</th>
-                <th scope="col">Status</th>
-                <th scope="col">Fecha Asignación</th>
-                <th scope="col">Mod Ope.</th>
-                <th scope="col">Cant. Maq</th>
-                <th scope="col">Opciones</th>
-             </tr>
+        <tr>
+            <!--<th scope="col">ID</th>--!>
+            <th WIDTH="80" scope="col">Numero TEC</th>
+            <th scope="col">Cliente</th>
+            <th scope="col">Breve Descripción del Servicio</th>
+            <th scope="col">Status</th>
+            <th scope="col">Fecha Servicio</th>
+            <th scope="col">Fecha Visita</th>
+            <th scope="col">Fecha Cierre</th>
+            <th WIDTH="140" scope="col">Opciones</th>
+        </tr>
         </thead>
-            <tbody>
-                <tr>
-                    <!--<td WIDTH="50" HEIGHT="50">
-                        {% for asignacion in asignaciones %}
-                            <input type="text" class="form-control" id="inputid" value="{{asignacion.id}}" readonly onmousedown="return false;">
-                        {% endfor %}--!>
-                    </td>
-                    <td WIDTH="80" HEIGHT="80">
-                        {% for asignacion in asignaciones %}
-                            <input type="text" class="form-control" value="{{asignacion.id}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {% for asignacion in asignaciones %}
-                            <input type="text" class="form-control" id="textcliente" value="{{asignacion.clientes}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {% for asignacion in asignaciones %}
-                            <input id="contacto" type="text" class="form-control" value="{{asignacion.contacto}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
+        <tbody>
+        {% for ServicioTecnico in servicios %}
+        <tr>
+            <td>TEC00-{{ServicioTecnico.id}}</td>
+            <td>{{ServicioTecnico.clientes.nombre}}</td>
+            <td>{{ServicioTecnico.descripcion}}</td>
+            <td>{{ServicioTecnico.id_status}}</td>
+            <td>{{ServicioTecnico.fecha|date:"Y-m-d"}}</td>
+            <td>{% if ServicioTecnico.fecha_visita %}
+                        {{ServicioTecnico.fecha_visita|date:"Y-m-d" }}
+                        {% else %}
+                            {{""}}
+                {% endif %}</td>
+            <td>{% if ServicioTecnico.fecha_final %}
+                        {{ServicioTecnico.fecha_final}}
+                        {% else %}
+                           {{""}}
+                {% endif %}</td>
+            <td><a href="{% url 'editarserviciotecnico' ServicioTecnico.id%}" type="submit" class="btn btn-danger">Editar</a> | <button type="button" class="btn btn-danger">Ver</button></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <p></p>
+    <p></p>
+    <p></p>
+    <p></p>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/fixedheader/3.1.6/js/dataTables.fixedHeader.min.js"></script>
+<script>
+            $(document).ready(function(){
+              var table = $('#listaservicio').DataTable({
+                   orderCellsTop: true,
+                   fixedHeader: true
+               });
+           });
+            /*$('#cliente thead tr').clone(true).appendTo( '#cliente thead' );
+            $('#cliente thead tr:eq(1) th').each( function (i) {
+                var title = $(this).text(); //es el nombre de la columna
+                $(this).html( '<input type="text" placeholder="Search...'+title+'" />' );
 
-                    <td>
-                        {% for asignacion in asignaciones %}
-                            <input type="text" class="form-control" value="{{asignacion.stado}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {% for asignacion in asignaciones %}
-                            <input type="text" class="form-control" value="{{asignacion.fecha_asignacion}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <TD WIDTH="250" HEIGHT="200">
-                        {% for asignacion in asignaciones %}
-                            <input type="text" class="form-control" value="{{asignacion.modelo}}" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <td WIDTH="60" HEIGHT="60">
-                        {% for asignacion in asignaciones %}
-                            <input type="text" class="form-control" value="#" readonly onmousedown="return false;">
-                        {% endfor %}
-                    </td>
-                    <script>
-                        function enviartexto(){
-                            var texto=document.getElementById("textcliente").value;
-                            document.getElementById("inputcliente").value=texto;
-                        }
-                    </script>
-                    <td WIDTH="140" HEIGHT="140">
-                        {% for asignacion in asignaciones %}
-                            <a href="{% url 'asignar'%}" type="submit" class="btn btn-danger">Editar</a> &nbsp;  <button type="button" class="btn btn-danger">Ver</button>
-                        {% endfor %}
-                    </td>
-
-
-                </tr>
-            </tbody>
-        </table>
-      <p></p>
-      <p></p>
-      <p></p>
-      <p></p>
-      <center>
-      <fieldset id="borde2">
-          <a href="{% url 'agregarfalla'%}" class="btn btn-success">Agregar</a>
-          <a href="#" class="btn btn-success">Imprimir</a>
-          <a href="#" class="btn btn-success">Cerrar</a>
-      </fieldset>
-       </center>
-
-
+                $( 'input', this ).on( 'keyup change', function () {
+                    if ( table.column(i).search() !== this.value ) {
+                        table
+                            .column(i)
+                            .search( this.value )
+                            .draw();
+                     }
+                } );
+             } );*/
+</script>
+    <center><fieldset id="borde2">
+        <a href="{% url 'serviciotecnico'%}" class="btn btn-success">Agregar</a>
+        <a href="#" class="btn btn-success">Imprimir</a>
+        <a href="#" class="btn btn-success">Cerrar</a>
+    </fieldset>
+    </center>
 </form>
 {% endblock%}

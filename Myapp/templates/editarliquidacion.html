@@ -1,10 +1,210 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'menuauditoria.html' %}
+{% load humanize %}
+{% load custom_filters %}
+{% block content %}
+<p></p>
+<center>
+<h2>Detalle de Liquidación </h2>
+</center>
+<p></p>
+<div class="row text-center p-2" style="background-color: #f2f2f2; border: 1px solid #ccc; border-radius: 8px;">
+    <div class="col">
+        <div><strong>Id:</strong></div>
+        <input type="text" class="form-control" value="LIQ-{{ cliente.id }}-{{ mes }}{{ anio }}" disabled>
+    </div>
+    <div class="col">
+        <div><strong>Cliente:</strong></div>
+        <input type="text" class="form-control" value="{{ cliente.nombre }}" disabled>
+    </div>
+    <div class="col">
+        <div><strong># Máquinas:</strong></div>
+        <input type="text" class="form-control" value="{{ detalles|length }}" disabled>
+    </div>
+    <div class="col">
+        <div><strong>Días a liq.:</strong></div>
+        <input type="text" class="form-control" value="30" disabled>
+    </div>
+    <p></p>
+    <div class="col">
+        <div><strong>Mes:</strong></div>
+        <input type="text" class="form-control" value="{{ nombre_mes }}" disabled>
+    </div>
+    <div class="col">
+        <div><strong>Año:</strong></div>
+        <input type="text" class="form-control" value="{{ anio }}" disabled>
+    </div>
+    <div class="col">
+        <div><strong>Metodo Calculo:</strong></div>
+        <input type="text" class="form-control" value="BILLS - HADPAY" disabled>
+    </div>
+    <div class="col">
+        <div><strong>Fecha Liquida:</strong></div>
+        <input type="text" class="form-control" value="{{ fecha_liquidacion|date:'d/m/Y' }}" disabled>
+    </div>
+</div>
+<p></p>
+<p></p>
+<h3 class="mt-4">Totales de la Liquidación</h3>
+
+<div class="row text-center p-2" style="background-color: #f2f2f2; border: 1px solid #ccc; border-radius: 8px;">
+    <div class="col">
+        <div><strong>$ Entrada</strong></div>
+        <div style="background: white; border: 1px solid #ccc;">{{ total.entrada|formato_pesos }}</div>
+    </div>
+    <div class="col">
+        <div><strong>$ Salida</strong></div>
+        <div style="background: white; border: 1px solid #ccc;">{{ total.salida|formato_pesos }}</div>
+    </div>
+    <div class="col">
+        <div><strong>$ Pago Cliente</strong></div>
+        <div style="background: #ffffcc; border: 1px solid #ccc;">{{ total.pago_cliente|formato_pesos }}</div>
+    </div>
+    <div class="col">
+        <div><strong>$ Pago Dueño</strong></div>
+        <div style="background: #e6ccff; border: 1px solid #ccc;">{{ total.pago_dueno|formato_pesos }}</div>
+    </div>
+    <div class="col">
+        <div><strong>$ Neto Total</strong></div>
+        <div style="background: #ccffcc; border: 1px solid #ccc;">{{ total.neto|formato_pesos }}</div>
+    </div>
+    <p></p>
+    <div class="col">
+        <div><strong>$ Descuento</strong></div>
+        <div style="background: #d9d9f2; border: 1px solid #ccc;">{{ total.descuento|formato_pesos }}</div>
+    </div>
+    <div class="col">
+        <div><strong>$ Bill Total</strong></div>
+        <div style="background: #f5f5dc; border: 1px solid #ccc;">{{ total.bill|formato_pesos }}</div>
+    </div>
+    <div class="col">
+        <div><strong># Jugadas</strong></div>
+        <div style="background: #e6ffe6; border: 1px solid #ccc;">{{ total.play|custom_intcomma }}</div>
+    </div>
+    <div class="col">
+        <div><strong>$ Impuesto</strong></div>
+        <div style="background: #e6ffe6; border: 1px solid #ccc;">{{ total.impuesto|formato_pesos }}</div>
+    </div>
+    <div class="col">
+        <div><strong>$ Iva</strong></div>
+        <div style="background: #e6ffe6; border: 1px solid #ccc;">{{ total.iva|formato_pesos }}</div>
+    </div>
+</div>
+<p></p>
+<center>
+<h3 class="mt-4">Resumen Sala / Maquina</h3>
+</center>
+<p></p>
+<!--<div class="row text-center p-2" style="background-color: #f2f2f2; border: 1px solid #ccc; border-radius: 8px;">
+    <div class="col">
+        <label for="saldo_vencido"><strong>$ Saldo Vencido:</strong></label>
+        <input type="number" step="0.01" name="saldo_vencido" id="saldo_vencido"
+               class="form-control"
+               value="{{ total.entrada|default:0 }}">
+    </div>
+    <div class="col">
+        <label for="saldo_favor"><strong>$ Saldo a Favor:</strong></label>
+        <input type="number" step="0.01" name="saldo_favor" id="saldo_favor"
+               class="form-control"
+               value="{{ total.salida|default:0 }}">
+    </div>
+</div>--!>
+<p></p>
+<p></p>
+{% for sala in resumen_salas %}
+<h5 class="mt-4">{{ sala.nombre }}</h5>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>ID Máquina</th>
+            <th>Dias Rep.</th>
+            <th> % </th>
+            <th>Desde</th>
+            <th>Hasta</th>
+            <th>Plays</th>
+            <th>$ Ingreso / Neto</th>
+            <th>- $ Imp. / IVA / Otros</th>
+            <th>$ Monto Distribuir</th>
+            <th>$ Monto x Cliente</th>
+            <th>$ Monto x Spot</th>
+            <!--<th>Entrada</th>
+            <th>Salida</th>
+            <th>Billetero</th>--!>
+        </tr>
+    </thead>
+    <tbody>
+        {% for detalle in sala.detalles %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ detalle.maquina.serie_PMV }}</td>
+            <td>{{ detalle.numero_registro }}</td>
+            <td>{{ detalle.maquina.porcentaje_pago|floatformat:0}}%</td>
+            <td>{{ fecha_desde|date:"d/m/Y" }}</td>
+            <td>{{ fecha_hasta|date:"d/m/Y" }}</td>
+            <td>{{ detalle.play_total|custom_intcomma }}</td>
+            <td>{{ detalle.neto_total|formato_pesos }}</td>
+            <td>{{ detalle.valor_a_descontar|formato_pesos }}</td>
+            <td>{{ detalle.monto_a_dividir|formato_pesos }}</td>
+            <td>{{ detalle.pago_cliente|formato_pesos }}</td>
+            <td>{{ detalle.pago_dueno|formato_pesos }}</td>
+            <!--<td>{{ detalle.entrada_total|formato_pesos }}</td>
+            <td>{{ detalle.salida_total|formato_pesos }}</td>
+            <td>{{ detalle.bill_total|formato_pesos }}</td>--!>
+        </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr>
+            <th colspan="6">Totales Sala</th>
+            <th>{{ sala.totales.play|custom_intcomma }}</th>
+            <th>{{ sala.totales.neto|formato_pesos }}</th>
+            <th>{{ sala.totales.descuento|formato_pesos }}</th>
+            <th>{{ sala.totales.monto_a_dividir|formato_pesos }}</th>
+            <th>{{ sala.totales.pago_cliente|formato_pesos }}</th>
+            <th>{{ sala.totales.pago_dueno|formato_pesos }}</th>
+            <!--<th>{{ sala.totales.entrada|formato_pesos }}</th>
+            <th>{{ sala.totales.salida|formato_pesos }}</th>
+            <th>{{ sala.totales.bill|formato_pesos }}</th>--!>
+        </tr>
+    </tfoot>
+</table>
+{% endfor %}
+<p></p>
+<hr>
+<center>
+<h4 class="mt-4">Totales Generales</h4>
+</center>
+<p></p>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+
+            <th>Plays</th>
+            <th>$ Ingreso / Neto</th>
+            <th>- $ Imp. / IVA / Otros</th>
+            <th>$ Monto Distribuir</th>
+            <th>$ Monto x Cliente</th>
+            <th>$ Monto x Spot</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="font-weight: bold; text-align: center; font-size: 22px;">{{ total.play|custom_intcomma }}</td>
+            <td style="font-weight: bold; text-align: center; font-size: 22px;">{{ total.neto|formato_pesos }}</td>
+            <td style="font-weight: bold; text-align: center; font-size: 22px;">{{ total.descuento|formato_pesos }}</td>
+            <td style="font-weight: bold; text-align: center; font-size: 22px;">{{ total.monto_a_dividir|formato_pesos }}</td>
+            <td style="font-weight: bold; text-align: center; font-size: 22px;">{{ total.pago_cliente|formato_pesos }}</td>
+            <td style="font-weight: bold; text-align: center; font-size: 22px;">{{ total.pago_dueno|formato_pesos }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<center>
+<a href="{% url 'liquidar' %}" class="btn btn-success">← Volver</a>
+<a href="{% url 'generar_pdf_liquidacion' cliente.id mes anio %}" class="btn btn-success" target="_blank">
+    Ver PDF Liquidación
+</a>
+</center>
+<p></p>
+<p></p>
+{% endblock %}

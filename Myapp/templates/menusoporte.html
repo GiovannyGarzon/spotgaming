@@ -1,10 +1,154 @@
-<!DOCTYPE html>
-<html lang="en">
+{% load static %}
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="utf-8">
+    <title> Navegacion Fallas / Soporte </title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+    <link rel="" href="https://cdn.datatables.net/fixedheader/3.1.6/css/fixedHeader.dataTables.min.css">
 </head>
 <body>
-$END$
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+      <a class="nav-link" href="{% url 'spotgaming'%}" style="color:#F3AC0A;" ><b><big>SPOTgaming</big></b></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url 'spotgaming'%}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'listareportedefallas'%}">Reporte de Fallas</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'listaserviciotecnico'%}">Servicio Técnico</a>
+          </li>
+          <!--<li class="nav-item">
+            <a class="nav-link" >Reparaciones</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" >Solicitud Repuestos</a>
+          </li>--!>
+          <!--<li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Dropdown
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="#">Action</a></li>
+              <li><a class="dropdown-item" href="#">Another action</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#">Something else here</a></li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link disabled">Disabled</a>
+          </li>--!>
+        </ul>
+        <form class="d-flex" action="{% url 'login' %}" method="GET">
+
+         <input type="text" name="User" onmousedown="return false;" value="@ {{user.username}}">
+
+       </form>
+        <form class="d-flex">
+         <a href="{% url 'logout' %}" class="btn btn-success" type="submit">Salir</a>
+       </form>
+      </div>
+    </div>
+  </nav>
+  <P></P>
+
+    <div class="content container">
+      {% block content%}
+        <br>
+          <h1> FALLAS / SOPORTE </h1>
+        <br>
+        <br>
+        <br>
+      <CENTER>
+        <div style="background-color: #f9f9f9; border-radius: 8px; padding: 20px; width: 80%; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); text-align: left;">
+          <p style="font-size: 18px; font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+            Este módulo permite la administración integral de las solicitudes de servicio y mantenimiento. A
+            continuación se detallan las funcionalidades disponibles:
+          </p>
+          <ul style="font-size: 16px; font-family: Arial, sans-serif; color: #555; line-height: 1.8; margin: 0 0 10px 20px;">
+            <li><strong>Creación de Reportes de Falla:</strong> Permite registrar y documentar incidentes o fallas en
+              las máquinas. Cada reporte incluye información detallada sobre el tipo de falla, la máquina afectada y el
+              usuario que reporta.
+            </li>
+            <li><strong>Gestión de Servicios Técnicos:</strong> Facilita la creación de solicitudes para servicios
+              técnicos. Los usuarios pueden especificar el tipo de servicio requerido, asignar personal técnico y
+              establecer fechas de atención.
+            </li>
+            <li><strong>Generación de Remisiones:</strong> Posibilita la creación de remisiones para el envío de piezas
+              de repuesto o la movilización de máquinas a talleres o instalaciones. Este proceso incluye la captura de
+              datos relevantes como la dirección de envío y el destinatario.
+            </li>
+            <li><strong>Registro de Reparaciones:</strong> Permite documentar el proceso de reparación de las máquinas,
+              incluyendo detalles sobre los trabajos realizados, piezas utilizadas y costos asociados.
+            </li>
+            <li><strong>Validación de Solicitudes de Repuesto:</strong> Ofrece la opción de validar y aprobar
+              solicitudes de repuestos necesarias para el mantenimiento y reparación de las máquinas. Esto asegura que
+              se cuente con los recursos necesarios para llevar a cabo el servicio técnico.
+            </li>
+          </ul>
+        </div>
+        <br>
+      </CENTER>
+        <br>
+        <br>
+        <br>
+        <center>
+          <fieldset >
+          <div id="version">
+            <h6>Ver. Verisón 1.0.0 (01/04/2022)</h6>
+            <img src="{% static "img/logosistema.png" %}" > <br>
+            <h8>Copyright ® 2019</h8><br>
+            <h8>SPOTGAMING S.A.S</h8><br>
+            <h8>El uso de este sistema implica la aceptacion del aviso legal todos los Derechos reservados.</h8>
+          </div>
+          </fieldset>
+        </center>
+      {% endblock%}
+      {% block script %}
+          <script>
+              document.addEventListener("DOMContentLoaded", function () {
+
+                const selectCodigoMaquina = document.getElementById("inputCodigoMaquina");
+                const inputCliente = document.getElementById("inputCliente");
+                const inputsala = document.getElementById("inputsala");
+                const inputoperacion = document.getElementById("inputoperacion");
+                const inputClienteoculto = document.getElementById("inputClienteoculto");
+                const inputsalateoculto = document.getElementById("inputsalateoculto");
+                const inputoperacionoculto = document.getElementById("inputoperacionoculto");
+
+
+                selectCodigoMaquina.addEventListener("change", function () {
+                  const selectedOption = selectCodigoMaquina.options[selectCodigoMaquina.selectedIndex];
+                  inputCliente.value = selectedOption.getAttribute("data-cliente");
+                  inputsala.value = selectedOption.getAttribute("data-sala");
+                  inputoperacion.value = selectedOption.getAttribute("data-operacion");
+                  inputClienteoculto.value = selectedOption.getAttribute("data-cliente2");
+                  inputsalateoculto.value = selectedOption.getAttribute("data-sala2");
+                  inputoperacionoculto.value = selectedOption.getAttribute("data-operacion2");
+               });
+             });
+                // Obtener la fecha actual en formato YYYY-MM-DD
+                const today = new Date().toISOString().split('T')[0];
+
+                // Asignar la fecha actual al campo de fecha
+                document.getElementById('inputfechareporte').value = today;
+          </script>
+      {% endblock %}
+    </div>
+
 </body>
+
+
 </html>

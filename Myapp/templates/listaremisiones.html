@@ -1,10 +1,194 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'menualmacen.html' %}
+{% load crispy_forms_tags %}
+{% block content%}
+<fieldset id="borde">
+    <h5>Remisiones de Maquinas / Partes</h5>
+</fieldset>
+<p></p>
+{% if messages %}
+
+<div class = "alert alert-success">
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<form class="row g-3" method="GET" id="formfiltrarremision" name="formfiltrarremision">
+    {% csrf_token %}
+    <div class="col-md-4">
+        <label for="inputnumero" class="form-label">Numero REM:</label>
+        <input type="text" class="form-control" id="inputnumero" name="numero_rem">
+    </div>
+    <div class="col-md-2">
+            <label for="inputmes1" class="form-label">Mes:</label>
+            <select id="inputmes1" class="form-select" name="mes">
+                <option value="01" {% if current_month == 1 %}selected{% endif %}>Enero</option>
+                <option value="02" {% if current_month == 2 %}selected{% endif %}>Febrero</option>
+                <option value="03" {% if current_month == 3 %}selected{% endif %}>Marzo</option>
+                <option value="04" {% if current_month == 4 %}selected{% endif %}>Abril</option>
+                <option value="05" {% if current_month == 5 %}selected{% endif %}>Mayo</option>
+                <option value="06" {% if current_month == 6 %}selected{% endif %}>Junio</option>
+                <option value="07" {% if current_month == 7 %}selected{% endif %}>Julio</option>
+                <option value="08" {% if current_month == 8 %}selected{% endif %}>Agosto</option>
+                <option value="09" {% if current_month == 9 %}selected{% endif %}>Septiembre</option>
+                <option value="10" {% if current_month == 10 %}selected{% endif %}>Octubre</option>
+                <option value="11" {% if current_month == 11 %}selected{% endif %}>Noviembre</option>
+                <option value="12" {% if current_month == 12 %}selected{% endif %}>Diciembre</option>
+            </select>
+    </div>
+    <div class="col-md-2">
+            <label for="inputanio" class="form-label">Año:</label>
+            <select id="inputanio" class="form-select" name="anio">
+            </select>
+        </div>
+    <div class="col-md-4">
+         <label for="inputcliente" class="form-label">Cliente:</label>
+            <select id="inputcliente" class="form-select" name="cliente">
+                <option>Todos los Clientes...</option>
+                    {% for Cliente in clientes %}
+                        <option value="{{Cliente.id}}">{{Cliente.nombre}}</option>
+                    {% endfor %}
+            </select>
+    </div>
+    <!--<div class="col-md-4">
+         <label for="inputCodigoMaquina" class="form-label">Serial Maquina:</label>
+            <select id="inputCodigoMaquina" class="form-select" name="codmaquina">
+                <option>Todas las Maquinas...</option>
+                    {% for Maquina in maquinas %}
+                        <option value="{{Maquina.id}}">{{Maquina.serie_PMV}}</option>
+                    {% endfor %}
+            </select>
+    </div>--!>
+    <div class="col-md-4">
+         <label for="inputstatus" class="form-label">Status:</label>
+        <select id="inputstatus" class="form-select" name="status">
+            <option>Todos los Status...</option>
+            <option value="1">ABIERTA</option>
+            <option value="3">EN PROCESO</option>
+            <option value="2">CERRADA</option>
+        </select>
+    </div>
+    <p></p>
+    <fieldset id="borde3">
+        <button type="submit" class="btn btn-danger" id="filtrar">Filtrar</button>
+        <a href="{% url 'listaremisiones'%}" type="button" class="btn btn-danger">Todos</a>
+    </fieldset>
+    <p></p>
+    <center>
+        <h3>Lista de Remisiones</h3>
+    </center>
+    <style type="text/css">
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 10px;
+        text-align: center;
+        font-size: 15px; /* Tamaño de fuente para encabezados de tabla */
+    }
+
+    td {
+        font-size: 70%; /* Tamaño de fuente para datos de tabla */
+    }
+
+    th {
+        font-weight: bold; /* Opcional: hacer que los encabezados de tabla sean negritas */
+    }
+
+    </style>
+    <div class="table-responsive">
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <!--<th scope="col">ID</th>--!>
+            <th WIDTH="20" scope="col">Numero
+                REM</th>
+            <th WIDTH="160" scope="col">Cliente</th>
+            <th WIDTH="80" scope="col">Status  </th>
+            <th WIDTH="100" scope="col">Fecha Remision</th>
+            <th WIDTH="100" scope="col">Fecha Envio</th>
+            <th WIDTH="160" scope="col">Observaciones</th>
+            <th WIDTH="120" scope="col">Opciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for Remisiones in remisiones %}
+        <tr>
+            <td>REM00-{{Remisiones.id}}</td>
+            <td>{{Remisiones.clientes.nombre}}</td>
+            <td>{{Remisiones.id_status}}</td>
+            <td>{{Remisiones.fecha|date:"Y-m-d"}}</td>
+            <td>{{Remisiones.fecha_envio|date:"Y-m-d"}}</td>
+            <td>{{Remisiones.observacion}}</td>
+            <td class="text-center">
+                {% if Remisiones.id_status.id != 2 %}  {# Verifica si el status no es 'CERRADA' #}
+                    <a href="{% url 'editar_remision' Remisiones.id%}" type="submit" class="btn btn-danger">Editar</a>
+                {% endif %}
+                <a href="{% url 'ver_remision' Remisiones.id%}" type="submit" class="btn btn-danger">Ver</a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    <div class="pagination">
+            <span class="step-links">
+                {% if remisiones.has_previous %}
+                    <a href="?{{ request.GET.urlencode }}&page=1">&laquo; first</a>
+                    <a href="?{{ request.GET.urlencode }}&page={{ remisiones.previous_page_number }}">previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Página {{ remisiones.number }} de {{ remisiones.paginator.num_pages }}.
+                </span>
+
+                {% if remisiones.has_next %}
+                    <a href="?{{ request.GET.urlencode }}&page={{ remisiones.next_page_number }}">next</a>
+                    <a href="?{{ request.GET.urlencode }}&page={{ remisiones.paginator.num_pages }}">last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+    <p></p>
+    <p></p>
+    <p></p>
+    <p></p>
+    <center>
+        <fieldset id="borde2">
+            <a href="{% url 'agregarremision'%}" class="btn btn-success">Agregar</a>
+            <a href="#" class="btn btn-success">Imprimir</a>
+            <a href="#" class="btn btn-success">Cerrar</a>
+        </fieldset>
+    </center>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('#formfiltrarremision'); // Selecciona el formulario
+            const submitButton = document.getElementById('filtrar'); // Agrega un ID al botón
+            const inputMes = document.querySelector('#inputmes1'); // Selecciona el campo de selección de mes
+
+
+            submitButton.addEventListener('click', function(e) {
+               e.preventDefault(); // Evita que el formulario se envíe automáticamente
+               form.submit(); // Envía el formulario manualmente
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputAnio = document.querySelector('#inputanio');
+            const currentYear = new Date().getFullYear();
+
+        // Agrega opciones de años desde el año actual hasta 10 años en el futuro
+        for (let year = currentYear; year >= currentYear - 10; year--) {
+            const option = document.createElement('option');
+            option.value = year;
+            option.text = year;
+            inputAnio.appendChild(option);
+        }
+    });
+    </script>
+</form>
+{% endblock%}

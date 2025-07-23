@@ -1,146 +1,159 @@
 {% extends 'menuauditoria.html' %}
 {% load crispy_forms_tags %}
-{% block content%}
+{% load custom_filters %}
+{% load humanize %}
+{% block content %}
+<h1>Liquidaciones de Máquinas</h1>
 
-<p>{{nombre}}</p>
-<h1> Liquidaciones de Maquinas</h1>
-<p></p>
+<form class="row g-3" method="get">
+    <div class="col-md-2">
+        <label for="inputnumero" class="form-label">Número LIQ:</label>
+        <input
+            type="text"
+            name="numero_liq"
+            class="form-control"
+            id="inputnumero"
+            value="{{ request.GET.numero_liq|default:'' }}"
+            placeholder="Número de Liquidación"
+        >
+    </div>
 
-<form class="row g-3">
-      <div class="col-md-6">
-        <label for="inputnumero" class="form-label">Numero_LIQ:</label>
-        <input type="text" class="form-control" id="inputnumero">
-      </div>
-      <div class="col-md-6">
-        <label for="inputmes" class="form-label">Mes:</label>
-        <input type="date" class="form-control" id="inputmes">
-      </div>
-      <div class="col-6">
-        <label for="inputcliente" class="form-label">Cliente:</label>
-        <input type="text" class="form-control" id="inputcliente" value="{{nombre}}">
-      </div>
-
-      <div class="col-md-6">
-        <label for="inputano" class="form-label">Año:</label>
-        <input type="date" class="form-control" id="inputano" >
-      </div>
-    <div class="col-md-6">
-        <label for="inputrazon" class="form-label">Razon Social:</label>
-        <input type="text" class="form-control" id="inputrazon" >
-      </div>
-    <div class="col-md-4">
-        <label for="modalidad" class="form-label">Status:</label>
-        <select id="modalidad" class="form-select">
-            <option selected>Todos los Status...</option>
-            <option >CALCULADA</option>
-            <option >REVISADA</option>
-            <option >ENVIADA</option>
-            <option >CERRADA</option>
+    <div class="col-md-2">
+        <label for="mes" class="form-label">Mes</label>
+        <select id="mes" name="mes" class="form-select">
+            {% for num, nombre in meses %}
+                <option value="{{ num }}" {% if current_month == num %}selected{% endif %}>{{ nombre }}</option>
+            {% endfor %}
         </select>
     </div>
 
-    <fieldset id="borde2">
-        <button type="button" class="btn btn-danger">Filtrar</button>
-        <button type="button" class="btn btn-danger">Todos</button>
-    </fieldset>
-    <center>
-        <h2> Lista de liquidaciones</h2>
-    </center>
+    <div class="col-md-2">
+        <label for="anio" class="form-label">Año</label>
+        <select id="anio" name="anio" class="form-select">
+            {% for year in anios %}
+                <option value="{{ year }}" {% if current_year == year %}selected{% endif %}>{{ year }}</option>
+            {% endfor %}
+        </select>
+    </div>
 
-    <style type="text/css">
-        table, th, td{
-            border: 1px solid black;
-            border-collapse: collapse;
-        }
-        td, th{
-            padding: 10px;
-        }
-        th {
-            text-align: left;
-        }
-    </style>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Numero LIQ</th>
-                <th scope="col">Cliente</th>
-                <th scope="col">Razon Social</th>
-                <th scope="col">Status</th>
-                <th scope="col">Tp</th>
-                <th scope="col">Periodo liq.</th>
-                <th scope="col">pnd</th>
-                <th scope="col"># de maquinas</th>
-                <th scope="col">$Ingreso / Neto</th>
-                <th scope="col">$Desbalance</th>
-                <th scope="col">$Impuesto /IVA/ Otros/ Descuentos</th>
-                <th scope="col">$Neto cliente</th>
-                <th scope="col">$Neto IGG</th>
-                <th scope="col">$ Saldo (Pendiente - a favor)</th>
-                <th colspan="2">Opciones</th>
-             </tr>
-        </thead>
+    <div class="col-md-3">
+        <label for="cliente" class="form-label">Cliente:</label>
+        <select id="cliente" name="cliente" class="form-select">
+            <option value="" {% if not request.GET.cliente %}selected{% endif %}>Todos los Clientes...</option>
+            {% for cliente in clientes %}
+                <option value="{{ cliente.id }}" {% if request.GET.cliente == cliente.id|stringformat:"s" %}selected{% endif %}>{{ cliente.nombre }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <label for="razon" class="form-label">Razón Social:</label>
+        <select id="razon" name="razon" class="form-select">
+            <option value="" {% if not request.GET.razon %}selected{% endif %}>Todas las Razones Sociales...</option>
+            {% for razon in razones %}
+                <option value="{{ razon.id }}" {% if request.GET.razon == razon.id|stringformat:"s" %}selected{% endif %}>{{ razon.nombre }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!--<div class="col-md-3">
+        <label for="status" class="form-label">Status:</label>
+        <select id="status" name="status" class="form-select">
+            <option value="" {% if not request.GET.status %}selected{% endif %}>Todos los Status...</option>
+            <option value="CALCULADA" {% if request.GET.status == "CALCULADA" %}selected{% endif %}>CALCULADA</option>
+            <option value="REVISADA" {% if request.GET.status == "REVISADA" %}selected{% endif %}>REVISADA</option>
+            <option value="ENVIADA" {% if request.GET.status == "ENVIADA" %}selected{% endif %}>ENVIADA</option>
+            <option value="CERRADA" {% if request.GET.status == "CERRADA" %}selected{% endif %}>CERRADA</option>
+        </select>
+    </div>--!>
+
+    <div class="col-12">
+        <button type="submit" class="btn btn-danger me-2">Filtrar</button>
+        <a href="{% url 'liquidar' %}" class="btn btn-secondary">Todos</a>
+    </div>
+</form>
+
+<hr>
+
+<center>
+    <h2>Lista de Liquidaciones</h2>
+</center>
+
+<style>
+    td, th {
+        padding: 10px;
+    }
+    th {
+        text-align: center;
+        font-size: 10px;
+    }
+    td {
+        font-size: 60%;
+        vertical-align: middle;
+        text-align: center;
+    }
+
+</style>
+
+<table class="table table-bordered table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Razón Social</th>
+            <th>Status</th>
+            <th>Tipo</th>
+            <th>Periodo liq.</th>
+            <th>Pendiente</th>
+            <th># de máquinas</th>
+            <th>$Ingreso / Neto</th>
+            <th>$Desbalance</th>
+            <th>$Impuesto / IVA / Otros / Descuentos</th>
+            <th>$Neto cliente</th>
+            <th>$Neto IGG</th>
+            <th>$Saldo (Pendiente - a favor)</th>
+            <th>Opciones</th>
+        </tr>
+    </thead>
         <tbody>
-            <tr>
-                <th scope="row">{% for liquidacion in liquidaciones %}
-                            <input type="text" class="form-control" id="inputid" value="{{liquidacion.id}}">
-                        {% endfor %}</th>
-                <td ><Mar></Mar>{% for liquidacion in liquidaciones %}
-                            <input type="text" class="form-control"  value="{{liquidacion.numero}}">
-                        {% endfor %}</td>
-                <td>{% for liquidacion in liquidaciones %}
-                            <input type="text" class="form-control" id="inputcliente2" value="{{liquidacion.clientes}}">
-                        {% endfor %}</td>
-                <td>{% for liquidacion in liquidaciones %}
-                            <input type="text" class="form-control" value="{{liquidacion.razon}}">
-                        {% endfor %}</td>
-                <td>{% for liquidacion in liquidaciones %}
-                            <input type="text" class="form-control" value="{{liquidacion.id_status}}">
-                        {% endfor %}</td>
-                <td>{% for liquidacion in liquidaciones %}
-                            <input type="text" class="form-control">
-                        {% endfor %}</td>
-                <td>{% for liquidacion in liquidaciones %}
-                            <input type="text" class="form-control" value="{{id_mes}}">
-                        {% endfor %}</td>
-                <td>{% for liquidacion in liquidaciones %}
-                            <input type="text" class="form-control">
-                        {% endfor %}</td>
-                <td>{% for liquidacion in liquidaciones %}
-                            <input type="text" class="form-control" value="{{liquidacion.nro_maquinas}}">
-                        {% endfor %}</td>
-                <td>{% for liquidacion in liquidaciones %}
-                            <input type="text" class="form-control" value="{{liquidacion.neto}}">
-                        {% endfor %}</td>
-                <td>{% for liquidacion in liquidaciones %}
-                            <input type="text" class="form-control" value="liquidacion.desbalance">
-                        {% endfor %}</td>
-                <td>{% for liquidacion in liquidaciones %}
-                            <input type="text" class="form-control" value="{{liquidacion.suma_impuestos}}">
-                        {% endfor %}</td>
-                <td>{% for liquidacion in liquidaciones %}
-                            <input type="text" class="form-control" value="{{liquidacion.monto}}">
-                        {% endfor %}</td>
-                <td>{% for liquidacion in liquidaciones %}
-                            <input type="text" class="form-control" value="{{liquidacion.monto_igg}}">
-                        {% endfor %}</td>
-                <td>{% for liquidacion in liquidaciones %}
-                            <input type="text" class="form-control">
-                        {% endfor %}</td>
-                <td>{% for liquidacion in liquidaciones %}
-                            <button type="button" class="btn btn-danger">Editar</button>  <button type="button" class="btn btn-danger">Ver</button>
-                        {% endfor %}</td>
-            </tr>
+            {% for resumen in resumenes %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td style="white-space: normal; word-break: break-word;">{{ resumen.cliente.nombre }}</td>
+                    <td style="white-space: normal; word-break: break-word;">{{ resumen.cliente.razon.nombre }}</td>
+                    <td>{{ resumen.cliente.status }}</td> <!-- o como accedas a status -->
+                    <td><!-- Tipo si aplica --></td>
+                    <td>{{ current_month }}/{{ current_year }}</td>
+                    <td>--</td> <!-- Pendiente si aplica -->
+                    <td>{{ resumen.nro_maquinas }}</td>
+                    <td>{{ resumen.neto|formato_pesos }}</td>
+                    <td>0.00</td> <!-- Desbalance -->
+                    <td>{{ resumen.impuesto|add:resumen.iva|formato_pesos }}</td>
+                    <td>{{ resumen.pago_cliente|formato_pesos }}</td>
+                    <td>{{ resumen.pago_dueno|formato_pesos }}</td>
+                    <td>--</td> <!-- Saldo -->
+                    <td>
+                        <a class="btn btn-sm btn-warning" href="{% url 'editar_liquidacion' resumen.cliente.id current_month current_year %}">
+                            Detalle
+                        </a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="15">No hay liquidaciones para mostrar.</td>
+                </tr>
+            {% endfor %}
         </tbody>
-    </table>
-    <p></p>
-    <center>
-    <fieldset id="borde3">
-        <button type="button" class="btn btn-primary">Agregar</button>
-        <button type="button" class="btn btn-primary">Agregar x Batch</button>
-        <button type="button" class="btn btn-primary">Enviar Email x Batch</button>
-        <button type="button" class="btn btn-primary">Imprimir</button>
-        <button type="button" class="btn btn-primary">Cerrar</button>
-    </fieldset>
-    </center>
-{% endblock%}
+</table>
+
+<center>
+    <div class="btn-group mt-3" role="group" aria-label="Acciones">
+        <a class="btn btn-primary me-2">Agregar</a>
+        <a href="{% url 'agregarporbatch' %}" class="btn btn-primary me-2">Agregar x Batch</a>
+        <button class="btn btn-primary me-2" type="button">Enviar Email x Batch</button>
+        <button class="btn btn-primary me-2" type="button">Imprimir</button>
+        <button class="btn btn-primary" type="button">Cerrar</button>
+    </div>
+</center>
+
+{% endblock %}

@@ -1,0 +1,219 @@
+{% load static %}
+{% load custom_filters %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Resumen de Clientes</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #f2f2f2;
+    }
+
+    /* Grid que contiene todas las tarjetas de resumen */
+    .resumen-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* Esto ajusta las tarjetas */
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    /* Tarjeta de resumen individual */
+    .resumen-box {
+      background-color: #ffffff;
+      border: 2px solid #28a745;
+      border-radius: 6px;
+      font-size: 6px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      padding: 8px;
+    }
+
+    /* Semaforo */
+    .header.verde {
+      background-color: #d4edda;
+      border-bottom: 2px solid #28a745;
+    }
+
+    .header.amarillo {
+      background-color: #fff3cd;
+      border-bottom: 2px solid #ffc107;
+    }
+
+    .header.naranja {
+      background-color: #ffe5b4;
+      border-bottom: 2px solid #fd7e14;
+    }
+
+    .header.rojo {
+      background-color: #f8d7da;
+      border-bottom: 2px solid #dc3545;
+    }
+
+    /* Encabezado de la tarjeta (nombre del cliente) */
+    .resumen-box .header {
+      text-align: center;
+      font-weight: bold;
+      padding: 8px;
+      font-size: 8px;
+      border-top-left-radius: 6px;
+      border-top-right-radius: 6px;
+      color: #155724;
+    }
+
+    /* Fila horizontal de datos (etiqueta y dato) */
+    .resumen-box .fila {
+      padding: 10px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #eee;
+    }
+
+    /* Última fila no lleva borde inferior */
+    .resumen-box .fila:last-child {
+      border-bottom: none;
+    }
+
+    /* Etiquetas (lado izquierdo) dentro de las filas */
+    .resumen-box .etiqueta {
+      color: #333;
+      text-align: left;
+      font-weight: normal;
+      font-size: 10px;
+      width: 50%;
+    }
+
+    /* Datos (lado derecho) dentro de las filas */
+    .resumen-box .dato {
+      color: #28a745;
+      text-align: right;
+      font-weight: bold;
+      font-size: 10px;
+      width: 50%;
+    }
+
+    /* Título de la sección (fuera de las tarjetas) */
+    .titulo-principal {
+      margin-top: 20px;
+      font-weight: 600;
+      font-size: 10px;
+    }
+
+    .resumen-box .fila-separada {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Fila con separador en el medio (|), usada para "Total ingreso", "Proyección mes", etc. */
+    .resumen-box .separador {
+      margin-left: 14px;
+      margin-right: 14px;
+      color: #333;
+      font-weight: bold;
+    }
+
+    /* Aplicamos el semáforo a la fila de "Total Ingreso" */
+    .semaforo-total {
+      border-top-left-radius: 6px;
+      border-top-right-radius: 6px;
+      padding: 8px;
+      color: #155724;
+    }
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+  <span class="navbar-brand mb-0 h1">SISTEMA SPOTGAMING | VISOR</span>
+  <div class="collapse navbar-collapse justify-content-end">
+    <span class="navbar-text text-white me-4">
+      Usuario: {{ request.user.username }}
+    </span>
+    <form class="d-flex" method="get" action="{% url 'resumen_clientes' %}">
+      <select name="mes" class="form-select me-2">
+        {% for i in 1|to_range:12 %}
+          <option value="{{ i }}" {% if i == mes_actual %}selected{% endif %}>Mes {{ i }}</option>
+        {% endfor %}
+      </select>
+      <select name="anio" class="form-select me-2">
+        {% for a in 2023|to_range:2026 %}
+          <option value="{{ a }}" {% if a == anio_actual %}selected{% endif %}>{{ a }}</option>
+        {% endfor %}
+      </select>
+      <button class="btn btn-primary me-2" type="submit">Filtrar</button>
+      <a href="http://127.0.0.1:8000/spotgaming/" class="btn btn-primary">Salir</a>
+    </form>
+  </div>
+</nav>
+
+<div class="container">
+  <h2 class="titulo-principal">Resumen de Clientes</h2>
+  <div class="resumen-grid">
+    {% for item in resumen %}
+      <div class="resumen-box">
+        <div class="header {{ item.color_semaforo }}">
+          {{ item.razon_social }}
+        </div>
+
+        <!-- Ingreso Día -->
+        <div class="fila">
+          <span class="etiqueta">$ Ingr. Día ({{ item.ingreso_dia_fecha }})</span>
+          <span class="dato">${{ item.ingreso_dia_valor|custom_intcomma }}</span>
+        </div>
+
+        <!-- Total Ingreso con Semáforo -->
+        <div class="semaforo-total {{ item.color_semaforo }}">
+          <div class="fila-separada">
+            <span class="etiqueta">$ Total Ingreso</span>
+            <span class="separador">|</span>
+            <span class="dato">${{ item.total_ingreso|custom_intcomma }}</span>
+          </div>
+        </div>
+
+        <!-- Prom. Día -->
+        <div class="fila">
+          <span class="etiqueta">$ Prom. Día</span>
+          <span class="dato">${{ item.promedio_dia|custom_intcomma }}</span>
+        </div>
+
+        <!-- Proyección Mes -->
+        <div class="fila-separada">
+          <span class="etiqueta">$ Proyección Mes</span>
+          <span class="separador">|</span>
+          <span class="dato">${{ item.proyeccion_mes|custom_intcomma }}</span>
+        </div>
+
+        <!-- Sala -->
+        <div class="fila">
+          <span class="etiqueta"># Sala</span>
+          <span class="dato">{{ item.num_salas }}</span>
+        </div>
+
+        <!-- Máq. -->
+        <div class="fila-separada">
+          <span class="etiqueta"># Máq.</span>
+          <span class="separador">|</span>
+          <span class="dato">{{ item.num_maquinas }}</span>
+        </div>
+
+        <!-- #maq. reportadas -->
+        <div class="fila">
+          <span class="etiqueta"># Máq. Reportadas</span>
+          <span class="dato">{{ item.maquinas_reportadas }}</span>
+        </div>
+
+        <!-- #jug. totales -->
+        <div class="fila">
+          <span class="etiqueta"># Jugadas Mes</span>
+          <span class="dato">{{ item.jugadas_totales|custom_intcomma }}</span>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+<p></p>
+</body>
+</html>

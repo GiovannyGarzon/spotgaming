@@ -13,7 +13,7 @@
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
-      <b class="navbar-brand" href="F3AC0A" style="color:#F3AC0A;">SPOTgaming</b>
+      <a class="nav-link" href="{% url 'spotgaming'%}" style="color:#F3AC0A;" ><b><big>SPOTgaming</big></b></a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -26,10 +26,10 @@
             <a class="nav-link" href="{% url 'liquidar'%}">Liquidaciones</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'listaconectar'%}">Carga diaria</a>
+            <a class="nav-link" href="{% url 'cargadiaria'%}">Carga diaria</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'listadespachar'%}">Resumen carga</a>
+            <a class="nav-link" href="{% url 'resumencargadiaria'%}">Resumen carga</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'listainstalar'%}">Notificaciones</a>
@@ -50,10 +50,19 @@
             <a class="nav-link disabled">Disabled</a>
           </li>--!>
         </ul>
+        <form class="d-flex" action="{% url 'login' %}" method="GET">
+
+         <input type="text" name="User" onmousedown="return false;" value="@ {{user.username}}">
+
+       </form>
+        <form class="d-flex" action="{% url 'login' %}" method="GET">
+         {% for post in posts %}
+         <input type="text" name="User" onmousedown="return false;" value="{{post.user.first_name}} {{post.user.last_name}}">
+         {% endfor %}
+       </form>
         <form class="d-flex">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success" type="submit">Search</button>
-        </form>
+         <a href="{% url 'logout' %}" class="btn btn-success" type="submit">Salir</a>
+       </form>
       </div>
     </div>
   </nav>
@@ -71,16 +80,18 @@
         <br>
         <br>
           <CENTER>
-            <p>En este módulo podremos navegar las opciones para revisar la contabilidad de la operación de las maquinas,</p>
-            <p>podremos ver el registro de la carga de contadores de cada máquina.</p>
-            <br>
-           </CENTER>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
+              <div style="background-color: #f9f9f9; border-radius: 8px; padding: 20px; width: 80%; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); text-align: left;">
+                <p style="font-size: 18px; font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+                  Este módulo permite gestionar y revisar la contabilidad de la operación de las máquinas de manera eficiente. Los usuarios podrán acceder a un historial detallado de la carga de contadores de cada máquina, lo que facilita el seguimiento de su rendimiento y el análisis de datos operativos. Además, el sistema ofrece herramientas para auditar el registro de contadores, lo que ayuda a garantizar la precisión y transparencia en el control de las máquinas.
+                </p>
+                <ul style="font-size: 16px; font-family: Arial, sans-serif; color: #555; line-height: 1.8; margin: 0 0 10px 20px;">
+                  <li><strong>Historial de Carga de Contadores:</strong> Acceso a registros detallados del funcionamiento de cada máquina.</li>
+                  <li><strong>Análisis de Rendimiento:</strong> Facilita la revisión de datos operativos para identificar posibles mejoras.</li>
+                  <li><strong>Auditoría de Contadores:</strong> Herramientas para verificar y garantizar la exactitud de los registros de contadores.</li>
+                </ul>
+              </div>
+              <br>
+            </CENTER>
         <br>
         <br>
         <br>

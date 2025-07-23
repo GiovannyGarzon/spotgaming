@@ -1,0 +1,128 @@
+{% extends 'menualmacen.html' %}
+{% load crispy_forms_tags %}
+{% block content%}
+
+<h1> Datos de la Orden de Remisión </h1>
+<p></p>
+
+<form class="row g-3" action="{% url 'formeditarremsiion' %}" method="POST">
+  {% csrf_token %}
+  <div class="col-md-4">
+    <label for="inputnumerorem" class="form-label">Numero_REM:</label>
+    <input type="texto" class="form-control" id="inputnumerorem" name="numerorem" value="REM00-{{remision.id}}" readonly onmousedown="return false;"  >
+  </div>
+  <input type="hidden" class="form-control" id="inputnumero" name="numero" value="{{remision.id}}" readonly onmousedown="return false;">
+  <div class="col-md-4">
+    <label for="inputfecharemision" class="form-label">Fecha Remisión:</label>
+    <input type="date" class="form-control" id="inputfecharemision" name="fecharemi" readonly onmousedown="return false;" value="{{remision.fecha|date:"Y-m-d"}}" required>
+  </div>
+  <!--
+  <div class="col-md-4">
+    <label for="inputfechaenvio" class="form-label">Fecha Envio:</label>
+    <input type="date" class="form-control" id="inputfechaenvio" name="fechaenvio" value="{{remision.fecha_envio}}" >
+  </div> --!>
+  <div class="col-md-4">
+    <label for="inputclientes" class="form-label">Cliente:</label>
+    <input type="texto" class="form-control" id="inputclientesocultos" name="clienteoculto" value="{{remision.clientes.nombre}}" readonly onmousedown="return false;">
+  </div>
+  <input type="hidden" class="form-control" id="inputclientes" name="clienteremi" value="{{remision.clientes}}" readonly onmousedown="return false;">
+  <div class="col-md-4">
+    <label for="inputenviadoa" class="form-label">Enviado a:</label>
+    <input type="text" class="form-control" id="inputenviadoa" name="enviadoa" value="{{remision.contacto}}" readonly onmousedown="return false;">
+  </div>
+  <!--
+  <div class="col-md-2">
+    <label for="inputfecharecibido" class="form-label">Fecha Recibido:</label>
+    <input type="date" class="form-control" id="inputfecharecibido" name="fecharecibido" value="{{remision.fecha_recibido|date:"Y-m-d"}}" >
+  </div> --!>
+
+  <div class="col-md-2">
+    <label for="inputtelefonoa" class="form-label">Teléfono:</label>
+    <input type="text" class="form-control" id="inputtelefonoa" name="telefonoremi" value="{{remision.telefono}}" readonly onmousedown="return false;">
+  </div>
+  <div class="col-md-2">
+    <label for="inputfechaenvio" class="form-label">Fecha Envio:</label>
+    <input type="date" class="form-control" id="inputfechaenvio" name="fechaenvio" readonly onmousedown="return false;" value="{% if remision.fecha_envio %}{{ remision.fecha_envio|date:"Y-m-d" }}{% endif %}">
+</div>
+  <div class="col-md-2">
+	<label for="inputformaenvio" class="form-label">Forma de Envío:</label>
+	<input type="texto" class="form-control" id="inputformaenvio" name="formaenviooculto" value="{{remision.id_transporte}}" readonly onmousedown="return false;">
+  </div>
+  <input type="hidden" class="form-control" id="inputformaenvioocultos" name="formaenvio" value="{{remision.id_transporte.id}}" readonly onmousedown="return false;">
+  <div class="col-md-2">
+    <label for="inputpreparado" class="form-label">Preparado por:</label>
+    <input type="text" class="form-control" id="inputpreparado" name="preparadaremi" value="{{remision.elaborado}}" readonly onmousedown="return false;">
+  </div>
+  <div class="col-md-6">
+    <label for="inputguia" class="form-label"># Guia de Envío:</label>
+    <input type="text" class="form-control" id="inputguia" name="guiaremi" value="{{remision.guia}}" readonly onmousedown="return false;">
+  </div>
+  <div class="col-md-2">
+    <label for="inputstatus" class="form-label">Status:</label>
+    <select id="inputstatus" class="form-select" name="statusremi" readonly onmousedown="return false;">
+        {% for option in status_options %}
+            <option value="{{ option.id }}" {% if option.id == remision.id_status.id %}selected{% endif %}>
+                {{ option.nombre }}
+            </option>
+        {% endfor %}
+    </select>
+</div>
+  <table border="0" width="98%" id="table2" cellspacing="1" cellpadding="0" style="border: 1px solid #000000; padding-left:0; padding-right:0">
+    <tbody>
+    <tr>
+      <td bgcolor="#808080" align="center">
+        <b><font face="Tahoma" size="2" color="#FFFFFF">Detalle de la Remisión</font></b>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <!--<th scope="col">ID</th>--!>
+        <th scope="col" style="text-align: center;">ID</th>
+        <th scope="col" style="text-align: center;"># Serie PMV</th>
+        <th scope="col" style="text-align: center;">Sala</th>
+        <th scope="col" style="text-align: center;">Descripcion de la Pieza / Parte</th>
+        <th scope="col" style="text-align: center;"># Serie Env.</th>
+        <th scope="col" style="text-align: center;">#Fecha Despacho</th>
+
+      </tr>
+    </thead>
+    <tbody>
+    {% for item in items_remision %}
+    <tr>
+      <td class="text-center">ITEM00-{{ item.id }}</td>
+      <td class="text-center">{{ item.codigomaquina.serie_PMV }}</td>
+      <td class="text-center">{{ item.sala.nombre }}</td>
+      <td class="text-center">{{ item.repuesto.nombre }}</td>
+      <td class="text-center">{{ item.serialrepuestodespacho }}</td>
+      <td class="text-center">{{ item.fechadespacho }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <p></p>
+  <div class="col-md-12">
+    <label for="inputobservacion" class="form-label">Observación:</label>
+    <textarea class="form-control" id="inputobservacion" name="observacion" rows="4" readonly onmousedown="return false;">{{ remision.observacion }}</textarea>
+  </div>
+  <p></p>
+  <center>
+    <fieldset id="borde2">
+      <!--<button type="button" class="btn btn-info" id="btnAgregarItem">Agregar Item</button>
+      <a type="button" class="btn btn-info">Agregar Reparación</a>--!>
+      <a href="#" id="btnImprimir" class="btn btn-info">Imprimir</a>
+      <a href="{% url 'generar_pdf' remision.id %}" class="btn btn-info" target="_blank">Carta</a>
+      <a href="{% url 'listaremisiones' %}" type="button" class="btn btn-info">Cerrar</a>
+    </fieldset>
+  </center>
+</form>
+
+<script>
+  document.getElementById('btnImprimir').addEventListener('click', function() {
+        window.print();
+    });
+</script>
+
+{% endblock%}

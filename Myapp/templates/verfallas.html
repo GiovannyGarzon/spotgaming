@@ -1,0 +1,60 @@
+{% extends 'menumaestro.html' %}
+{% load crispy_forms_tags %}
+{% block content%}
+<fieldset id="borde" xmlns="http://www.w3.org/1999/html">
+    <h5>  Historial de Fallas para Maquina: {{ maquina.serie_PMV }} </h5>
+</fieldset>
+<p></p>
+<table class="table table-bordered" id="cliente" style="text-align:center;">
+    <thead>
+        <tr>
+            <th>Cliente</th>
+            <th>Sala / Punto</th>
+            <th>Falla Reportada</th>
+            <th>Apg?</th>
+            <th>Fecha Reportada</th>
+            <th>Fecha Solucion</th>
+            <th>Tiempo(Dias)</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for Falla in fallas %}
+        <tr>
+            <td>{{ Falla.clientes.nombre }}</td>
+            <td>{{ Falla.salas.nombre }}</td>
+            <td>{{ Falla.id_error }}</td>
+            <td>{% if Falla.apagada == 1 %}
+                            X
+                {% else %}
+                            {{""}}
+                {% endif %}
+            </td>
+            <td>{{Falla.fecha|date:"Y-m-d"}}</td>
+            <td>{% if Falla.fecha_cierre %}
+                            {{Falla.fecha_cierre|date:"Y-m-d"}}
+                            {% else %}
+                                {{""}}
+                            {% endif %}</td>
+            <td>{% if Falla.tiempo_abierto_dias > 8 %}
+                            <span style="color: red;">{{ Falla.tiempo_abierto_dias }}</span>
+                            {% elif Falla.tiempo_abierto_dias > 5 %}
+                            <span style="color: orange;">{{ Falla.tiempo_abierto_dias }}</span>
+                            {% else %}
+                            {{ Falla.tiempo_abierto_dias }}
+                            {% endif %}</td>
+            <td>{{ Falla.id_status}}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="2">No hay fallas registradas para esta máquina.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<center>
+    <button onclick="window.print();" class="btn btn-primary">Imprimir</button>
+    <a href="{% url 'editarmaquina' maquina.id %}" class="btn btn-primary">Cerrar</a>
+</center>
+
+{% endblock%}
