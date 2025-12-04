@@ -52,3 +52,40 @@ El sistema está construido con el framework **Django**, manteniendo un enfoque 
 ---
 
 ## 📂 Estructura del Proyecto (Resumen)
+
+SPOTGAMING/
+│── SPOTGAMING/ # Configuración general del proyecto Django
+│── Myapp/ # Lógica de negocio principal
+│ ├── templates/ # Interfaces HTML del sistema
+│ ├── views.py # Vistas y controladores
+│ ├── urls.py # Rutas internas
+│── media/ # Archivos y documentos cargados por el sistema
+│── admin-interface/ # Personalización del panel de administración
+│── .gitignore # Exclusión de archivos temporales (.pyc, caches)
+│── app.yaml # Configuración adicional / despliegue
+│── manage.py # Ejecutor del proyecto
+
+Clonar el repositorio
+```bash
+git clone https://github.com/GiovannyGarzon/spotgaming.git
+cd spotgaming
+
+Crear entorno virtual (opcional pero recomendado)
+python -m venv venv
+venv\Scripts\activate
+
+Instalar dependencias
+
+pip install -r requirements.txt
+
+Realizar migraciones
+
+python manage.py makemigrations
+python manage.py migrate
+
+Ejecutar el servidor
+
+python manage.py runserver
+
+El sistema estará disponible en:
+👉 http://127.0.0.1:8000/
