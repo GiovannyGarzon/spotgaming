@@ -53,17 +53,9 @@ El sistema está construido con el framework **Django**, manteniendo un enfoque 
 
 ## 📂 Estructura del Proyecto (Resumen)
 
-SPOTGAMING/
-│── SPOTGAMING/ # Configuración general del proyecto Django
-│── Myapp/ # Lógica de negocio principal
-│ ├── templates/ # Interfaces HTML del sistema
-│ ├── views.py # Vistas y controladores
-│ ├── urls.py # Rutas internas
-│── media/ # Archivos y documentos cargados por el sistema
-│── admin-interface/ # Personalización del panel de administración
-│── .gitignore # Exclusión de archivos temporales (.pyc, caches)
-│── app.yaml # Configuración adicional / despliegue
-│── manage.py # Ejecutor del proyecto
+## 📂 Estructura del Proyecto (Resumen)
+
+
 
 Clonar el repositorio
 ```bash
