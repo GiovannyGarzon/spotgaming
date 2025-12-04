@@ -133,8 +133,8 @@
       Usuario: {{ request.user.username }}
     </span>
     <form class="d-flex" method="get" action="{% url 'resumen_clientes' %}">
-      <select name="mes" class="form-select me-2">
-        {% for i in 1|to_range:12 %}
+      <select name="mes" class="form-select me-2 w-auto" style="min-width: 120px;">
+        {% for i in 1|to_range:13 %}
           <option value="{{ i }}" {% if i == mes_actual %}selected{% endif %}>Mes {{ i }}</option>
         {% endfor %}
       </select>
@@ -154,7 +154,7 @@
   <div class="resumen-grid">
     {% for item in resumen %}
       <div class="resumen-box">
-        <div class="header {{ item.color_semaforo }}">
+        <div class="header {{ item.color_final }}">
           {{ item.razon_social }}
         </div>
 
@@ -165,7 +165,7 @@
         </div>
 
         <!-- Total Ingreso con Semáforo -->
-        <div class="semaforo-total {{ item.color_semaforo }}">
+        <div class="semaforo-total {{ item.color_final }}">
           <div class="fila-separada">
             <span class="etiqueta">$ Total Ingreso</span>
             <span class="separador">|</span>

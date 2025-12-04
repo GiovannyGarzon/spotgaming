@@ -105,10 +105,10 @@
             <textarea name="direccion" id="inputdirección" cols="8" class="form-control"  required>{{clientes.direccion}}</textarea>
         </div>
         <div class="col-md-4">
-            <label for="inputnombre" class="form-label">Nombre:</label>
+            <label for="inputnombrevisible" class="form-label">Nombre:</label>
             <input type="texto" class="form-control" id="inputnombrevisible" name="nombrevisible" minlength="5" value="{{clientes.nombre}}" required>
         </div>
-        <input type="hidden" class="form-control" id="inputnombre" name="nombre" minlength="5" value="{{clientes.id}}" required>
+
         <div class="col-md-4">
             <label for="inputinspired" class="form-label">ID Inspired:</label>
             <input type="texto" class="form-control" id="inputinspired" name="inspired" value="{{clientes.id_inspired}}" required>
@@ -125,7 +125,7 @@
         <div class="col-md-6">
             <label for="inputrazon" class="form-label">Razón Social Principal:</label>
             <select id="inputrazon" class="form-select" name="razonsocial" required>
-                <option value="{{clientes.razon}}">{{clientes.razon.nombre}}</option>
+                <option value="{{clientes.razon.id}}">{{clientes.razon.nombre}}</option>
                 {% for Razon_social in listarazon %}
                 <option value="{{Razon_social.id}}">{{Razon_social.nombre}}</option>
                 {% endfor %}
@@ -134,7 +134,7 @@
         <div class="col-md-2">
             <label for="inputciudad" class="form-label">Ciudad:</label>
             <select id="inputciudad" class="form-select" name="ciudad" required>
-                <option value="{{clientes.ciudad}}">{{clientes.ciudad.nombre}}</option>
+                <option value="{{clientes.ciudad.id}}">{{clientes.ciudad.nombre}}</option>
                 {% for Ciudad in listaciudad %}
                 <option value="{{Ciudad.id}}">{{Ciudad.nombre}}</option>
                 {% endfor %}
@@ -143,7 +143,7 @@
         <div class="col-md-4">
             <label for="inputdepartamento" class="form-label">Departamento:</label>
             <select id="inputdepartamento" class="form-select" name="departamento" required>
-                <option value="{{clientes.departamento}}">{{clientes.departamento.nombre}}</option>
+                <option value="{{clientes.departamento.id}}">{{clientes.departamento.nombre}}</option>
                 {% for Departamento in listadepartamento %}
                 <option value="{{Departamento.id}}">{{Departamento.nombre}}</option>
                 {% endfor %}
@@ -308,7 +308,9 @@
             <label for="falla">Fallas:</label> <input id="falla" type="checkbox" name="fallas">
         </div>
         <div class="col-md-6">
-            <label for="visor">Incluir en el Visor:</label> <input id="visor" type="checkbox" name="visor">
+            <label for="visor">Incluir en el Visor:</label>
+            <input id="visor" type="checkbox" name="visor" value="1"
+                   {% if clientes.visor == 1 %}checked{% endif %}>
         </div>
         <center>
             <fieldset id="borde2">

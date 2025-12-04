@@ -198,9 +198,7 @@
         </div>
         <div class="col-md-6">
             <label for="inputiva" class="form-label"> $ Valor IVA:</label>
-            {% for DescuentosLiquidacion in listadescuentos %}
-            <input type="texto" class="form-control" id="inputiva" name="iva" value="{{DescuentosLiquidacion.valoriva}}">
-            {% endfor %}
+            <input type="text" class="form-control" id="inputiva" name="iva" value="{{ descuento.valoriva }}">
         </div>
         <div class="col-md-2">
             <label for="inputdialiquida" class="form-label"> Días Liquidar x Mes:</label>
@@ -216,9 +214,8 @@
         </div>
         <div class="col-md-2">
             <label for="inputvariable" class="form-label"> % Variable:</label>
-            {% for DescuentosLiquidacion in listadescuentos %}
-            <input type="texto" class="form-control" id="inputvariable" name="variable" value="{{DescuentosLiquidacion.variable}}">
-            {% endfor %}
+            <input type="texto" class="form-control" id="inputvariable" name="variable" value="{{descuento.variable}}">
+
         </div>
         <div class="col-md-2">
             <label for="inputtieneliquidacion" class="form-label">Tiene Liquidación:</label>

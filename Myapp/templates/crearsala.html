@@ -200,9 +200,7 @@
         </div>
         <div class="col-md-2">
             <label for="inputvariable" class="form-label"> % Variable:</label>
-            {% for DescuentosLiquidacion in listadescuentos %}
-            <input type="texto" class="form-control" id="inputvariable" name="variable" value="{{DescuentosLiquidacion.variable}}">
-            {% endfor %}
+            <input type="texto" class="form-control" id="inputvariable" name="variable" value="{{listadescuentos.variable}}">
         </div>
         <div class="col-md-2">
             <label for="inputcierreliqui" class="form-label">Cierre Liquidación:</label>
@@ -218,9 +216,7 @@
         </div>
         <div class="col-md-6">
             <label for="inputiva" class="form-label"> $ Valor IVA:</label>
-            {% for DescuentosLiquidacion in listadescuentos %}
-            <input type="texto" class="form-control" id="inputiva" name="iva" value="{{DescuentosLiquidacion.valoriva}}">
-            {% endfor %}
+            <input type="texto" class="form-control" id="inputiva" name="iva" value="{{listadescuentos.valoriva}}">
         </div>
         <div class="col-md-6">
             <label for="inputparticipacion" class="form-label">% Participación:</label>

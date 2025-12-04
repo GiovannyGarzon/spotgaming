@@ -3,6 +3,9 @@
 {% load crispy_forms_tags %}
 {% load custom_filters %}
 {% block content %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <fieldset id="borde" xmlns="http://www.w3.org/1999/html">
     <h5>  Máquinas Sin Transmitir Recaudo Diario </h5>
 </fieldset>
@@ -28,83 +31,95 @@
     }
 
 </style>
+<div class="card shadow-sm p-3 mb-4">
+  <div class="card-body">
+    <form id="transmision" name="transmision" class="row g-3" method="GET">
+        <div class="col-md-3">
+            <label for="cliente" class="form-label">Cliente</label>
+            <select id="cliente" name="cliente" class="form-select">
+                <option value="">Todos</option>
+                {% for cliente in clientes %}
+                    <option value="{{ cliente.id }}" {% if request.GET.cliente == cliente.id|stringformat:"s" %}selected{% endif %}>
+                        {{ cliente.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
 
-<form id="transmision" name="transmision" class="row g-3" method="GET">
-    <div class="col-md-3">
-        <label for="cliente" class="form-label">Cliente</label>
-        <select id="cliente" name="cliente" class="form-select">
-            <option value="">Todos</option>
-            {% for cliente in clientes %}
-                <option value="{{ cliente.id }}" {% if request.GET.cliente == cliente.id|stringformat:"s" %}selected{% endif %}>
-                    {{ cliente.nombre }}
-                </option>
-            {% endfor %}
-        </select>
-    </div>
+        <div class="col-md-3">
+            <label for="sala" class="form-label">Sala</label>
+            <select id="sala" name="sala" class="form-select">
+                <option value="">Todas</option>
+                {% for sala in salas %}
+                    <option value="{{ sala.id }}" {% if request.GET.sala == sala.id|stringformat:"s" %}selected{% endif %}>
+                        {{ sala.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="maquina" class="form-label">Máquina</label>
+            <select id="maquina" name="maquina" class="form-select">
+                <option value="">Todas</option>
+                {% for maquina in maquinas %}
+                    <option value="{{ maquina.id }}" {% if request.GET.maquina == maquina.id|stringformat:"s" %}selected{% endif %}>
+                        {{ maquina.id_codigo }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
 
-    <div class="col-md-3">
-        <label for="sala" class="form-label">Sala</label>
-        <select id="sala" name="sala" class="form-select">
-            <option value="">Todas</option>
-            {% for sala in salas %}
-                <option value="{{ sala.id }}" {% if request.GET.sala == sala.id|stringformat:"s" %}selected{% endif %}>
-                    {{ sala.nombre }}
-                </option>
-            {% endfor %}
-        </select>
-    </div>
+        <div class="col-md-2">
+            <label for="mes" class="form-label">Mes</label>
+            <select id="mes" name="mes" class="form-select">
+                {% for num, nombre in meses %}
+                    <option value="{{ num }}" {% if request.GET.mes|default_if_none:hoy.month|stringformat:"s" == num|stringformat:"s" %}selected{% endif %}>
+                        {{ nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
 
-    <div class="col-md-3">
-        <label for="status" class="form-label">Status</label>
-        <select id="status" name="status" class="form-select">
-            <option value="">Todos</option>
-            {% for TipoOperacion in listastatus %}
-                <option value="{{ TipoOperacion.id }}" {% if request.GET.status == TipoOperacion.id|stringformat:"s" %}selected{% endif %}>
-                    {{ TipoOperacion.nombre }}
-                </option>
-            {% endfor %}
-        </select>
-    </div>
-
-    <div class="col-md-3">
-        <label for="maquina" class="form-label">Máquina</label>
-        <select id="maquina" name="maquina" class="form-select">
-            <option value="">Todas</option>
-            {% for maquina in maquinas %}
-                <option value="{{ maquina.id }}" {% if request.GET.maquina == maquina.id|stringformat:"s" %}selected{% endif %}>
-                    {{ maquina.id_codigo }}
-                </option>
-            {% endfor %}
-        </select>
-    </div>
-
-    <div class="col-md-2">
-        <label for="mes" class="form-label">Mes</label>
-        <select id="mes" name="mes" class="form-select">
-            {% for num, nombre in meses %}
-                <option value="{{ num }}" {% if request.GET.mes|default:hoy.month == num %}selected{% endif %}>
-                    {{ nombre }}
-                </option>
-            {% endfor %}
-        </select>
-    </div>
-
-    <div class="col-md-2">
-        <label for="anio" class="form-label">Año</label>
-        <select id="anio" name="anio" class="form-select">
-            {% for year in anios %}
-                <option value="{{ year }}" {% if request.GET.anio|default:hoy.year == year %}selected{% endif %}>
-                    {{ year }}
-                </option>
-            {% endfor %}
-        </select>
-    </div>
-
-    <div class="col-md-2 align-self-end">
-        <button type="submit" class="btn btn-primary">Filtrar</button>
-        <a href="{% url 'conectividad'%}" type="reset" class="btn btn-secondary">Borrar Filtros</a>
-    </div>
-</form>
+        <div class="col-md-2">
+            <label for="anio" class="form-label">Año</label>
+            <select id="anio" name="anio" class="form-select">
+                {% for year in anios %}
+                    <option value="{{ year }}" {% if request.GET.anio|default_if_none:hoy.year|stringformat:"s" == year|stringformat:"s" %}selected{% endif %}>
+                        {{ year }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="status" class="form-label">Status</label>
+            <select id="status" name="status" class="form-select" multiple>
+                {% for TipoOperacion in listastatus %}
+                    <option value="{{ TipoOperacion.id }}"
+                        {% if status_ids and TipoOperacion.id|stringformat:"s" in status_ids %}
+                            selected
+                        {% endif %}>
+                        {{ TipoOperacion.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+            <small class="text-muted">Mantén presionada CTRL (Windows) o CMD (Mac) para seleccionar varias</small>
+        </div>
+        <div class="col-12 d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary me-2">Filtrar</button>
+            <a href="{% url 'conectividad'%}" type="reset" class="btn btn-secondary">Borrar Filtros</a>
+        </div>
+    </form>
+  </div>
+</div>
+<!-- 🔹 Leyenda de colores -->
+<div class="mt-3" style="font-size: 15px;">
+    <strong>Leyenda:</strong>
+    <span style="color: green; font-weight: bold; margin-left: 12px;">X</span> Día Trasmitido Completo |
+    <span style="color: orange; font-weight: bold; margin-left: 12px;">X</span> Día Trasmitido Después |
+    <span style="color: blue; font-weight: bold; margin-left: 12px;">X</span> Día en Falla Reportada |
+    <span style="color: red; font-weight: bold; margin-left: 10px;">X</span> Día Sin Comunicación |
+</div>
+<p></p>
 <h5>Reporte de transmisión por día:</h5>
 <table class="table"  style="width: 100%">
     <thead>
@@ -141,10 +156,14 @@
                         <td style="font-size: 10px;">{{ maquina_data.maquina.id_inspired }} / {{ maquina_data.maquina.id_posicion }}</td>
 
                         {% for dia in maquina_data.dias %}
-                            <td style="font-size: 14px; font-weight: bold;">
+                            <td style="font-size: 14px; font-weight: bold; text-align: center;">
                                 {% if dia.fecha < hoy %}
-                                    {% if dia.transmitio %}
+                                    {% if dia.estado == "ok" %}
                                         <span style="color: green;">X</span>
+                                    {% elif dia.estado == "delayed" %}
+                                        <span style="color: orange;">X</span>
+                                    {% elif dia.estado == "falla" %}
+                                        <span style="color: blue;">X</span>
                                     {% else %}
                                         <span style="color: red;">X</span>
                                     {% endif %}

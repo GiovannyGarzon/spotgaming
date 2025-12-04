@@ -5,7 +5,7 @@
     <h5>  Historial de Fallas para Maquina: {{ maquina.serie_PMV }} </h5>
 </fieldset>
 <p></p>
-<table class="table table-bordered" id="cliente" style="text-align:center;">
+<table class="table table-bordered table-striped">
     <thead>
         <tr>
             <th>Cliente</th>
@@ -54,7 +54,7 @@
 </table>
 <center>
     <button onclick="window.print();" class="btn btn-primary">Imprimir</button>
-    <a href="{% url 'editarmaquina' maquina.id %}" class="btn btn-primary">Cerrar</a>
+    <a href="{% url 'editarmaquina' maquina.id %}" class="btn btn-primary">Volver</a>
 </center>
 
 {% endblock%}

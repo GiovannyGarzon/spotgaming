@@ -23,7 +23,7 @@
              <a class="nav-link" href="{% url 'menumaestro'%}">Maestro</a>
            </li>
            <li class="nav-item">
-             <a class="nav-link" href="http://127.0.0.1:8000/clientes/resumen/?mes=4&anio=2025">Visor Inteligente</a>
+             <a class="nav-link" href="{% url 'resumen_clientes' %}">Visor Inteligente</a>
            </li>
            <li class="nav-item">
              <a class="nav-link" >Monitor Gráfico</a>
@@ -91,6 +91,14 @@
            <!--<li class="nav-item">
              <a class="nav-link" href="{% url 'menualmacen'%}">Almacen</a>
            </li>--!>
+         {% elif 'REPORTES' in user_groups %}
+         <!-- Mostrar opciones específicas para el grupo SOPORTE -->
+           <li class="nav-item">
+             <a class="nav-link" href="{% url 'resumen_clientes' %}">Visor Inteligente</a>
+           </li>
+           <li class="nav-item">
+            <a class="nav-link" href="{% url 'menuservicios'%}">Servicios</a>
+           </li>
          {% endif %}
        </ul>
        <form class="d-flex" action="{% url 'login' %}" method="GET">

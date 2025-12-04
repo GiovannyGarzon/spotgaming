@@ -92,7 +92,9 @@
   <p></p>
   <div class="col-md-12">
     <label for="inputobservacion" class="form-label">Observación:</label>
-    <textarea class="form-control" id="inputobservacion" name="observacion" rows="4"></textarea>
+    <textarea class="form-control" id="inputobservacion" name="observacion" rows="4" readonly onmousedown="return false;">
+        {{ remision.observacion }}
+    </textarea>
   </div>
   <p></p>
   <center>

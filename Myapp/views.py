@@ -463,12 +463,11 @@ def menufalla(request):
         return redirect('login')
 
 def menuservicios(request):
-
     if request.user.is_authenticated:
-
-        return render(request, "menuservicios.html")
+        user_groups = list(request.user.groups.values_list("name", flat=True))
+        return render(request, "menuservicios.html", {"user_groups": user_groups})
     else:
-        return redirect('login')
+        return redirect("login")
 
 def menualmacen(request):
 
@@ -1175,29 +1174,44 @@ def verremisionreparacion(request, id):
 
 def guardaredicionremisionreparacion(request):
     if request.method == 'POST':
-        # Obtener el número de remisión, el nuevo status y la fecha de retorno
         numerorem = request.POST.get('numerorem')
         nuevo_status_id = request.POST.get('statusremi')
         fecharetorno = request.POST.get('fecharetorno')
 
-        # Obtener la remisión a partir del número
         remision = get_object_or_404(eparacionremision, id=numerorem)
-
-        # Obtener el nuevo status
         nuevo_status = get_object_or_404(statusremision, id=nuevo_status_id)
 
-        # Actualizar la remisión con el nuevo status y la fecha de retorno
         remision.status = nuevo_status
         remision.fecha_retorno_almacen = fecharetorno
         remision.save()
 
-        # Determinar los estados y status según el nuevo estado de la remisión
+        # Obtener estados/status para inventario según status remisión
         if nuevo_status_id == '3':  # EN PROCESO
             status_inventario = statusinventario.objects.filter(id=4).first()  # REPARACIÓN
             estado_inventario = estadoinventario.objects.filter(id=2).first()  # DAÑADO
         elif nuevo_status_id == '2':  # CERRADO
             status_inventario = statusinventario.objects.filter(id=1).first()  # ALMACÉN
             estado_inventario = estadoinventario.objects.filter(id=2).first()  # DAÑADO
+
+            # ** Aquí agregamos la actualización que necesitas para el campo estado = 6 **
+            estado_cerrado = get_object_or_404(estadoinventario, id=6)  # Estado cerrado
+
+            detalles_remision = remision.detalleremision_set.all()
+            for detalle in detalles_remision:
+                if not detalle.serialrepuestoretorno:
+                    print(f"Detalle {detalle.id} no tiene un serial válido.")
+                    continue
+
+                inventario = Inventario.objects.filter(serial=detalle.serialrepuestoretorno).first()
+                if not inventario:
+                    print(f"No se encontró inventario para el serial {detalle.serialrepuestoretorno}.")
+                    continue
+
+                # Solo actualizamos el campo estado a id=6, sin tocar otros campos
+                inventario.estado = estado_cerrado
+                inventario.save()
+                print(f"Inventario {inventario.id} actualizado: estado={estado_cerrado.id}")
+
         else:
             messages.error(request, "Estado de remisión no válido.")
             return redirect('listaremisionreparacion')
@@ -1206,30 +1220,23 @@ def guardaredicionremisionreparacion(request):
             messages.error(request, "No se encontraron los estados necesarios en la base de datos.")
             return redirect('listaremisionreparacion')
 
-        # Obtener los detalles de la remisión
-        detalles_remision = remision.detalleremision_set.all()
-        for detalle in detalles_remision:
-            if not detalle.serialrepuestoretorno:
-                print(f"Detalle {detalle.id} no tiene un serial válido.")
-                continue
+        # Actualiza estado y status para inventario en caso de status != 2 (opcional)
+        if nuevo_status_id != '2':
+            detalles_remision = remision.detalleremision_set.all()
+            for detalle in detalles_remision:
+                if not detalle.serialrepuestoretorno:
+                    continue
+                inventario = Inventario.objects.filter(serial=detalle.serialrepuestoretorno).first()
+                if not inventario:
+                    continue
+                inventario.id_status = status_inventario
+                inventario.estado = estado_inventario
+                inventario.save()
+                print(f"Inventario {inventario.id} actualizado: estado={estado_inventario.id}, status={status_inventario.id}")
 
-            # Buscar inventario relacionado con el serial del detalle
-            inventario = Inventario.objects.filter(serial=detalle.serialrepuestoretorno).first()
-            if not inventario:
-                print(f"No se encontró inventario para el serial {detalle.serialrepuestoretorno}.")
-                continue
-
-            # Actualizar estado y status del inventario
-            inventario.id_status = status_inventario
-            inventario.estado = estado_inventario
-            inventario.save()  # 🔹 Guardar cambios en la base de datos
-            print(f"Inventario {inventario.id} actualizado: estado={estado_inventario.id}, status={status_inventario.id}")
-
-        # Mensaje de éxito y redirección
         messages.success(request, 'El status de la remisión y el inventario han sido actualizados correctamente.')
         return redirect('listaremisionreparacion')
 
-    # Redirigir si no es un POST
     return redirect('listaremisionreparacion')
 
 def agregaritemremisionreparacion(request):
@@ -3576,7 +3583,7 @@ def crear_cliente(request):
     listaciudad = Ciudad.objects.all()
     listadepartamento = Departamento.objects.all()
     listagrupo = Grupos.objects.all()
-    listadescuentos = DescuentosLiquidacion.objects.all()
+    descuento = DescuentosLiquidacion.objects.last()
 
     if request.user.is_authenticated:
 
@@ -3585,7 +3592,7 @@ def crear_cliente(request):
             'listaciudad' : listaciudad,
             'listadepartamento' : listadepartamento,
             'listagrupos' : listagrupo,
-            'listadescuentos' : listadescuentos
+            'descuento' : descuento
         })
     else:
         return redirect('login')
@@ -3609,11 +3616,11 @@ def guardarcliente(request):
         participacion = request.POST['participacion']
         transmision = request.POST['transmision']
         montoxdia = request.POST['montoxdia']
-        iva = request.POST['iva']
+        iva = request.POST['iva'].replace(',', '.')
         dialiquida = request.POST['dialiquida']
         diasintransmitir = request.POST['diasintransmitir']
         impuestocoljuegos = request.POST['impuestocoljuegos']
-        variable = request.POST['variable']
+        variable = request.POST['variable'].replace(',', '.')
         tieneliquidacion = request.POST['tieneliquidacion']
         metodo = request.POST['metodo']
         otrosgastos= request.POST['otrosgastos']
@@ -3697,95 +3704,50 @@ def editarcliente(request, id):
     })
 
 def formeditarcliente(request):
-
     if request.method == 'POST':
+        id = request.POST['idcliente']  # este es el hidden del form
 
-        id = request.POST['nombre']
-        nit = request.POST['nit']
-        nombre = request.POST['nombrevisible']
-        direccion = request.POST['direccion']
-        idinspired = request.POST['inspired']
-        grupo = request.POST['grupo']
-        razonsocial = request.POST['razonsocial']
-        ciudad = request.POST['ciudad']
-        departamento = request.POST['departamento']
-        contacto = request.POST['contacto']
-        telefono = request.POST['telefono']
-        contratocoljuegos = request.POST['contrato']
-        participacion = request.POST['participacion']
-        transmision = request.POST['transmision']
-        montoxdia = request.POST['montoxdia']
-        iva = request.POST['iva']
-        dialiquida = request.POST['dialiquida']
-        diasintransmitir = request.POST['diasintransmitir']
-        impuestocoljuegos = request.POST['impuestocoljuegos']
-        variable = request.POST['variable']
-        tieneliquidacion = request.POST['tieneliquidacion']
-        metodo = request.POST['metodo']
-        otrosgastos= request.POST['otrosgastos']
-        cierreliquidacion = request.POST['cierreliquidacion']
-        horacierre = request.POST['horacierre']
-        descuentos = request.POST['descuentos']
-        recmaquina = request.POST['recmaquina']
-        recsala = request.POST['recsala']
-        recgrupo = request.POST['recgrupo']
-        contadores = request.POST['contadores']
-        fallasemail = request.POST['fallasemail']
-        sintrasnmitir = request.POST['sintrasnmitir']
-        #recmaquinaselect = request.POST['recmaquinaselect']
-        #recgruposelect = request.POST['recgruposelect']
-        #recsalaselect = request.POST['recsalaselect']
-        #contadoresselect = request.POST['contadoresselect']
-        #fallasemailselect = request.POST['fallasemailselect']
-        print(id)
-        clientes = Cliente(
+        try:
+            cliente = Cliente.objects.get(id=id)  # 👈 trae el cliente existente
+        except Cliente.DoesNotExist:
+            return HttpResponse("Cliente no encontrado", status=404)
 
-            id = id,
-            nit = nit,
-            nombre = nombre,
-            direccion = direccion,
-            id_inspired = idinspired,
-            Grupos_id = grupo,
-            razon_id = razonsocial,
-            ciudad_id = ciudad,
-            departamento_id = departamento,
-            telefono = telefono,
-            contacto = contacto,
-            contratoCol = contratocoljuegos,
-            porcentaje = participacion,
-            cobro_dia = transmision,
-            presupuesto_dia = montoxdia,
-            iva = iva,
-            dia_liquida = dialiquida,
-            dias_sin = diasintransmitir,
-            impuesto = impuestocoljuegos,
-            variable = variable,
-            liquida_mes_id = metodo,
-            liquida = cierreliquidacion,
-            hora_liquida = horacierre,
-            descuentos = descuentos,
-            email_recaudo = recmaquina,
-            email_rec_sala = recsala,
-            email_rec_grupo = recgrupo,
-            email_contadores = contadores,
-            email_fallas_sala = fallasemail,
-            email_sin_transmmitir_text = sintrasnmitir,
-            #emeailrecmaquina = recmaquinaselect,
-            #email_recaudo_grupo = recgruposelect,
-            #email_recaudo_sala = recsalaselect,
-            #email_contadores_select = contadoresselect,
-            #email_fallas = fallasemailselect,
-            #activo = activo,
-            #condicion = suspendido,
-            #visor = visor
-        )
-        clientes.save()
+        cliente.nit = request.POST['nit']
+        cliente.nombre = request.POST['nombrevisible']
+        cliente.direccion = request.POST['direccion']
+        cliente.id_inspired = request.POST['inspired']
+        cliente.Grupos_id = request.POST['grupo'] or None
+        cliente.razon_id = request.POST['razonsocial']
+        cliente.ciudad_id = request.POST['ciudad']
+        cliente.departamento_id = request.POST['departamento']
+        cliente.telefono = request.POST['telefono']
+        cliente.contacto = request.POST['contacto']
+        cliente.contratoCol = request.POST['contrato']
+        porcentaje = request.POST['participacion'].replace(',', '.')
+        cliente.cobro_dia = request.POST['transmision']
+        cliente.presupuesto_dia = request.POST['montoxdia']
+        cliente.iva = request.POST['iva']
+        cliente.dia_liquida = request.POST['dialiquida']
+        cliente.dias_sin = request.POST['diasintransmitir']
+        cliente.impuesto = request.POST['impuestocoljuegos']
+        cliente.variable = request.POST['variable']
+        cliente.liquida_mes_id = request.POST['metodo']
+        cliente.liquida = request.POST['cierreliquidacion']
+        cliente.hora_liquida = request.POST['horacierre']
+        cliente.descuentos = request.POST['descuentos']
+        cliente.email_recaudo = request.POST['recmaquina']
+        cliente.email_rec_sala = request.POST['recsala']
+        cliente.email_rec_grupo = request.POST['recgrupo']
+        cliente.email_contadores = request.POST['contadores']
+        cliente.email_fallas_sala = request.POST['fallasemail']
+        cliente.email_sin_transmmitir_text = request.POST['sintrasnmitir']
 
-        messages.success(request, "Cliente editado con exito!")
+        cliente.save()  # 👈 ahora sí, actualiza
 
+        messages.success(request, "Cliente editado con éxito!")
         return redirect('listacliente')
-    else:
-        return HttpResponse("Cliente no puedo ser editado")
+
+    return HttpResponse("Cliente no pudo ser editado")
 
 def vercliente(request, id):
     clientes = Cliente.objects.get(pk=id)
@@ -3837,7 +3799,7 @@ def crearsala(request):
     listaciudad = Ciudad.objects.all()
     listadepartamento = Departamento.objects.all()
     listacliente = Cliente.objects.all()
-    listadescuentos = DescuentosLiquidacion.objects.all()
+    listadescuentos = DescuentosLiquidacion.objects.last()
 
     if request.user.is_authenticated:
 
@@ -4038,16 +4000,15 @@ def editarmaquina(request, id):
         })
 
 def verinstalacion(request, id):
-    asignacion = Asignacione.objects.get(pk=id)
-    asignaciones = StatusAsignacion.objects.all()
-    seriales = MovAsignacion.objects.filter(id_asignacion=asignacion)
+
     tecnicos = Tecnico.objects.filter(activo=1)
+    maquina = Maquina.objects.get(pk=id)
+    historial_instalaciones = Instalacion.objects.filter(maquinas=maquina).order_by('-fecha_instalacion')
 
     return render(request, "verinstalacion.html", {
-        'asignacion': asignacion,
-        'asignaciones': asignaciones,
-        'seriales': seriales,
-        'tecnicos': tecnicos
+        'tecnicos': tecnicos,
+        'maquina': maquina,
+        'historial_instalaciones': historial_instalaciones,
     })
 
 def verfallas(request, id):
@@ -4607,8 +4568,12 @@ def liquidar_maquinas(request):
                     print(f"❌ Máquina {maquina.id} omitida: sin registros.")
                     continue
 
+                #neto_total_maquina = sum(
+                 #   (registro['billeteros_total_fecha'] or 0) - (registro['handpay_total_fecha'] or 0)
+                  #  for registro in registros
+                #)
                 neto_total_maquina = sum(
-                    (registro['billeteros_total_fecha'] or 0) - (registro['handpay_total_fecha'] or 0)
+                    (registro['entrada_total_fecha'] or 0) - (registro['salida_total_fecha'] or 0)
                     for registro in registros
                 )
 
@@ -4616,8 +4581,10 @@ def liquidar_maquinas(request):
                     print(f"❌ Máquina {maquina.id} omitida: neto total = 0.")
                     continue
 
-                entrada_total_maquina = sum((registro['entrada_total_fecha'] or 0) for registro in registros)
-                salida_total_maquina = sum((registro['salida_total_fecha'] or 0) for registro in registros)
+                entrada_total_maquina = sum((registro['entrada_total_fecha'] or 0) for registro in registros)  # Coin In
+                salida_total_maquina = sum((registro['salida_total_fecha'] or 0) for registro in registros)  # Coin Out
+                #entrada_total_maquina = sum((registro['billeteros_total_fecha'] or 0) for registro in registros)  # Bills
+                #salida_total_maquina = sum((registro['handpay_total_fecha'] or 0) for registro in registros)  # Handpay
                 billeteros_total_maquina = sum((registro['billeteros_total_fecha'] or 0) for registro in registros)
                 jugadas_total_maquina = sum((registro['jugadas_total_fecha'] or 0) for registro in registros)
 
@@ -4987,39 +4954,53 @@ def conectividad(request):
     listasalas = Sala.objects.all().order_by('nombre')
     listastatus = TipoOperacion.objects.filter(id__in=[1, 5, 6, 8])
 
-    # Obtener filtros
+    # 🔹 Si el usuario logueado pertenece a un cliente
+    cliente_usuario = Cliente.objects.filter(id_user=request.user.id).first()
+    if cliente_usuario:
+        # Solo ese cliente y sus salas
+        listacliente = Cliente.objects.filter(id=cliente_usuario.id)
+        listasalas = Sala.objects.filter(clientes=cliente_usuario)
+
+    # Filtros
     cliente_id = request.GET.get('cliente')
     sala_id = request.GET.get('sala')
-    status_id = request.GET.get('status')
+    #status_id = request.GET.get('status')
+    status_ids = request.GET.getlist('status')  # lista de IDs seleccionados
     maquina_id = request.GET.get('maquina')
     current_year = int(request.GET.get('anio', datetime.now().year))
     current_month = int(request.GET.get('mes', datetime.now().month))
 
-    # Filtrar máquinas con select_related para mejorar eficiencia
-    listamaquina = Maquina.objects.filter(id_status__in=[1, 5, 6, 8]).select_related('clientes', 'salas')
+    listamaquina = Maquina.objects.filter(
+        id_status__in=[1, 5, 6, 8]
+    ).select_related('clientes', 'salas')
 
     if cliente_id:
         listamaquina = listamaquina.filter(clientes_id=cliente_id)
     if sala_id:
         listamaquina = listamaquina.filter(salas_id=sala_id)
-    if status_id:
-        listamaquina = listamaquina.filter(id_status=status_id)
+    #if status_id:
+        #listamaquina = listamaquina.filter(id_status=status_id)
+    if status_ids:
+        listamaquina = listamaquina.filter(id_status__in=[int(s) for s in status_ids])
     if maquina_id:
         listamaquina = listamaquina.filter(id=maquina_id)
 
-    # Calcular días del mes
     days_in_month = calendar.monthrange(current_year, current_month)[1]
     hoy = datetime.now().date()
 
-    # Optimización: Pre-cargar datos de transmisión
     fechas_mes = [datetime(current_year, current_month, day).date() for day in range(1, days_in_month + 1)]
-    recaudodia_dict = {
-        (r.maquina_id, r.fecha): True for r in recaudodia.objects.filter(
-            maquina__in=listamaquina, fecha__in=fechas_mes
-        ).only("maquina_id", "fecha")
-    }
 
-    # Generar la estructura de datos agrupada por Cliente → Sala → Máquina
+    registros = recaudodia.objects.filter(
+        maquina__in=listamaquina, fecha__in=fechas_mes
+    ).only("maquina_id", "fecha", "fechacarga")
+
+    recaudodia_dict = {}
+    for r in registros:
+        if r.fecha == r.fechacarga:
+            recaudodia_dict[(r.maquina_id, r.fecha)] = "ok"
+        else:
+            recaudodia_dict[(r.maquina_id, r.fecha)] = "delayed"
+
     conectividad = []
     for cliente in listacliente:
         maquinas_cliente = listamaquina.filter(clientes=cliente)
@@ -5035,24 +5016,48 @@ def conectividad(request):
             sala_data = {"sala": sala, "sala_index": sala_index, "maquinas": []}
 
             for maquina_index, maquina in enumerate(maquinas_cliente.filter(salas=sala)):
+                dias_maquina = []
+
+                # 🔹 Traer fallas activas para esa máquina
+                fallas = Falla.objects.filter(
+                    maquina=maquina,
+                    fecha__lte=fechas_mes[-1]
+                ).filter(
+                    Q(fecha_cierre__gte=fechas_mes[0]) | Q(fecha_cierre__isnull=True)
+                )
+
+                # 🔹 Precalcular todas las fechas en falla (set para lookup rápido)
+                fechas_en_falla = set()
+                for f in fallas:
+                    inicio = f.fecha
+                    fin = f.fecha_cierre or hoy
+                    delta = (fin - inicio).days
+                    for i in range(delta + 1):
+                        fechas_en_falla.add(inicio + timedelta(days=i))
+
+                # 🔹 Recorremos días
+                for fecha in fechas_mes:
+                    estado = recaudodia_dict.get((maquina.id, fecha), "missing")
+
+                    if fecha in fechas_en_falla:
+                        estado = "falla"
+
+                    dias_maquina.append({"fecha": fecha, "estado": estado})
+
                 maquina_data = {
                     "maquina": maquina,
                     "maquina_index": maquina_index,
-                    "dias": [
-                        {"fecha": fecha, "transmitio": recaudodia_dict.get((maquina.id, fecha), False)}
-                        for fecha in fechas_mes
-                    ],
+                    "dias": dias_maquina,
                 }
                 sala_data["maquinas"].append(maquina_data)
 
             if sala_data["maquinas"]:
                 cliente_data["salas"].append(sala_data)
-                cliente_data["total_maquinas"] += len(sala_data["maquinas"])  # Sumar máquinas al cliente
+                cliente_data["total_maquinas"] += len(sala_data["maquinas"])
 
         if cliente_data["salas"]:
             conectividad.append(cliente_data)
 
-    # Datos para el template
     meses = [
         (1, "Enero"), (2, "Febrero"), (3, "Marzo"), (4, "Abril"),
         (5, "Mayo"), (6, "Junio"), (7, "Julio"), (8, "Agosto"),
@@ -5061,6 +5066,8 @@ def conectividad(request):
     anios = list(range(2020, datetime.now().year + 1))
 
     if request.user.is_authenticated:
+        user_groups = list(request.user.groups.values_list("name", flat=True))
+
         return render(request, "conectividad.html", {
             'clientes': listacliente,
             'salas': listasalas,
@@ -5071,6 +5078,8 @@ def conectividad(request):
             'listastatus': listastatus,
             'meses': meses,
             'anios': anios,
+            'status_ids': status_ids,
+            "user_groups": user_groups,
         })
     else:
         return redirect('login')
@@ -5339,6 +5348,10 @@ def resumen_clientes(request):
     inicio_mes = date(anio_actual, mes_actual, 1)
 
     clientes = Cliente.objects.filter(visor=1, activo=1, razon__activo=1)
+    cliente_usuario = Cliente.objects.filter(id_user=request.user.id).first()
+    if cliente_usuario:
+        clientes = Cliente.objects.filter(id=cliente_usuario.id)  # solo ese cliente
+
     clientes_ids = clientes.values_list('id', flat=True)
 
     resumen_por_razon = defaultdict(lambda: {
@@ -5352,6 +5365,7 @@ def resumen_clientes(request):
         'clientes': set(),
     })
 
+    # --- Ingresos del día ---
     ingresos_ayer = recaudodia.objects.filter(
         fecha=ayer,
         eliminar=False,
@@ -5360,6 +5374,7 @@ def resumen_clientes(request):
         total_ingreso=Sum('ingreso')
     )
 
+    # --- Ingresos del mes ---
     ingresos_mes = recaudodia.objects.filter(
         fecha__gte=inicio_mes,
         fecha__lt=hoy,
@@ -5371,22 +5386,31 @@ def resumen_clientes(request):
     ingreso_mes_dict = {item['clientes__id']: item['ingreso_total_mes'] for item in ingresos_mes}
     dias_transcurridos = (ayer - inicio_mes).days + 1
 
+    # --- Reemplazamos recaudomes por recaudodia ---
     for cliente in clientes:
         razon_social = cliente.razon.nombre if cliente.razon else "Sin razón social"
-        registros = recaudomes.objects.filter(clientes=cliente, idmes=mes_actual, idano=anio_actual)
+        registros = recaudodia.objects.filter(
+            clientes=cliente,
+            fecha__month=mes_actual,
+            fecha__year=anio_actual,
+            eliminar=False
+        )
 
         resumen = resumen_por_razon[razon_social]
         resumen['clientes'].add(cliente.nombre)
-        resumen['num_salas'].update(registros.values_list('sala', flat=True).distinct())
-        maquinas_cliente = Maquina.objects.filter(clientes=cliente).values_list('id', flat=True)
-        resumen['num_maquinas'].update(maquinas_cliente)
+
+        # salas, maquinas y reportadas
+        resumen['num_salas'].update(registros.values_list('salas', flat=True).distinct())
+        resumen['num_maquinas'].update(registros.values_list('maquina', flat=True).distinct())
         resumen['maquinas_reportadas'].update(
-            registros.exclude(ultimafecha__isnull=True).values_list('maquina', flat=True).distinct()
+            registros.exclude(fechaultima__isnull=True).values_list('maquina', flat=True).distinct()
         )
 
+        # ingresos y jugadas desde recaudodia
         resumen['total_ingreso'] += registros.aggregate(Sum('ingreso'))['ingreso__sum'] or 0
         resumen['total_jugadas'] += registros.aggregate(Sum('plays'))['plays__sum'] or 0
 
+    # --- Agregar ingresos del día y del mes ---
     for ingreso in ingresos_ayer:
         cliente_id = ingreso['clientes__id']
         razon_social = ingreso['clientes__razon__nombre'] or "Sin razón social"
@@ -5396,7 +5420,7 @@ def resumen_clientes(request):
         ingreso_total_mes = ingreso_mes_dict.get(cliente_id, 0)
         resumen['ingreso_total_mes'] += ingreso_total_mes
 
-    # Inicializar acumuladores de total general
+    # --- Totales generales ---
     totales_generales = {
         'ingreso_dia_valor': 0,
         'ingreso_total_mes': 0,
@@ -5418,6 +5442,7 @@ def resumen_clientes(request):
         maquinas_reportadas = len(valores['maquinas_reportadas'])
         porcentaje_reportadas = (maquinas_reportadas / total_maquinas) * 100 if total_maquinas > 0 else 0
 
+        # semáforo máquinas
         if porcentaje_reportadas > 90:
             color_semaforo = "verde"
         elif porcentaje_reportadas > 75:
@@ -5427,7 +5452,35 @@ def resumen_clientes(request):
         else:
             color_semaforo = "rojo"
 
-        # Acumular totales generales
+        # semáforo ingresos/proyección
+        total_ingreso = valores['ingreso_total_mes']
+        if proyeccion > 0:
+            porcentaje_ingreso = (total_ingreso / proyeccion) * 100
+        else:
+            porcentaje_ingreso = 0
+
+        if porcentaje_ingreso >= 53:
+            color_ingreso = "verde"
+        elif 40 <= porcentaje_ingreso < 53.5:
+            color_ingreso = "amarillo"
+        elif 25 <= porcentaje_ingreso < 40:
+            color_ingreso = "naranja"
+        else:
+            color_ingreso = "rojo"
+
+        # color final
+        if "rojo" in [color_semaforo, color_ingreso]:
+            color_final = "rojo"
+        elif "naranja" in [color_semaforo, color_ingreso]:
+            color_final = "naranja"
+        elif "amarillo" in [color_semaforo, color_ingreso]:
+            color_final = "amarillo"
+        elif color_semaforo == "verde" and color_ingreso == "verde":
+            color_final = "verde"
+        else:
+            color_final = "gris"
+
+        # acumular totales
         totales_generales['ingreso_dia_valor'] += valores['ingreso_dia_valor']
         totales_generales['ingreso_total_mes'] += valores['ingreso_total_mes']
         totales_generales['promedio_dia'] += promedio_dia
@@ -5450,10 +5503,10 @@ def resumen_clientes(request):
             'num_maquinas': total_maquinas,
             'maquinas_reportadas': maquinas_reportadas,
             'jugadas_totales': valores['total_jugadas'],
-            'color_semaforo': color_semaforo,
+            'color_final': color_final,
         })
 
-    # Agregar el recuadro TOTAL GENERAL al final
+    # --- Total general ---
     data.append({
         'razon_social': "TOTAL GENERAL",
         'cliente': f"{totales_generales['total_clientes']} clientes",
@@ -5466,15 +5519,15 @@ def resumen_clientes(request):
         'num_maquinas': totales_generales['num_maquinas'],
         'maquinas_reportadas': totales_generales['maquinas_reportadas'],
         'jugadas_totales': totales_generales['jugadas_totales'],
-        'color_semaforo': 'azul',  # Puedes elegir otro color distintivo si lo prefieres
+        'color_final': 'azul',
     })
 
     if request.user.is_authenticated:
         return render(request, 'resumen_clientes.html', {
-        'resumen': data,
-        'mes_actual': mes_actual,
-        'anio_actual': anio_actual,
-    })
+            'resumen': data,
+            'mes_actual': mes_actual,
+            'anio_actual': anio_actual,
+        })
     else:
         return redirect('login')
 
